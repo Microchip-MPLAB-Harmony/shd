@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Module name="SHD" id="ef184f5a-9f60-4675-aaeb-d88f7380ad84" version="1.0.0">
+    <ConfigRoot path="config/module.py"/>
+</Module>
