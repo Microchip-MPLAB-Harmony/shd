@@ -1,0 +1,57 @@
+.contentbox {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.contentbox aside {
+  border-right: 1px solid #eee;
+  padding: 15px 10px;
+  font-size: 12px;
+  background: #fcfcfc;
+}
+
+.contentbox aside .description {
+  margin-bottom: 10px;
+}
+
+.contentbox .boardnode {
+  height: 20px;
+  padding: 4px;
+  border: 1px solid #1a192b;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.contentbox .boardnode.input {
+  border-color: #0041d0;
+}
+
+.contentbox .boardnode.output {
+  border-color: #6865a5;
+}
+
+.contentbox .reactflow-wrapper {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.contentbox .selectall {
+  margin-top: 10px;
+}
+
+@media screen and (min-width: 768px) {
+  .contentbox {
+    flex-direction: row;
+  }
+
+  .contentbox aside {
+    width: 20%;
+    max-width: 250px;
+  }
+}

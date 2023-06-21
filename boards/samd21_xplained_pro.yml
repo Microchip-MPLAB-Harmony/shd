@@ -1,0 +1,394 @@
+name: samd21-xplained-pro
+config: samd21_xplained_pro.py
+documentation: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-42220-SAMD21-Xplained-Pro_User-Guide.pdf
+processor:
+  name: ATSAMD21J18A
+  architecture: CORTEX-M0PLUS
+  family: SAMD
+  series: SAMD21
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led 1
+        description: Yellow Led (PB30) - latch high
+        pinctrl:
+          pinId: PB30
+          name: LED0
+          function: GPIO
+          direction: out
+          latch: high
+      - name: User Button 1
+        description: User Button 1 (PA15)
+        pinctrl:
+          pinId: PA15
+          name: USER_BUTTON1
+          function: GPIO
+          direction: in
+          pull up: True
+
+  - name: USB interface
+    description: USB configurations
+    options:
+      - name: USB
+        description: Target USB configuration
+        dependencies: [drv_usbfs_v1]
+        pinctrl:
+          usb_p:
+            pinId: PA25
+            function: USB_DP
+          usb_n:
+            pinId: PA24
+            function: USB_DM
+      - name: USB VBUS Detection
+        description: USB VBUS Detection
+        pinctrl:
+          pinId: PA14
+          name: VBUS_DETECTION
+          function: GPIO
+          direction: in
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: AT25DF081A interface
+        description: AT25DF081A Serial Flash memory (8Mbit)
+        pinctrl:
+          cs:
+            pinId: PA13
+            name: AT25DF_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: PB23
+            name: AT25DF_SPI_SCK
+            function: SERCOM5_PAD3
+          miso:
+            pinId: PB16
+            name: AT25DF_SPI_MISO
+            function: SERCOM5_PAD0
+          mosi:
+            pinId: PB22
+            name: AT25DF_SPI_MOSI
+            function: SERCOM5_PAD2
+
+  - name: USB debugger interface
+    description: On-Board Debugger (EDBG)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        pinctrl:
+          tx:
+            pinId: PA22
+            name: VIRTUAL_COM_TX
+            function: SERCOM3_PAD0
+          rx:
+            pinId: PA23
+            name: VIRTUAL_COM_RX
+            function: SERCOM3_PAD1
+
+      - name: Data Gateway SPI interface
+        description: Data Gateway SPI interface
+        pinctrl:
+          cs:
+            pinId: PB31
+            name: DGI_SPI_CS
+            function: SERCOM5_PAD1
+          sck:
+            pinId: PB23
+            name: DGI_SPI_SCK
+            function: SERCOM5_PAD3
+          miso:
+            pinId: PB16
+            name: DGI_SPI_MISO
+            function: SERCOM5_PAD0
+          mosi:
+            pinId: PB22
+            name: DGI_SPI_MOSI
+            function: SERCOM5_PAD2
+
+      - name: Data Gateway I2C interface
+        description: Data Gateway I2C interface
+        pinctrl:
+          sda:
+            pinId: PA08
+            name: DGI_I2C_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA09
+            name: DGI_I2C_SCL
+            function: SERCOM2_PAD1
+
+      - name: Data Gateway GPIO 0
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA27
+            name: DGI_GPIO0
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 1
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA28
+            name: DGI_GPIO1
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 2
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA20
+            name: DGI_GPIO2
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 3
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA21
+            name: DGI_GPIO3
+            function: GPIO
+            direction: out
+            latch: low
+
+connectors:
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header 1
+    pinctrl:
+      adc plus:
+        pinId: PB00
+        name: EXT1_ADC_PLUS
+        function: ADC_AIN8
+      adc minus:
+        pinId: PB01
+        name: EXT1_ADC_MINUS
+        function: ADC_AIN9
+      gpio1:
+        pinId: PB06
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PB07
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PB02
+        name: EXT1_PWM_PLUS
+        function: TC6/WO0
+      pwm minus:
+        pinId: PB03
+        name: EXT1_PWM_MINUS
+        function: TC6/WO1
+      irq:
+        pinId: PB04
+        name: EXT1_IRQ
+        function: EIC_EXTINT4
+        direction: in
+        latch: low
+      gpio ss:
+        pinId: PB05
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PA08
+          name: EXT1_I2C_SDA
+          function: SERCOM2_PAD0
+        scl:
+          pinId: PA09
+          name: EXT1_I2C_SCL
+          function: SERCOM2_PAD1
+      uart:
+        tx:
+          pinId: PB08
+          name: EXT1_USART_TX
+          function: SERCOM4_PAD0
+        rx:
+          pinId: PB09
+          name: EXT1_USART_RX
+          function: SERCOM4_PAD1
+      spi:
+        cs:
+          pinId: PA05
+          name: EXT1_SPI_CS
+          function: SERCOM0_PAD1
+        sck:
+          pinId: PA07
+          name: EXT1_SPI_SCK
+          function: SERCOM0_PAD3
+        miso:
+          pinId: PA04
+          name: EXT1_SPI_MISO
+          function: SERCOM0_PAD0
+        mosi:
+          pinId: PA06
+          name: EXT1_SPI_MOSI
+          function: SERCOM0_PAD2
+
+  - compatible: xplainpro
+    name: Extension Header EXT2
+    description: Xplained Pro Standard Extension Header 2
+    pinctrl:
+      adc plus:
+        pinId: PA10
+        name: EXT2_ADC_PLUS
+        function: ADC_AIN18
+      adc minus:
+        pinId: PA11
+        name: EXT2_ADC_MINUS
+        function: ADC_AIN19
+      gpio1:
+        pinId: PA20
+        name: EXT2_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PA21
+        name: EXT2_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PB12
+        name: EXT2_PWM_PLUS
+        function: TC4/WO0
+      pwm minus:
+        pinId: PB13
+        name: EXT2_PWM_MINUS
+        function: TC4/WO1
+      irq:
+        pinId: PB14
+        name: EXT2_IRQ
+        function: EIC_EXTINT14
+        direction: in
+        latch: low
+      gpio ss:
+        pinId: PB15
+        name: EXT2_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PA08
+          name: EXT2_I2C_SDA
+          function: SERCOM2_PAD0
+        scl:
+          pinId: PA09
+          name: EXT2_I2C_SCL
+          function: SERCOM2_PAD1
+      uart:
+        tx:
+          pinId: PB10
+          name: EXT2_USART_TX
+          function: SERCOM4_PAD0
+        rx:
+          pinId: PB11
+          name: EXT2_USART_RX
+          function: SERCOM4_PAD1
+      spi:
+        cs:
+          pinId: PA17
+          name: EXT2_SPI_CS
+          function: SERCOM1_PAD1
+        sck:
+          pinId: PA19
+          name: EXT2_SPI_SCK
+          function: SERCOM1_PAD3
+        miso:
+          pinId: PA16
+          name: EXT2_SPI_MISO
+          function: SERCOM1_PAD0
+        mosi:
+          pinId: PA18
+          name: EXT2_SPI_MOSI
+          function: SERCOM1_PAD2
+
+  - compatible: xplainpro
+    name: Extension Header EXT3
+    description: Xplained Pro Standard Extension Header 3
+    pinctrl:
+      adc plus:
+        pinId: PA02
+        name: EXT3_ADC_PLUS
+        function: ADC_AIN0
+      adc minus:
+        pinId: PA03
+        name: EXT3_ADC_MINUS
+        function: ADC_AIN1
+      gpio1:
+        pinId: PB30
+        name: EXT3_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PA15
+        name: EXT3_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PA12
+        name: EXT3_PWM_PLUS
+        function: TCC2/WO0
+      pwm minus:
+        pinId: PA13
+        name: EXT3_PWM_MINUS
+        function: TCC2/WO1
+      irq:
+        pinId: PA28
+        name: EXT3_IRQ
+        function: EIC_EXTINT8
+        direction: in
+        latch: low
+      gpio ss:
+        pinId: PA27
+        name: EXT3_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PA08
+          name: EXT3_I2C_SDA
+          function: SERCOM2_PAD0
+        scl:
+          pinId: PA09
+          name: EXT3_I2C_SCL
+          function: SERCOM2_PAD1
+      uart:
+        tx:
+          pinId: PB10
+          name: EXT3_USART_TX
+          function: SERCOM4_PAD0
+        rx:
+          pinId: PB11
+          name: EXT3_USART_RX
+          function: SERCOM4_PAD1
+      spi:
+        cs:
+          pinId: PB17
+          name: EXT3_SPI_CS
+          function: SERCOM5_PAD1
+        sck:
+          pinId: PB23
+          name: EXT3_SPI_SCK
+          function: SERCOM5_PAD3
+        miso:
+          pinId: PB16
+          name: EXT3_SPI_MISO
+          function: SERCOM5_PAD0
+        mosi:
+          pinId: PB22
+          name: EXT3_SPI_MOSI
+          function: SERCOM5_PAD2

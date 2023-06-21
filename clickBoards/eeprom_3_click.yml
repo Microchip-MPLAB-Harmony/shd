@@ -1,0 +1,15 @@
+name: EEPROM 3 click
+config: eeprom_3_click.py
+description: >
+  The EEPROM module used on the EEPROM 3 click is the AT24CM02, 
+  an I2C serial EEPROM from Microchip, with the memory cell 
+  density of 2 megabits (Mbit)
+documentation: https://www.mikroe.com/eeprom-3-click
+compatible: mikrobus
+dependencies: [["drv_at24", "i2c"]]
+supported:
+  i2c:
+    sda:
+      name: EEPROM3_SDA
+    scl:
+      name: EEPROM3_SCL

@@ -1,0 +1,26 @@
+name: EEPROM 4 click
+config: eeprom_4_click.py
+description: >
+  The EEPROM module used on the EEPROM 4 click is the AT25M02, 
+  an SPI serial EEPROM from Microchip, with the memory cell 
+  density of 2 Mbits
+documentation: https://www.mikroe.com/eeprom-4-click
+compatible: mikrobus
+dependencies: [["drv_at25", "spi"]]
+supported:
+  rst:
+    name: EEPROM4_WP
+  spi:
+    cs:
+      name: EEPROM4_CS
+    sck:
+      name: EEPROM4_SCK
+    miso:
+      name: EEPROM4_MISO
+    mosi:
+      name: EEPROM4_MOSI
+  pwm:
+    name: EEPROM4_HLD
+    function: GPIO
+    direction: out
+    latch: low

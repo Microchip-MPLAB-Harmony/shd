@@ -1,0 +1,66 @@
+name: I/O1 Xplained Pro
+config: io1_xplained_pro.py
+description: >
+  I/O1 Xplained Pro provides a light sensor, temperature sensor, and microSD card. 
+  It connects to the extension headers of any Xplained Pro Evaluation Kit.
+documentation: https://www.microchip.com/en-us/development-tool/ATIO1-XPRO
+compatible: xplainpro
+dependencies: [["drv_sdspi", "spi"]]
+supported:
+  adc plus:
+    name: IO1_LightSensor
+    description: Light sensor output (ADC)
+  adc minus:
+    name: IO1_LP_OUT
+    description: Low pass filter output (ADC)
+  gpio1:
+    name: IO1_GPIO1
+    description: General Purpose I/O pin (GPIO)
+  gpio2:
+    name: IO1_GPIO2
+    description: General Purpose I/O pin (GPIO)
+  pwm plus:
+    name: IO1_LED
+    description: LED control (PWM/GPIO)
+    function: GPIO
+    direction: out
+    latch: high
+  pwm minus:
+    name: IO1_LP_IN
+    description: Low pass filter input (PWM)
+  irq:
+    name: IO1_TEMP_ALERT
+    description: ALERT pin (Pin 3) of temperature sensor chip (IRQ)
+  gpio ss:
+    name: IO1_microSD_DETECT
+    description: Detect pin on microSD card connector (GPIO)
+  i2c:
+    sda:
+      name: IO1_TWI_SDA
+      description: Data line of TWI interface, connected to SDA pin (Pin 1) of temperature sensor chip
+    scl:
+      name: IO1_TWI_SCL
+      description: Clock line of TWI interface, connected to SCL pin (Pin 2) of temperature sensor chip
+  uart:
+    tx:
+      name: IO1_UART_TX
+      description: Transmit pin of target MCU UART interface
+    rx:
+      name: IO1_UART_RX
+      description: Transmit pin of target MCU UART interface
+  spi:
+    cs:
+      name: IO1_microSD_SS
+      description: Chip select signal, connected to DAT3 pin on microSD card connector
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: IO1_SPI_SCK
+      description: Clock line of SPI interface. Connected to CLK pin on microSD card connector
+    miso:
+      name: IO1_SPI_MISO
+      description: Master In, Slave Out signal of target MCU SPI interface. Connected to D0 pin on microSD card connector
+    mosi:
+      name: IO1_SPI_MOSI
+      description: Master Out, Slave In signal of target MCU SPI interface. Connected to CMD pin on microSD card connector

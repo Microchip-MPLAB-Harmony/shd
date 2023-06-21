@@ -1,0 +1,7 @@
+clickboards:
+- clickBoards/eeprom_10_click.yml
+- clickBoards/eeprom_3_click.yml
+- clickBoards/eeprom_4_click.yml
+- clickBoards/io1_xplained_pro.yml
+mainboards:
+- boards/same54_curiosity_ultra.yml

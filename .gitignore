@@ -2,6 +2,7 @@
 *.elf
 *.map
 *.d
+*.pyc
 **/nbproject/private
 **/nbproject/Makefile-*
 **/nbproject/Package-*
@@ -13,3 +14,5 @@
 **/*.IAR/settings
 **/*.IAR/*.dep
 **/*.IAR/*.custom_argvars
+**/*.KEIL/Objects
+**/*.KEIL/*.uvguix.*

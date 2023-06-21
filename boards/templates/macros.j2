@@ -1,0 +1,19 @@
+{% macro getMainBoardSettings(values) %}
+    {% for value in values %}
+        {% if 'mainBoard' in value %}
+            {% set boardComponent = values[value] %}
+                {% for component in boardComponent %}
+                    {% if '_SETTINGS_' in component %}
+                        {% set nameDescriptor = component.split('_')[-1] %}
+                        {% if ':' in nameDescriptor %}
+                            {% if '_SETTINGS_INT_' in component %}
+{{ '#define {:<40} {}'.format(nameDescriptor|replace(':', '_')|upper(), boardComponent[component]) }}
+                            {% else %}
+{{ '#define {:<40} "{}"'.format(nameDescriptor|replace(':', '_')|upper(), boardComponent[component]) }}
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}

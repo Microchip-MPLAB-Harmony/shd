@@ -1,0 +1,85 @@
+{% macro generateOuputsHeaders(trustzone, core) %}
+    {% set numPinTotal = core["PIO_PIN_TOTAL"] %}
+    {% set numPinCount = core["PORT_PIN_COUNT"] %}
+    {% for pinNumber in  range(1, numPinTotal + 1) %}
+        {% set funcTypeSymName = "PIN_{}_FUNCTION_TYPE".format(pinNumber) %}
+        {% set directionSymName = "PIN_{}_DIR".format(pinNumber) %}
+        {% set funcType = core[funcTypeSymName] %}
+        {% set direction = core[directionSymName] %}
+        {% if funcType == 'GPIO' %}
+            {% if direction.lower() == 'out' %}
+                {% set funcNameSymName = "PIN_{}_FUNCTION_NAME".format(pinNumber) %}
+                {% set funcName = core[funcNameSymName] %}
+                {% set expNameSymName = "PIN_{}_EXPORT_NAME".format(pinNumber) %}
+                {% set expName = core[expNameSymName] %}
+                {% set port = expName.split(":")[1][1] %}
+                {% set pin = expName.split(":")[1][2:] %}
+/*** OUTPUT PIO Macros for {{ funcName }} ***/
+#define BSP_{{ funcName|upper() }}_PIN        PIO_PIN_P{{ port }}{{ pin }}
+#define BSP_{{ funcName|upper() }}_Get()      ((PIO{{ port }}_REGS->PIO_PDSR >> {{ pin }}) & 0x1)
+#define BSP_{{ funcName|upper() }}_On()       (PIO{{ port }}_REGS->PIO_CODR = (1UL<<{{ pin }}))
+#define BSP_{{ funcName|upper() }}_Off()      (PIO{{ port }}_REGS->PIO_SODR = (1UL<<{{ pin }}))
+#define BSP_{{ funcName|upper() }}_Toggle()   do {\
+                                    PIO{{ port }}_REGS->PIO_MSKR = (1<<{{ pin }}); \
+                                    PIO{{ port }}_REGS->PIO_ODSR ^= (1<<{{ pin }});\
+                                } while (0)
+
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro generateInputsHeaders(trustzone, core) %}
+    {% set numPinTotal = core["PIO_PIN_TOTAL"] %}
+    {% for pinNumber in  range(1, numPinTotal + 1) %}
+        {% set funcTypeSymName = "PIN_{}_FUNCTION_TYPE".format(pinNumber) %}
+        {% set directionSymName = "PIN_{}_DIR".format(pinNumber) %}
+        {% set funcType = core[funcTypeSymName] %}
+        {% set direction = core[directionSymName] %}
+        {% if funcType == 'GPIO' %}
+            {% if direction.lower() != 'out' %}
+                {% set funcNameSymName = "PIN_{}_FUNCTION_NAME".format(pinNumber) %}
+                {% set funcName = core[funcNameSymName] %}
+                {% set expNameSymName = "PIN_{}_EXPORT_NAME".format(pinNumber) %}
+                {% set expName = core[expNameSymName] %}
+                {% set port = expName.split(":")[1][1] %}
+                {% set pin = expName.split(":")[1][2:] %}
+                {% set pullupSymName = "PIN_{}_PU".format(pinNumber) %}
+                {% set pullup = core[pullupSymName] %}
+/*** INPUT PIO Macros for {{ funcName|upper() }} ***/
+#define BSP_{{ funcName|upper() }}_PIN                    PIO_PIN_P{{ port }}{{ pin }}
+#define BSP_{{ funcName|upper() }}_Get()                  ((PIO{{ port }}_REGS->PIO_PDSR >> {{ pin }}) & 0x1)
+{% if pullup == "True" -%}   
+#define BSP_{{ funcName|upper() }}_STATE_PRESSED          0
+#define BSP_{{ funcName|upper() }}_STATE_RELEASED         1
+{% else -%}   
+#define BSP_{{ funcName|upper() }}_STATE_PRESSED          1
+#define BSP_{{ funcName|upper() }}_STATE_RELEASED         0
+{% endif -%}  
+#define BSP_{{ funcName|upper() }}_InterruptEnable()      (PIO{{ port }}_REGS->PIO_IER = (1UL<<{{ pin }}))
+#define BSP_{{ funcName|upper() }}_InterruptDisable()     (PIO{{ port }}_REGS->PIO_IDR = (1UL<<{{ pin }}))
+
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro generateLedsInitialization(core) %}
+    {% set numPinTotal = core["PIO_PIN_TOTAL"] %}
+    {% for pinNumber in  range(1, numPinTotal + 1) %}
+        {% set funcTypeSymName = "PIN_{}_FUNCTION_TYPE".format(pinNumber) %}
+        {% set directionSymName = "PIN_{}_DIR".format(pinNumber) %}
+        {% set funcType = core[funcTypeSymName] %}
+        {% set direction = core[directionSymName] %}
+        {% if funcType == 'GPIO' %}
+            {% if direction.lower() == 'out' %}
+                {% set funcNameSymName = "PIN_{}_FUNCTION_NAME".format(pinNumber) %}
+                {% set funcName = core[funcNameSymName] %}
+                {% if 'led' in funcName.lower() %}
+    /* Switch off {{ funcName|upper() }} */
+    BSP_{{ funcName|upper() }}_Off();
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}

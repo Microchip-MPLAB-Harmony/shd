@@ -1,0 +1,280 @@
+name: pic32cxmtg-ek
+config: pic32cxmtg_ek.py
+documentation: https://www.microchip.com/en-us/development-tool/EV11K09A
+processor:
+  name: PIC32CX2051MTG128
+  architecture: CORTEX-M4
+  family: PIC32CXMT
+  series: PIC32CXMTG
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: Green Led
+        description: Green Led (PD16) - latch high
+        pinctrl:
+          pinId: PD16
+          name: LED0
+          function: GPIO
+          direction: out
+          latch: high
+      - name: Blue Led
+        description: Blue Led (PD3) - latch high
+        pinctrl:
+          pinId: PD3
+          name: LED1
+          function: GPIO
+          direction: out
+          latch: high
+      - name: User Button 1
+        description: User Button 1 (PA7) - raising edge
+        pinctrl:
+          pinId: PA7
+          name: USER_BUTTON1
+          function: GPIO
+          direction: in
+          interrupt: raising edge
+          pull up: True
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B QSPI flash memory (64Mbit)
+        dependencies: ["drv_sst26", "qspi"]
+        pinctrl:
+          qsck:
+            pinId: PC15
+            function: QSPI_QSCK
+          qcs:
+            pinId: PC14
+            function: QSPI_QCS
+          quio0:
+            pinId: PC13
+            function: QSPI_QIO0
+          quio1:
+            pinId: PC12
+            function: QSPI_QIO1
+          quio2:
+            pinId: PC11
+            function: QSPI_QIO2
+          quio3:
+            pinId: PC10
+            function: QSPI_QIO3
+            pull up: True
+
+  - name: USB debugger interface
+    description: On-Board Debugger (J-Link)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        pinctrl:
+          tx:
+            pinId: PA4
+            name: VIRTUAL_COM_TX
+            function: FLEXCOM0_IO0
+          rx:
+            pinId: PA5
+            name: VIRTUAL_COM_RX
+            function: FLEXCOM0_IO1
+
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS 1
+    description: MikroBUS 1 Standard Extension Header
+    pinctrl:
+      an:
+        pinId: PA30
+        name: MikroBUS_1_AN
+        function: ADC_AD1
+      rst:
+        pinId: PA25
+        name: MikroBUS_1_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PA19
+          name: MikroBUS_1_SPI_CS
+          function: FLEXCOM3_IO3
+        sck:
+          pinId: PA18
+          name: MikroBUS_1_SPI_SCK
+          function: FLEXCOM3_IO2
+        miso:
+          pinId: PA17
+          name: MikroBUS_1_SPI_MISO
+          function: FLEXCOM3_IO1
+        mosi:
+          pinId: PA16
+          name: MikroBUS_1_SPI_MOSI
+          function: FLEXCOM3_IO0
+      pwm:
+        pinId: PD17
+        name: MikroBUS_1_PWM
+        function: PWM_PWML0
+      int:
+        pinId: PC7
+        name: MikroBUS_1_INT
+        function: GPIO
+        direction: in
+        interrupt: falling edge
+      uart:
+        tx:
+          pinId: PD2
+          name: MikroBUS_1_UART_TX
+          function: UART_UTXD
+        rx:
+          pinId: PD1
+          name: MikroBUS_1_UART_RX
+          function: UART_URXD
+      i2c:
+        sda:
+          pinId: PA8
+          name: MikroBUS_1_I2C_SDA
+          function: FLEXCOM1_IO0
+        scl:
+          pinId: PA9
+          name: MikroBUS_1_I2C_SCL
+          function: FLEXCOM1_IO1
+
+  - compatible: mikrobus
+    name: MikroBUS 2
+    description: MikroBUS 2 Standard Extension Header
+    pinctrl:
+      an:
+        pinId: PB0
+        name: MikroBUS_2_AN
+        function: ADC_AD3
+      rst:
+        pinId: PB26
+        name: MikroBUS_2_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PB8
+          name: MikroBUS_2_SPI_CS
+          function: FLEXCOM4_IO3
+        sck:
+          pinId: PB7
+          name: MikroBUS_2_SPI_SCK
+          function: FLEXCOM4_IO2
+        miso:
+          pinId: PB6
+          name: MikroBUS_2_SPI_MISO
+          function: FLEXCOM4_IO1
+        mosi:
+          pinId: PB5
+          name: MikroBUS_2_SPI_MOSI
+          function: FLEXCOM4_IO0
+      pwm:
+        pinId: PD18
+        name: MikroBUS_2_PWM
+        function: PWM_PWML1
+      int:
+        pinId: PB25
+        name: MikroBUS_2_INT
+        function: GPIO
+        direction: in
+        latch: low
+        interrupt: falling edge
+      uart:
+        tx:
+          pinId: PB4
+          name: MikroBUS_2_UART_TX
+          function: FLEXCOM7_IO0
+        rx:
+          pinId: PB3
+          name: MikroBUS_2_UART_RX
+          function: FLEXCOM7_IO1
+      i2c:
+        sda:
+          pinId: PA12
+          name: MikroBUS_2_I2C_SDA
+          function: FLEXCOM2_IO0
+        scl:
+          pinId: PA13
+          name: MikroBUS_2_I2C_SCL
+          function: FLEXCOM2_IO1
+
+  - compatible: xplainpro
+    name: Xplained Pro
+    description: Xplained Pro Standard Extension Header
+    pinctrl:
+      adc plus:
+        pinId: PB1
+        name: Xplained_Pro_ADC_PLUS
+        function: ADC_AD4
+      adc minus:
+        pinId: PA31
+        name: Xplained_Pro_ADC_MINUS
+        function: ADC_AD2
+      gpio1:
+        pinId: PA28
+        name: Xplained_Pro_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PA3
+        name: Xplained_Pro_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PD15
+        name: Xplained_Pro_PWM_PLUS
+        function: PWM_PWMH1
+      pwm minus:
+        pinId: PD19
+        name: Xplained_Pro_PWM_MINUS
+        function: PWM_PWML2
+      irq:
+        pinId: PA2
+        name: Xplained_Pro_IRQ
+        function: GPIO
+        direction: in
+        latch: low
+        interrupt: falling edge
+      gpio ss:
+        pinId: PB15
+        name: Xplained_Pro_GPIO_SS
+        function: GPIO
+        direction: in
+      spi:
+        cs:
+          pinId: PA21
+          name: Xplained_Pro_SPI_CS
+          function: FLEXCOM5_IO3
+        sck:
+          pinId: PA22
+          name: Xplained_Pro_SPI_SCK
+          function: FLEXCOM5_IO2
+        miso:
+          pinId: PA23
+          name: Xplained_Pro_SPI_MISO
+          function: FLEXCOM5_IO1
+        mosi:
+          pinId: PA24
+          name: Xplained_Pro_SPI_MOSI
+          function: FLEXCOM5_IO0
+      uart:
+        tx:
+          pinId: PD13
+          name: Xplained_Pro_UART_TX
+          function: UART_UTXD
+        rx:
+          pinId: PD12
+          name: Xplained_Pro_UART_RX
+          function: UART_URXD
+      i2c:
+        sda:
+          pinId: PA0
+          name: Xplained_Pro_I2C_SDA
+          function: FLEXCOM6_IO0
+        scl:
+          pinId: PA1
+          name: Xplained_Pro_I2C_SCL
+          function: FLEXCOM6_IO1
