@@ -53,35 +53,39 @@ interfaces:
       - name: User Led 1
         description: Yellow Led (PC21) - latch high
         pinctrl:
-          pinId: PC21
-          name: LED0
-          function: GPIO
-          direction: out
-          latch: high
+          gpio:
+            pinId: PC21
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: high
       - name: User Led 2
         description: Yellow Led (PA16) - latch high
         pinctrl:
-          pinId: PA16
-          name: LED2
-          function: GPIO
-          direction: out
-          latch: high
+          gpio:
+            pinId: PA16
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: high
       - name: User Button 1
-        description: User Button 1 (PD00) - raising edge
+        description: User Button 1 (PD00)
         pinctrl:
-          pinId: PD00
-          name: USER_BUTTON1
-          function: GPIO
-          direction: in
-          pull up: True
+          gpio:
+            pinId: PD00
+            name: USER_BUTTON1
+            function: GPIO
+            direction: in
+            pull up: True
       - name: User Button 2
-        description: User Button 2 (PD01) - raising edge
+        description: User Button 2 (PD01)
         pinctrl:
-          pinId: PD01
-          name: USER_BUTTON2
-          function: GPIO
-          direction: in
-          pull up: True
+          gpio:
+            pinId: PD01
+            name: USER_BUTTON2
+            function: GPIO
+            direction: in
+            pull up: True
 
   - name: USB interface
     description: USB configurations
@@ -99,10 +103,11 @@ interfaces:
       - name: VBUS Sense Pin
         description: USB VBUS Sense Pin
         pinctrl:
-          pinId: PD21
-          name: USB_VBUS_SENSE
-          function: GPIO
-          direction: in
+          gpio:
+            pinId: PD21
+            name: USB_VBUS_SENSE
+            function: GPIO
+            direction: in
 
   - name: Storage interface
     description: Storage on-board components configurations
@@ -710,8 +715,6 @@ connectors:
         pinId: PD12
         name: EXT1_IRQ
         function: EIC_EXTINT7
-        direction: in
-        latch: low
       gpio ss:
         pinId: PB29
         name: EXT1_GPIO_SS
@@ -787,8 +790,6 @@ connectors:
         pinId: PD11
         name: EXT2_IRQ
         function: EIC_EXTINT6
-        direction: in
-        latch: low
       gpio ss:
         pinId: PB28
         name: EXT2_GPIO_SS
@@ -870,8 +871,7 @@ connectors:
       int:
         pinId: PC14
         name: MikroBUS_INT
-        function: GPIO
-        direction: in
+        function: EIC_EXTINT14
       uart:
         tx:
           pinId: PC12

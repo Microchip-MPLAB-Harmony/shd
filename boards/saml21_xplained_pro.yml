@@ -1,34 +1,56 @@
-name: samd21-xplained-pro
-config: samd21_xplained_pro.py
-documentation: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-42220-SAMD21-Xplained-Pro_User-Guide.pdf
+name: saml21-xplained-pro
+config: saml21_xplained_pro.py
+documentation: https://www.microchip.com/en-us/development-tool/ATSAML21-XPRO-B
 processor:
-  name: ATSAMD21J18A
+  name: ATSAML21J18B
   architecture: CORTEX-M0PLUS
-  family: SAMD
-  series: SAMD21
+  family: SAML
+  series: SAML21
+
+settings:
+  - name: Backup Battery Selection
+    description: Use the VBAT SELECT Jumper to select power from battery or power from board supply.
+    type: keyValue
+    keyValues:
+      - key: VBAT_SELECT_PSUP
+        description: Power from power supply
+      - key: VBAT_SELECT_VBAT
+        description: Power from battery
 
 interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
       - name: User Led 1
-        description: Yellow Led (PB30) - latch high
+        description: Yellow Led (PB10) - latch high
         pinctrl:
           gpio:
-            pinId: PB30
+            pinId: PB10
             name: LED0
             function: GPIO
             direction: out
             latch: high
       - name: User Button 1
-        description: User Button 1 (PA15)
+        description: User Button 1 (PA02)
         pinctrl:
           gpio:
-            pinId: PA15
+            pinId: PA02
             name: USER_BUTTON1
             function: GPIO
             direction: in
             pull up: True
+
+  - name: QTouch interface
+    description: QTouch Button
+    options:
+      - name: QTouch Button
+        description: QTouch Button
+        dependencies: [ptc]
+        pinctrl:
+          gpio:
+            pinId: PA10
+            name: QTOUCH_BUTTON
+            function: PTC_X2/Y8
 
   - name: USB interface
     description: USB configurations
@@ -47,35 +69,10 @@ interfaces:
         description: USB VBUS Detection
         pinctrl:
           gpio:
-            pinId: PA14
+            pinId: PB02
             name: VBUS_DETECTION
             function: GPIO
             direction: in
-
-  - name: Storage interface
-    description: Storage on-board components configurations
-    options:
-      - name: AT25DF081A interface
-        description: AT25DF081A Serial Flash memory (8Mbit)
-        pinctrl:
-          cs:
-            pinId: PA13
-            name: AT25DF_SPI_CS
-            function: GPIO
-            direction: out
-            latch: high
-          sck:
-            pinId: PB23
-            name: AT25DF_SPI_SCK
-            function: SERCOM5_PAD3
-          miso:
-            pinId: PB16
-            name: AT25DF_SPI_MISO
-            function: SERCOM5_PAD0
-          mosi:
-            pinId: PB22
-            name: AT25DF_SPI_MOSI
-            function: SERCOM5_PAD2
 
   - name: USB debugger interface
     description: On-Board Debugger (EDBG)
@@ -128,7 +125,7 @@ interfaces:
         description: Data Gateway GPIO interface
         pinctrl:
           gpio:
-            pinId: PA27
+            pinId: PB01
             name: DGI_GPIO0
             function: GPIO
             direction: out
@@ -138,7 +135,7 @@ interfaces:
         description: Data Gateway GPIO interface
         pinctrl:
           gpio:
-            pinId: PA28
+            pinId: PA16
             name: DGI_GPIO1
             function: GPIO
             direction: out
@@ -170,13 +167,13 @@ connectors:
     description: Xplained Pro Standard Extension Header 1
     pinctrl:
       adc plus:
-        pinId: PB00
+        pinId: PB05
         name: EXT1_ADC_PLUS
-        function: ADC_AIN8
+        function: ADC_AIN13
       adc minus:
-        pinId: PB01
-        name: EXT1_ADC_PLUS
-        function: ADC_AIN9
+        pinId: PA03
+        name: EXT1_ADC_MINUS
+        function: ADC_AIN1
       gpio1:
         pinId: PB06
         name: EXT1_GPIO1
@@ -188,19 +185,19 @@ connectors:
         function: GPIO
         direction: in
       pwm plus:
-        pinId: PB02
+        pinId: PA12
         name: EXT1_PWM_PLUS
-        function: TC6/WO0
+        function: TCC2_WO0
       pwm minus:
-        pinId: PB03
+        pinId: PA13
         name: EXT1_PWM_MINUS
-        function: TC6/WO1
+        function: TCC2_WO1
       irq:
         pinId: PB04
         name: EXT1_IRQ
         function: EIC_EXTINT4
       gpio ss:
-        pinId: PB05
+        pinId: PA02
         name: EXT1_GPIO_SS
         function: GPIO
         direction: in
@@ -290,43 +287,45 @@ connectors:
           function: SERCOM2_PAD1
       uart:
         tx:
-          pinId: PB10
+          pinId: PA18
           name: EXT2_USART_TX
-          function: SERCOM4_PAD0
+          function: SERCOM1_PAD2
         rx:
-          pinId: PB11
+          pinId: PA19
           name: EXT2_USART_RX
-          function: SERCOM4_PAD1
+          function: SERCOM1_PAD3
       spi:
         cs:
           pinId: PA17
           name: EXT2_SPI_CS
-          function: SERCOM1_PAD1
+          function: GPIO
+          direction: out
+          latch: high
         sck:
-          pinId: PA19
+          pinId: PB23
           name: EXT2_SPI_SCK
-          function: SERCOM1_PAD3
+          function: SERCOM5_PAD3
         miso:
-          pinId: PA16
+          pinId: PB16
           name: EXT2_SPI_MISO
-          function: SERCOM1_PAD0
+          function: SERCOM5_PAD0
         mosi:
-          pinId: PA18
+          pinId: PB22
           name: EXT2_SPI_MOSI
-          function: SERCOM1_PAD2
+          function: SERCOM5_PAD2
 
   - compatible: xplainpro
     name: Extension Header EXT3
     description: Xplained Pro Standard Extension Header 3
     pinctrl:
       adc plus:
-        pinId: PA02
+        pinId: PB00
         name: EXT3_ADC_PLUS
-        function: ADC_AIN0
+        function: ADC_AIN8
       adc minus:
-        pinId: PA03
+        pinId: PB01
         name: EXT3_ADC_MINUS
-        function: ADC_AIN1
+        function: ADC_AIN9
       gpio1:
         pinId: PB30
         name: EXT3_GPIO1
@@ -338,17 +337,17 @@ connectors:
         function: GPIO
         direction: in
       pwm plus:
-        pinId: PA12
+        pinId: PB10
         name: EXT3_PWM_PLUS
-        function: TCC2/WO0
+        function: TCC0_WO4
       pwm minus:
-        pinId: PA13
+        pinId: PB11
         name: EXT3_PWM_MINUS
-        function: TCC2/WO1
+        function: TCC0_WO5
       irq:
-        pinId: PA28
+        pinId: PA16
         name: EXT3_IRQ
-        function: EIC_EXTINT8
+        function: EIC_EXTINT0
       gpio ss:
         pinId: PA27
         name: EXT3_GPIO_SS
@@ -365,13 +364,13 @@ connectors:
           function: SERCOM2_PAD1
       uart:
         tx:
-          pinId: PB10
+          pinId: PA18
           name: EXT3_USART_TX
-          function: SERCOM4_PAD0
+          function: SERCOM1_PAD2
         rx:
-          pinId: PB11
+          pinId: PA19
           name: EXT3_USART_RX
-          function: SERCOM4_PAD1
+          function: SERCOM1_PAD3
       spi:
         cs:
           pinId: PB17

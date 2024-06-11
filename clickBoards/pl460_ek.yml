@@ -1,0 +1,59 @@
+name: PL460 Evaluation Kit
+config: pl460_ek.py
+description: >
+  The PL460 EK board includes a PL460 modem for narrow-band Power Line Communication (NB-PLC),
+  which operates in the frequency band 0 .. 500kHz.
+documentation: https://www.microchip.com/en-us/development-tool/EV13L63A
+compatible: xplainpro
+dependencies: [["drvPlcPhy", "spi"]]
+supported:
+  adc plus:
+    name: PL460_SUPPLY_MON
+    description: Supply Monitor
+  pwm plus:
+    name: PL460_NRST
+    description: PL460 NReset
+    function: GPIO
+    direction: out
+    latch: low
+  pwm minus:
+    name: PL460_ENABLE
+    description: PL460 Enable
+    function: GPIO
+    direction: out
+    latch: low
+  irq:
+    name: PL460_EXTINT
+    description: PL460 External Interrupt (IRQ)
+  gpio ss:
+    name: PL460_NTHW0
+    description: PL460 Thermal Monitor Warning 0
+    function: GPIO
+    direction: in
+    pull up: False
+  i2c:
+    sda:
+      name: PL460_STBY
+      description: PL460 StandBy
+      function: GPIO
+      direction: out
+      latch: low
+    scl:
+      name: PL460_TXEN
+      description: PL460 Transmission Enable
+      function: GPIO
+      direction: out
+      latch: low
+  spi:
+    cs:
+      name: PL460_CS
+      description: Chip select signal
+    sck:
+      name: PL460_SCK
+      description: Clock line of SPI interface.
+    miso:
+      name: PL460_MISO
+      description: Master In, Slave Out signal of target MCU SPI interface.
+    mosi:
+      name: PL460_MOSI
+      description: Master Out, Slave In signal of target MCU SPI interface.

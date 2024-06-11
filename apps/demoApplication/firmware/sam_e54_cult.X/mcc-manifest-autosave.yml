@@ -2,7 +2,7 @@
 
 manifest_file_version: 1.0.0
 project: sam_e54_cult
-creation_date: 2024-06-06T11:39:18.755+02:00[Europe/Paris]
+creation_date: 2024-06-11T16:44:37.379+02:00[Europe/Paris]
 operating_system: Windows 10
 mcc_mode: IDE
 mcc_mode_version: v6.20
@@ -21,4 +21,4 @@ modules:
 - {name: csp, type: HARMONY, version: dev}
 - {name: core, type: HARMONY, version: master}
 - {name: CMSIS_5, type: HARMONY, version: 5.9.0}
-- {name: shd, type: HARMONY, version: MH3-90392-add-samd21-curiosity-nano-board-support}
+- {name: shd, type: HARMONY, version: MH3-95596-automatic-peripheral-configuration-depending-on-yaml-board-configuration-file}

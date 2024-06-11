@@ -14,20 +14,22 @@ interfaces:
       - name: User Led
         description: Yellow Led (PB10) - latch high
         pinctrl:
-          pinId: PB10
-          name: LED0
-          function: GPIO
-          direction: out
-          latch: high
+          gpio:
+            pinId: PB10
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: high
 
       - name: User Button
         description: User Button 1 (PB11) - raising edge
         pinctrl:
-          pinId: PB11
-          name: SW0
-          function: GPIO
-          direction: in
-          pull up: True
+          gpio:
+            pinId: PB11
+            name: SW0
+            function: GPIO
+            direction: in
+            pull up: True
 
   - name: On-Board Nano Debugger interface
     description: On-Board Nano Debugger

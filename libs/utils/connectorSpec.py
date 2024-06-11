@@ -72,7 +72,14 @@ __connectorSpec = {
         'd7': 22,
         'd8': 23,
         'd9': 24
-    }
+    },
+    'highspeedI2Cslave': {
+        'gpio': 3,
+        'i2c': {
+            'sda': 5,
+            'scl': 6,
+        }
+    },
 }
 __drvDependencies = {
     'drv_i2c': 'I2C',
@@ -85,7 +92,9 @@ __drvDependencies = {
     'drv_at25df': 'SPI',
     'drv_sdmmc': 'SDHC',
     'a_drv_i2s': 'I2S',
-    'drv_sdspi': 'SPI'
+    'drv_sdspi': 'SPI',
+    'drvPlcPhy': 'SPI',
+    'stdio': 'UART'
 }
 
 def __checkSubstringList(substringList, string):
@@ -124,6 +133,7 @@ def getConnectorSignalMapMikroBUSXplainPro():
 def getAutoconnectTable(idDependency, idCapability):
     connectionTable = []
     for dep, signal in __drvDependencies.items():
+        exception = False
         if dep in idDependency:
             connection = []
             # Add dependency
@@ -133,15 +143,22 @@ def getAutoconnectTable(idDependency, idCapability):
                 depType = dep.replace('a_', '')
             elif 'audio_codec_ak495' in idDependency:
                 depType = idCapability # could be I2C or I2S
+            elif 'stdio' == dep:
+                exception = True
+                depType = "UART"
             else:
                 depType = dep
-            connection.append("{}_{}_dependency".format(depType, signal))
+
+            if exception == True:
+                connection.append("{}".format(depType))
+            else:
+                connection.append("{}_{}_dependency".format(depType, signal))
             
             # Add capability
             # handle name exceptions
             connection.append(idCapability)
-            if idCapability == 'a_i2s':
-                idCapability = 'i2s'
+            if idCapability[:2] == 'a_':
+                idCapability = idCapability.replace("a_", "")
             connection.append("{}_{}".format(idCapability.upper(), signal))
             
             connectionTable.append(connection)

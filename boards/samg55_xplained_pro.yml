@@ -1,0 +1,339 @@
+name: samg55_xplained_pro-ek
+config: samg55_xplained_pro.py
+documentation: https://www.microchip.com/en-us/development-tool/ATSAMG55-XPRO
+processor:
+  name: ATSAMG55J19
+  architecture: CORTEX-M4
+  family: SAMG
+  series: SAMG55
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: Yellow Led
+        description: Yellow Led (PA6) - latch high
+        pinctrl:
+          gpio:
+            pinId: PA6
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Button 1
+        description: User Button 1 (PA2) - raising edge
+        pinctrl:
+          gpio:
+            pinId: PA2
+            name: USER_BUTTON1
+            function: GPIO
+            direction: in
+            interrupt: raising edge
+            pull up: True
+
+  - name: USB interface
+    description: USB configurations
+    options:
+      - name: USB
+        description: Target USB configuration
+        dependencies: [drv_usbfs_v1]
+        pinctrl:
+          usb_p:
+            pinId: PA22
+            function: USB_DP
+          usb_n:
+            pinId: PA21
+            function: USB_DM
+      - name: VBUS Sense Pin
+        description: USB VBUS Sense Pin
+        pinctrl:
+          gpio:
+            pinId: PB2
+            name: USB_VBUS_SENSE
+            function: GPIO
+            direction: in
+
+  - name: USB debugger interface
+    description: On-Board Debugger (EDBG)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        pinctrl:
+          tx:
+            pinId: PA28
+            name: VIRTUAL_COM_TX
+            function: USART7_TXD
+          rx:
+            pinId: PA27
+            name: VIRTUAL_COM_RX
+            function: USART7_RXD
+
+      - name: Data Gateway USART interface
+        description: Data Gateway USART interface
+        pinctrl:
+          tx:
+            pinId: PB0
+            name: DGI_USART_TX
+            function: USART6_TXD
+          rx:
+            pinId: PB1
+            name: DGI_USART_RX
+            function: USART6_RXD
+          sck:
+            pinId: PB13
+            name: DGI_USART_SCK
+            function: USART6_SCK
+
+      - name: Data Gateway I2C interface
+        description: Data Gateway I2C interface
+        pinctrl:
+          sda:
+            pinId: PB10
+            name: DGI_I2C_SDA
+            function: TWI4_TWD
+          scl:
+            pinId: PB11
+            name: DGI_I2C_SCL
+            function: TWI4_TWCK
+
+      - name: Data Gateway GPIO 0
+        description: Data Gateway GPIO 0 interface
+        pinctrl:
+          gpio:
+            pinId: PA2
+            name: DGI_GPIO0
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 1
+        description: Data Gateway GPIO 1 interface
+        pinctrl:
+          gpio:
+            pinId: PA6
+            name: DGI_GPIO1
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 2
+        description: Data Gateway GPIO 2 interface
+        pinctrl:
+          gpio:
+            pinId: PA24
+            name: DGI_GPIO2
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO
+        description: Data Gateway GPIO 3 interface
+        pinctrl:
+          gpio:
+            pinId: PB14
+            name: DGI_GPIO3
+            function: GPIO
+            direction: out
+            latch: low
+
+connectors:
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header 1
+    pinctrl:
+      adc plus:
+        pinId: PA17
+        name: EXT1_ADC_PLUS
+        function: ADC_AD0
+      adc minus:
+        pinId: PA18
+        name: EXT1_ADC_MINUS
+        function: ADC_AD1
+      gpio1:
+        pinId: PA26
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PA25
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PA0
+        name: EXT1_PWM_PLUS
+        function: TC0_TIOA0
+      pwm minus:
+        pinId: PA23
+        name: EXT1_PWM_MINUS
+        function: TC0_TIOA1
+      irq:
+        pinId: PA24
+        name: EXT1_IRQ
+        function: SUPC_WKUP11
+      gpio ss:
+        pinId: PA29
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: in
+      spi:
+        cs:
+          pinId: PA11
+          name: EXT1SPI_CS
+          function: SPI5_NPCS0
+        sck:
+          pinId: PA14
+          name: EXT1SPI_SCK
+          function: SPI5_SPCK
+        miso:
+          pinId: PA12
+          name: EXT1_SPI_MISO
+          function: SPI5_MISO
+        mosi:
+          pinId: PA13
+          name: EXT1_SPI_MOSI
+          function: SPI5_MOSI
+      uart:
+        tx:
+          pinId: PA10
+          name: EXT1_UART_TX
+          function: USART0_TXD
+        rx:
+          pinId: PA9
+          name: EXT1_UART_RX
+          function: USART0_RXD
+      i2c:
+        sda:
+          pinId: PB10
+          name: EXT1_I2C_SDA
+          function: TWI4_TWD
+        scl:
+          pinId: PB11
+          name: EXT1_I2C_SCL
+          function: TWI4_TWCK
+
+  - compatible: xplainpro
+    name: Extension Header EXT3
+    description: Xplained Pro Standard Extension Header 3
+    pinctrl:
+      adc plus:
+        pinId: PA19
+        name: EXT3_ADC_PLUS
+        function: ADC_AD2
+      adc minus:
+        pinId: PA20
+        name: EXT3_ADC_MINUS
+        function: ADC_AD3
+      gpio1:
+        pinId: PA30
+        name: EXT3_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PB15
+        name: EXT3_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PA1
+        name: EXT3_PWM_PLUS
+        function: TC0_TIOB0
+      pwm minus:
+        pinId: PB13
+        name: EXT3_PWM_MINUS
+        function: GPIO
+        direction: in
+      irq:
+        pinId: PB3
+        name: EXT3_IRQ
+        function: GPIO
+        direction: in
+        latch: low
+        interrupt: falling edge
+      gpio ss:
+        pinId: PA15
+        name: EXT3_GPIO_SS
+        function: GPIO
+        direction: in
+      spi:
+        cs:
+          pinId: PA5
+          name: EXT1_SPI_CS
+          function: SPI5_NPCS1
+        sck:
+          pinId: PA14
+          name: EXT1_SPI_SCK
+          function: SPI5_SPCK
+        miso:
+          pinId: PA12
+          name: EXT1_SPI_MISO
+          function: SPI5_MISO
+        mosi:
+          pinId: PA13
+          name: EXT1_SPI_MOSI
+          function: SPI5_MOSI
+      uart:
+        tx:
+          pinId: PB0
+          name: EXT1_UART_TX
+          function: USART6_TXD
+        rx:
+          pinId: PB1
+          name: EXT1_UART_RX
+          function: USART6_RXD
+      i2c:
+        sda:
+          pinId: PB8
+          name: EXT1_I2C_SDA
+          function: TWI4_TWD
+        scl:
+          pinId: PB9
+          name: EXT1_I2C_SCL
+          function: TWI4_TWCK
+
+  - compatible: xplainpro
+    name: Extension Header EXT4
+    description: Xplained Pro Standard Extension Header 2
+    pinctrl:
+      gpio1:
+        pinId: PA31
+        name: EXT4_GPIO1
+        function: GPIO
+        direction: in
+      irq:
+        pinId: PB14
+        name: EXT4_IRQ
+        function: GPIO
+        direction: in
+        latch: low
+        interrupt: falling edge
+      i2c:
+        sda:
+          pinId: PB10
+          name: EXT4_I2C_SDA
+          function: TWI4_TWD
+        scl:
+          pinId: PB11
+          name: EXT4_I2C_SCL
+          function: TWI4_TWCK
+
+  - compatible: highspeedI2Cslave
+    name: High Speed I2C Slave Interface
+    description: I2C Host
+    pinctrl:
+      gpio:
+        pinId: PA16
+        name: I2C_HOST_GPIO
+        function: GPIO
+        direction: in
+        latch: low
+        interrupt: falling edge
+      i2c:
+        sda:
+          pinId: PB10
+          name: I2C_HOST_SDA
+          function: TWI3_TWD
+        scl:
+          pinId: PB11
+          name: I2C_HOST_SCL
+          function: TWI3_TWCK

@@ -14,28 +14,31 @@ interfaces:
       - name: Green Led
         description: Green Led (PD16) - latch high
         pinctrl:
-          pinId: PD16
-          name: LED0
-          function: GPIO
-          direction: out
-          latch: high
+          gpio:
+            pinId: PD16
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: high
       - name: Blue Led
         description: Blue Led (PD3) - latch high
         pinctrl:
-          pinId: PD3
-          name: LED1
-          function: GPIO
-          direction: out
-          latch: high
+          gpio:
+            pinId: PD3
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: high
       - name: User Button 1
         description: User Button 1 (PA7) - raising edge
         pinctrl:
-          pinId: PA7
-          name: USER_BUTTON1
-          function: GPIO
-          direction: in
-          interrupt: raising edge
-          pull up: True
+          gpio:
+            pinId: PA7
+            name: USER_BUTTON1
+            function: GPIO
+            direction: in
+            interrupt: raising edge
+            pull up: True
 
   - name: Storage interface
     description: Storage on-board components configurations
