@@ -45,7 +45,7 @@ interfaces:
     options:
       - name: QTouch Button
         description: QTouch Button
-        dependencies: [ptc]
+        dependencies: [[ptc]]
         pinctrl:
           gpio:
             pinId: PA10
@@ -57,7 +57,7 @@ interfaces:
     options:
       - name: USB
         description: Target USB configuration
-        dependencies: [drv_usbfs_v1]
+        dependencies: [[drv_usbfs_v1]]
         pinctrl:
           usb_p:
             pinId: PA25
@@ -79,6 +79,7 @@ interfaces:
     options:
       - name: Virtual COM Port interface
         description: Serial Debug Console
+        dependencies: [[sys_console, sercom3]]
         pinctrl:
           tx:
             pinId: PA22

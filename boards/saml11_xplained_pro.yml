@@ -54,7 +54,7 @@ interfaces:
     options:
       - name: QTouch Button
         description: QTouch Button
-        dependencies: [ptc]
+        dependencies: [[ptc]]
         pinctrl:
           gpio:
             pinId: PA06
@@ -141,6 +141,7 @@ interfaces:
     options:
       - name: Virtual COM Port interface
         description: Serial Debug Console
+        dependencies: [[sys_console, sercom0]]
         pinctrl:
           tx:
             pinId: PA24

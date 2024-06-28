@@ -36,14 +36,14 @@ interfaces:
     options:
       - name: USB
         description: Target USB configuration
-        dependencies: [drv_usbfs_v1]
+        dependencies: [[drv_usbfs_v1]]
         pinctrl:
           usb_p:
             pinId: PA22
-            function: USB_DP
+            function: UHP_DP
           usb_n:
             pinId: PA21
-            function: USB_DM
+            function: UHP_DM
       - name: VBUS Sense Pin
         description: USB VBUS Sense Pin
         pinctrl:
@@ -58,6 +58,7 @@ interfaces:
     options:
       - name: Virtual COM Port interface
         description: Serial Debug Console
+        dependencies: [[sys_console, usart7]]
         pinctrl:
           tx:
             pinId: PA28

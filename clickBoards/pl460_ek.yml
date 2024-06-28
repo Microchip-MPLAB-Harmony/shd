@@ -5,7 +5,7 @@ description: >
   which operates in the frequency band 0 .. 500kHz.
 documentation: https://www.microchip.com/en-us/development-tool/EV13L63A
 compatible: xplainpro
-dependencies: [["drvPlcPhy", "spi"]]
+dependencies: [[drvPlcPhy, spi]]
 supported:
   adc plus:
     name: PL460_SUPPLY_MON

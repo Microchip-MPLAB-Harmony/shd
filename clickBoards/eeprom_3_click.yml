@@ -6,7 +6,7 @@ description: >
   density of 2 megabits (Mbit)
 documentation: https://www.mikroe.com/eeprom-3-click
 compatible: mikrobus
-dependencies: [["drv_at24", "i2c"]]
+dependencies: [[drv_at24, i2c]]
 supported:
   i2c:
     sda:

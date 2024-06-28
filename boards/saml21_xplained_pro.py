@@ -104,3 +104,8 @@ def instantiateComponent(boardComponent):
     # bspHeaderGPIOFile.setSourcePath("boards/templates/bsp_pio_11264.h.ftl")
     # bspHeaderGPIOFile.setMarkup(True)
 
+def destroyComponent(boardComponent):
+    global mainBoard
+
+    mainBoard.resetSignalConfiguration()
+

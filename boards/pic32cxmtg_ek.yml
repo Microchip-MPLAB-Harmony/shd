@@ -45,7 +45,7 @@ interfaces:
     options:
       - name: SST26VF064B interface
         description: SST26VF064B QSPI flash memory (64Mbit)
-        dependencies: ["drv_sst26", "qspi"]
+        dependencies: [[drv_sst26, qspi]]
         pinctrl:
           qsck:
             pinId: PC15
@@ -72,6 +72,7 @@ interfaces:
     options:
       - name: Virtual COM Port interface
         description: Serial Debug Console
+        dependencies: [[sys_console, flexcom0]]
         pinctrl:
           tx:
             pinId: PA4

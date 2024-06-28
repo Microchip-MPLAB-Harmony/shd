@@ -44,7 +44,7 @@ interfaces:
     options:
       - name: VBUS Sense Pin
         description: USB VBUS Sense Pin
-        dependencies: [drv_usbhs_v1]
+        dependencies: [[drv_usbhs_v1]]
         pinctrl:
           gpio:
             pinId: PB8
@@ -53,7 +53,7 @@ interfaces:
             direction: in
       - name: VBUS Host Enable
         description: USB VBUS Host Enable
-        dependencies: [drv_usbhs_v1]
+        dependencies: [[drv_usbhs_v1]]
         pinctrl:
           gpio:
             pinId: PA8
@@ -67,7 +67,7 @@ interfaces:
     options:
       - name: SST26VF064B interface
         description: SST26VF064B QSPI flash memory
-        dependencies: ["drv_sst26", "qspi"]
+        dependencies: [[drv_sst26, qspi]]
         pinctrl:
           qsck:
             pinId: PA14
@@ -90,7 +90,7 @@ interfaces:
             pull up: True
       - name: AT24MAC402 interface
         description: Serial EEPROM with EIA-48 MAC address
-        dependencies: ["drv_at24", "twihs0"]
+        dependencies: [[drv_at24, twihs0]]
         pinctrl:
           sda:
             pinId: PA3
@@ -102,7 +102,7 @@ interfaces:
             function: TWIHS0_TWCK0
       - name: SDCARD interface
         description: SD/MMC Host Controller - SDHCx
-        dependencies: ["drv_sdmmc", "hsmci"]
+        dependencies: [[drv_sdmmc, hsmci]]
         pinctrl:
           cd:
             pinId: PC16
@@ -270,7 +270,7 @@ interfaces:
             function: PMC_PCK2
       - name: SSC interface (J902)
         description: Audio SSC interface on J902 jumper
-        dependencies: ["a_drv_i2s", "a_ssc"]
+        dependencies: [[a_drv_i2s, a_ssc]]
         pinctrl:
           rd:
             pinId: PA10
@@ -290,7 +290,7 @@ interfaces:
             function: SSC_TK
       - name: I2SC interface (J903)
         description: Audio I2SC interface on J903 jumper
-        dependencies: ["a_drv_i2s", "a_i2sc1"]
+        dependencies: [[a_drv_i2s, a_i2sc1]]
         pinctrl:
           di:
             pinId: PE2
@@ -689,7 +689,7 @@ interfaces:
             function: ICE_TDO/TRACESWO
       - name: Virtual COM Port interface
         description: Serial Debug Console
-        dependencies: ["stdio", "usart1"]
+        dependencies: [[sys_console, usart1]]
         pinctrl:
           tx:
             pinId: PB4

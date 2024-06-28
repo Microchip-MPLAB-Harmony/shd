@@ -1,55 +1,69 @@
-def getDeviceFunctionListByPinId(ATDF, pinId):
+def getInstanceNameFromMIPS(Database, ATDF, function):
+    params = dict()
+    params.setdefault('pinFunction', function)
+    symbolDict = Database.sendMessage("core", "PIN_INSTANCE_NAME", params)
+    return symbolDict.get('instanceName')
+
+def getDeviceFunctionListByPinId(Database, ATDF, pinId):
     functionList = []
-    peripheralList = ATDF.getNode("/avr-tools-device-file/devices/device/peripherals").getChildrenByName("module")
-    for module in peripheralList:
-        moduleName = module.getAttribute("name")
-        if 'PIO' in moduleName:
-            continue
+    architecture = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
+    if architecture == "MIPS":
+        params = dict()
+        params.setdefault('pinName', pinId)
+        symbolDict = Database.sendMessage("core", "PIN_FUNCTION_LIST", params)
+        functionList = list(symbolDict.get('pinName'))
+        
+    else:
+        peripheralList = ATDF.getNode("/avr-tools-device-file/devices/device/peripherals").getChildrenByName("module")
+        for module in peripheralList:
+            moduleName = module.getAttribute("name")
+            if 'PIO' in moduleName:
+                continue
 
-        instanceList = module.getChildrenByName("instance")
-        for instance in instanceList:
-            instanceName = instance.getAttribute("name")
-            foundSignal = False
-            signalsNodes = instance.getChildrenByName("signals")
-            for signalsNode in signalsNodes:
-                signalList = signalsNode.getChildrenByName("signal")
-                signalFunctionPrev = None
-                for signal in signalList:
-                    if pinId == signal.getAttribute("pad"):
-                        signalFunction = signal.getAttribute("function")
-                        if signalFunction != signalFunctionPrev:
-                            if signalFunctionPrev != None:
+            instanceList = module.getChildrenByName("instance")
+            for instance in instanceList:
+                instanceName = instance.getAttribute("name")
+                foundSignal = False
+                signalsNodes = instance.getChildrenByName("signals")
+                for signalsNode in signalsNodes:
+                    signalList = signalsNode.getChildrenByName("signal")
+                    signalFunctionPrev = None
+                    for signal in signalList:
+                        if pinId == signal.getAttribute("pad"):
+                            signalFunction = signal.getAttribute("function")
+                            if signalFunction != signalFunctionPrev:
+                                if signalFunctionPrev != None:
+                                    functionList.append(functionName)
+                                functionName = "{}_".format(instanceName)
+                                signalFunctionPrev = signalFunction
+                                foundSignal = False
+                            
+                            if foundSignal:
+                                functionName += '/'
+                                # Handle MCSPI exception
+                                if instanceName == 'MCSPI':
+                                    functionName += 'MCSPI_'
+                                
+                            groupName = signal.getAttribute("group")
+                            groupNameSplitted = groupName.split("_")
+                            if groupNameSplitted[0] == instanceName:
+                                groupName = "_".join(groupNameSplitted[1:])
+
+                            functionName += groupName
+                            
+                            index = signal.getAttribute("index")
+                            if index != None:
+                                functionName += index
+                                
+                            foundSignal = True
+
+                            if "FLEXCOM" in instanceName:
                                 functionList.append(functionName)
-                            functionName = "{}_".format(instanceName)
-                            signalFunctionPrev = signalFunction
-                            foundSignal = False
-                        
-                        if foundSignal:
-                            functionName += '/'
-                            # Handle MCSPI exception
-                            if instanceName == 'MCSPI':
-                                functionName += 'MCSPI_'
-                            
-                        groupName = signal.getAttribute("group")
-                        groupNameSplitted = groupName.split("_")
-                        if groupNameSplitted[0] == instanceName:
-                            groupName = "_".join(groupNameSplitted[1:])
+                                functionName = "{}_".format(instanceName)
+                                foundSignal = False
 
-                        functionName += groupName
-                        
-                        index = signal.getAttribute("index")
-                        if index != None:
-                            functionName += index
-                            
-                        foundSignal = True
-
-                        if "FLEXCOM" in instanceName:
-                            functionList.append(functionName)
-                            functionName = "{}_".format(instanceName)
-                            foundSignal = False
-
-            if foundSignal:
-                functionList.append(functionName)
+                if foundSignal:
+                    functionList.append(functionName)
 
     functionList.append('GPIO')
             
@@ -57,16 +71,11 @@ def getDeviceFunctionListByPinId(ATDF, pinId):
 
 def getDevicePinMap(Database, ATDF):
     pinMap = dict()
-    # Extract Device Pin Map from ATDF
-    packageName = str(Database.getSymbolValue("core", "COMPONENT_PACKAGE"))
-    variants = ATDF.getNode("/avr-tools-device-file/variants").getChildren()
-    for variant in variants:
-        if packageName in variant.getAttribute("package"):
-            pinOutName = variant.getAttribute("pinout")
-
-    pinOut = ATDF.getNode("/avr-tools-device-file/pinouts/pinout@[name=\"" + str(pinOutName) + "\"]").getChildren()
-    for pin in pinOut:
-        pinMap[str(pin.getAttribute("pad"))] = int(pin.getAttribute("position"))
+    # Send message to core to get available pins
+    availablePinDictionary = {}
+    availablePinDictionary = Database.sendMessage("core", "PIN_LIST", availablePinDictionary)
+    for pinNumber, pinId in availablePinDictionary.items():
+        pinMap[str(pinId)] = int(pinNumber)
 
     return pinMap
 
@@ -120,19 +129,16 @@ def getConfigDatabaseADC(periphID, settings):
     configDB.setdefault('msgID', 'ADC_CONFIG_HW_IO')
 
     periphID = periphID.upper()
-    if periphID == 'ADC_U2500':
+    if periphID == 'ADC_U2500' or periphID == 'ADC_U2204' or periphID == 'ADC_U2247':
         if pinNameValue.split('_')[-1] == 'MINUS':
             muxInput = 'MUXNEG'
         else:
             muxInput = 'MUXPOS'
+            
+        # get ADC channel from setting
+        channel = int("".join(filter(lambda x: x.isdigit(), setting)))
 
-        if enable == True:
-            # get ADC channel from setting
-            channel = int("".join(filter(lambda x: x.isdigit(), setting)))
-        else:
-            channel = -1
-
-        configDB.setdefault('config', (channel, muxInput))
+        configDB.setdefault('config', (channel, muxInput, enable))
 
     elif periphID == 'ADC_44134':
         # get ADC channel from setting
@@ -162,20 +168,6 @@ def getConfigDatabaseADC(periphID, settings):
             
         configDB.setdefault('config', (channel, isNegInput, enable))
     
-    elif periphID == 'ADC_U2204' or periphID == 'ADC_U2247':
-        if pinNameValue.split('_')[-1] == 'MINUS':
-            muxInput = 'MUXNEG'
-        else:
-            muxInput = 'MUXPOS'
-
-        if enable == True:
-            # get ADC channel from setting
-            channel = int("".join(filter(lambda x: x.isdigit(), setting)))
-        else:
-            channel = -1
-
-        configDB.setdefault('config', (channel, muxInput, enable))
-        
     elif periphID == 'ADC_6489':
         # get ADC channel from setting
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
@@ -190,13 +182,17 @@ def getConfigDatabaseADC(periphID, settings):
             
         configDB.setdefault('config', (channel, isNegInput, enable))
 
+    elif periphID == 'ADCHS_02508':
+        # get ADC channel from setting
+        channel = int("".join(filter(lambda x: x.isdigit(), setting)))
+
+        configDB.setdefault('config', (channel, enable))
     
     # elif periphID == 'ADC_00755':
     # elif periphID == 'ADC_02486':
     # elif periphID == 'ADC_02805':
     # elif periphID == 'ADC_03620':
     # elif periphID == 'ADC_44073':
-    # elif periphID == 'ADCHS_02508':
     # elif periphID == 'AFEC_11147':
     else:
         print("CHRIS dbg >> getConfigDatabaseADC {} NOT FOUND!!!".format(periphID))
@@ -293,11 +289,18 @@ def getConfigDatabasePWM(periphID, settings):
     periphID = periphID.upper()
     if periphID == 'PWM_6343':
         # get data configuration from setting in{n/p}{chn}
-        accIndex = int("".join(filter(lambda x: x.isdigit(), setting)))
+        channel = int("".join(filter(lambda x: x.isdigit(), setting)))
         polarity = setting[-2] #'l' or 'h'
             
-        configDB.setdefault('config', (accIndex, polarity, enable))
+        configDB.setdefault('config', (channel, polarity, enable))
 
+    elif periphID == 'MCPWM_01477':
+        # get data configuration from setting
+        channel = int("".join(filter(lambda x: x.isdigit(), setting)))
+        polarity = setting[-1] #'l' or 'h'
+            
+        configDB.setdefault('config', (channel, polarity, enable))
+        
     # elif periphID == 'PWM_54':
     # elif periphID == 'PWM_6044':
     else:
@@ -439,6 +442,7 @@ def getConfigDatabaseSUPC(periphID, settings):
 
 def getDevicePLIBConfigurationDBMessage(ATDF, settings):
     periphList = getDevicePeripheralList(ATDF)
+    msgID = None
 
     signalId, fnValue, pinNameValue, enable = settings
     # fnValue format -> '{}_{}'.format(componentID, setting)
@@ -446,61 +450,64 @@ def getDevicePLIBConfigurationDBMessage(ATDF, settings):
     driver = "".join(filter(lambda x: x.isalpha(), componentID))
 
     # Adapt driver according to the peripheral PIO ID
-    (componentID, driver) = adaptDevicePeripheralDependencies(ATDF, [componentID, driver])
+    dependencyList = dict()
+    dependencyList[driver] = componentID
+    newDependencyList = adaptDevicePeripheralDependencies(ATDF, dependencyList)
 
-    periphID = ""
-    configDB = dict()
-    params = dict()
-    
-    for peripheral in periphList:
-        pName = peripheral.split('_')[0].lower()
-        # print("CHRIS dbg >> checking periph {}: {} = {}".format(peripheral, driver, pName))
-        if driver == pName:
-            periphID = peripheral
-            params.setdefault('peripheral', peripheral)
-            break
+    for depId, capId in newDependencyList.items():
+        componentID = capId
+        driver = depId
 
-    if driver == 'adc' or driver == 'afec':
-        configDB = getConfigDatabaseADC(periphID, settings)
+        periphID = ""
+        configDB = dict()
+        params = dict()
         
-    elif driver == 'dac' or driver == 'dacc':
-        configDB = getConfigDatabaseDAC(periphID, settings)
-        
-    elif driver == 'ac':
-        configDB = getConfigDatabaseAC(periphID, settings)
-        
-    elif driver == 'acc':
-        configDB = getConfigDatabaseACC(periphID, settings) 
-               
-    elif driver == 'pwm':
-        configDB = getConfigDatabasePWM(periphID, settings)
+        for peripheral in periphList:
+            pName = peripheral.split('_')[0].lower()
+            # print("CHRIS dbg >> checking periph {}: {} = {}".format(peripheral, driver, pName))
+            if driver == pName:
+                periphID = peripheral
+                params.setdefault('peripheral', peripheral)
+                break
 
-    elif driver == 'flexcom':
-        configDB = getConfigDatabaseFLEXCOM(periphID, settings)
+        if driver == 'adc' or driver == 'afec' or driver == 'adchs':
+            configDB = getConfigDatabaseADC(periphID, settings)
+            
+        elif driver == 'dac' or driver == 'dacc':
+            configDB = getConfigDatabaseDAC(periphID, settings)
+            
+        elif driver == 'ac':
+            configDB = getConfigDatabaseAC(periphID, settings)
+            
+        elif driver == 'acc':
+            configDB = getConfigDatabaseACC(periphID, settings) 
+                
+        elif driver == 'pwm' or driver == 'mcpwm':
+            configDB = getConfigDatabasePWM(periphID, settings)
 
-    elif driver == 'sercom':
-        configDB = getConfigDatabaseSERCOM(periphID, settings)
+        elif driver == 'flexcom':
+            configDB = getConfigDatabaseFLEXCOM(periphID, settings)
 
-    elif driver == 'mcspi':
-        configDB = getConfigDatabaseMCSPI(periphID, settings)
-        
-    elif driver == 'eic':
-        configDB = getConfigDatabaseEIC(periphID, settings)
-        
-    elif driver == 'supc':
-        configDB = getConfigDatabaseSUPC(periphID, settings)
-        componentID = configDB.get('compID')
-    # else:
-    #     print("CHRIS dbg >> getDevicePLIBConfigurationDBMessage {} NOT FOUND!!!".format(driver))
-        
-    config = configDB.get('config')
-    if config != None:
-        msgID = configDB.get('msgID')
-        params.setdefault('config', config)
-        params.setdefault('enable', enable)
-    else:
-        # print("CHRIS dbg >> getDevicePLIBConfigurationDBMessage error config {}".format(configDB))
-        msgID = None
+        elif driver == 'sercom':
+            configDB = getConfigDatabaseSERCOM(periphID, settings)
+
+        elif driver == 'mcspi':
+            configDB = getConfigDatabaseMCSPI(periphID, settings)
+            
+        elif driver == 'eic':
+            configDB = getConfigDatabaseEIC(periphID, settings)
+            
+        elif driver == 'supc':
+            configDB = getConfigDatabaseSUPC(periphID, settings)
+            componentID = configDB.get('compID')
+        else:
+            print("CHRIS dbg >> getDevicePLIBConfigurationDBMessage {} NOT FOUND!!!".format(driver))
+            
+        config = configDB.get('config')
+        if config != None:
+            msgID = configDB.get('msgID')
+            params.setdefault('config', config)
+            params.setdefault('enable', enable)
 
     return (componentID, msgID, params)
 
@@ -515,6 +522,34 @@ def getConfigDatabaseDrvPlcPhy(settings):
     
     return configDB
 
+def getConfigDatabaseDrvX2CScope(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+
+    if "tx" in nameValue.lower():
+        configDB.setdefault('msgID', 'X2CSCOPE_CONFIG_HW_IO')
+        configDB.setdefault('config', ("TX", pinId, enable))
+    elif "rx" in nameValue.lower():
+        configDB.setdefault('msgID', 'X2CSCOPE_CONFIG_HW_IO')
+        configDB.setdefault('config', ("RX", pinId, enable))
+    
+    return configDB
+
+def getConfigDatabaseDrvPMSMFOC(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+
+    # if "tx" in nameValue.lower():
+    #     configDB.setdefault('msgID', 'X2CSCOPE_CONFIG_HW_IO')
+    #     configDB.setdefault('config', ("TX", pinId, enable))
+    # elif "rx" in nameValue.lower():
+    #     configDB.setdefault('msgID', 'X2CSCOPE_CONFIG_HW_IO')
+    #     configDB.setdefault('config', ("RX", pinId, enable))
+    
+    return configDB
+
 def getDeviceDriverConfigurationDBMessage(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
     
@@ -524,6 +559,10 @@ def getDeviceDriverConfigurationDBMessage(settings):
 
     if driver == 'drvPlcPhy':
         configDB = getConfigDatabaseDrvPlcPhy(settings)
+    elif driver == 'X2CScope':
+        configDB = getConfigDatabaseDrvX2CScope(settings)
+    elif driver == 'pmsm_foc':
+        configDB = getConfigDatabaseDrvPMSMFOC(settings)
     # else:
     #     print("CHRIS dbg >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
         
@@ -538,21 +577,27 @@ def getDeviceDriverConfigurationDBMessage(settings):
     return (componentID, msgID, params)
 
 def adaptDevicePeripheralDependencies(ATDF, dependencyList):
-    newDependencyList = []
-    pioPeriphID = getDeviceGPIOPeripheral(ATDF)
-    flexcomID = getDeviceFLEXCOMPeripheral(ATDF)
-    # print("CHRIS dbg >> adaptDevicePeripheralDependencies {} - {}".format(pioPeriphID, flexcomID))
-    if pioPeriphID == "PIO_11004" and flexcomID != 'NOT_SUPPORTED':
-        for dependency in dependencyList:
-            if "usart" in dependency[:5]:
-                dependency = dependency.replace("usart", "flexcom")
-            elif "spi" in dependency[:3]:
-                dependency = dependency.replace("spi", "flexcom")
-            elif "twi" in dependency[:3]:
-                dependency = dependency.replace("twi", "flexcom")
-
-            newDependencyList.append(dependency)
-
-        return newDependencyList
-    else:
+    architecture = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
+    if architecture == "MIPS":
+        # family = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
+        # if family == "PIC32MK":
         return dependencyList
+    else:
+        newDependencyList = {}
+        pioPeriphID = getDeviceGPIOPeripheral(ATDF)
+        flexcomID = getDeviceFLEXCOMPeripheral(ATDF)
+        # print("CHRIS dbg >> adaptDevicePeripheralDependencies {} - {}".format(pioPeriphID, flexcomID))
+        if pioPeriphID == "PIO_11004" and flexcomID != 'NOT_SUPPORTED':
+            for depId, capId in dependencyList.items():
+                if "usart" in capId[:5]:
+                    capId = capId.replace("usart", "flexcom")
+                elif "spi" in capId[:3]:
+                    capId = capId.replace("spi", "flexcom")
+                elif "twi" in capId[:3]:
+                    capId = capId.replace("twi", "flexcom")
+
+                newDependencyList.setdefault(depId, capId)
+
+            return newDependencyList
+        else:
+            return dependencyList

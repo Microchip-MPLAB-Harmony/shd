@@ -1,0 +1,237 @@
+name: same54-pim-mc-mclv2
+config: sam_e54_pim_mc_mclv2.py
+documentation: https://www.microchip.com/en-us/development-tool/MA320207
+processor:
+  name: ATSAME54P20A
+  architecture: CORTEX-M4
+  family: SAME
+  series: SAME54
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led 1
+        description: User Led 1 - Active High
+        pinctrl:
+          gpio:
+            pinId: PB27
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 2
+        description: User Led 2 - Active High
+        pinctrl:
+          gpio:
+            pinId: PB26
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Button 1
+        description: User Button 1 - Active High
+        pinctrl:
+          gpio:
+            pinId: PD09
+            name: BUTTON1
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Button 2
+        description: User Button 2 - Active High
+        pinctrl:
+          gpio:
+            pinId: PD10
+            name: BUTTON2
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: General IO PIM_FLT_OUT2
+        description: General IO PIM_FLT_OUT2
+        pinctrl:
+          gpio:
+            pinId: PA11
+            name: PIM_FLT_OUT2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: General IO PIM_FLT_OUT1
+        description: General IO PIM_FLT_OUT1
+        pinctrl:
+          gpio:
+            pinId: PB00
+            name: PIM_FLT_OUT1
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Analog interface
+    description: Analog peripheral configurations
+    options:
+      - name: IA
+        description: Phase current signal
+        dependencies: [[pmsm_foc, adc0]]
+        pinctrl:
+          adc plus:
+            pinId: PA02
+            name: IA
+            function: ADC0_AIN0
+      - name: IB
+        description: Phase current signal
+        dependencies: [[pmsm_foc, adc1]]
+        pinctrl:
+          adc plus:
+            pinId: PB08
+            name: IB
+            function: ADC1_AIN0
+      - name: VPOT
+        description: Potentiometer signal
+        dependencies: [[pmsm_foc, adc0]]
+        pinctrl:
+          adc plus:
+            pinId: PA06
+            name: VPOT
+            function: ADC0_AIN6
+      - name: VDC
+        description: DC bus voltage
+        dependencies: [[pmsm_foc, adc1]]
+        pinctrl:
+          adc plus:
+            pinId: PD00
+            name: VDC
+            function: ADC1_AIN14
+      - name: DC Bus Current Signal
+        description: DC Bus Current Signal
+        pinctrl:
+          adc plus:
+            pinId: PA07
+            name: PIM_IMOTOR_SUM
+            function: ADC0_AIN7
+      - name: Reconstructed Motor Neutral Voltage
+        description: Reconstructed Motor Neutral Voltage Signal
+        pinctrl:
+          adc plus:
+            pinId: PA05
+            name: PIM_REC_NEUTR
+            function: ADC0_AIN5
+      - name: PIM Monitor 1
+        description: Hall sensor A/Phase A Current signal/Phase M1 Voltage feedback signal
+        pinctrl:
+          adc plus:
+            pinId: PA02
+            name: PIM_MONITOR_1
+            function: ADC0_AIN0
+      - name: PIM Monitor 2
+        description: Hall sensor B/Phase B Current signal/Phase M2 Voltage feedback signal
+        pinctrl:
+          adc plus:
+            pinId: PB08
+            name: PIM_MONITOR_2
+            function: ADC0_AIN2
+      - name: PIM Monitor 3
+        description: Hall sensor C/DC Bus Current signal/Phase M3 Voltage feedback signal
+        pinctrl:
+          adc plus:
+            pinId: PB09
+            name: PIM_MONITOR_3
+            function: ADC0_AIN3
+
+  - name: Position Decoder interface
+    description: Position decoder configurations
+    options:
+      - name: HALL A QEA
+        description: Hall A sensor signal
+        pinctrl:
+          qea:
+            pinId: PC16
+            name: HALLA_QEA
+            function: PDEC_QDI0
+      - name: HALL B QEB
+        description: Hall B sensor signal
+        pinctrl:
+          qea:
+            pinId: PC17
+            name: HALLB_QEB
+            function: PDEC_QDI1
+      - name: HALL C INDX
+        description: Hall C sensor signal
+        pinctrl:
+          qea:
+            pinId: PC18
+            name: HALLC_QEINDX
+            function: PDEC_QDI2
+
+  - name: Inverter interface
+    description: Three-Phase Inverter configurations
+    options:
+      - name: Phase A
+        description: Phase A Inverter signals
+        dependencies: [[pmsm_foc, tcc0]]
+        pinctrl:
+          low:
+            pinId: PA16
+            name: PWM_AL
+            function: TCC0_WO4
+          high:
+            pinId: PA08
+            name: PWM_AH
+            function: TCC0_WO0
+      - name: Phase B
+        description: Phase B Inverter signals
+        dependencies: [[pmsm_foc, tcc0]]
+        pinctrl:
+          low:
+            pinId: PA17
+            name: PWM_BL
+            function: TCC0_WO5
+          high:
+            pinId: PA09
+            name: PWM_BH
+            function: TCC0_WO1
+      - name: Phase C
+        description: Phase C Inverter signals
+        dependencies: [[pmsm_foc, tcc0]]
+        pinctrl:
+          low:
+            pinId: PA18
+            name: PWM_CL
+            function: TCC0_WO6
+          high:
+            pinId: PA10
+            name: PWM_CH
+            function: TCC0_WO2
+      - name: Fault
+        description: DC bus Current Fault
+        pinctrl:
+          gpio:
+            pinId: PB02
+            name: FAULT_PWM
+            function: EIC_EXTINT2
+
+  - name: Communication interface
+    description: Communication Port options
+    options:
+      - name: USART X2CScope interface
+        description: USART X2CScope interface
+        dependencies: [[X2CScope, sercom2]]
+        pinctrl:
+          tx:
+            pinId: PA12
+            name: UART_TX
+            function: SERCOM2_PAD0
+          rx:
+            pinId: PA13
+            name: UART_RX
+            function: SERCOM2_PAD1
+      - name: CAN interface
+        description: Control Area Network interface
+        pinctrl:
+          tx:
+            pinId: PB12
+            name: CAN_TX
+            function: CAN1_TX
+          rx:
+            pinId: PB13
+            name: CAN_RX
+            function: CAN1_RX

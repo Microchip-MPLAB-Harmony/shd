@@ -5,7 +5,7 @@ description: >
   It connects to the extension headers of any Xplained Pro Evaluation Kit.
 documentation: https://www.microchip.com/en-us/development-tool/ATIO1-XPRO
 compatible: xplainpro
-dependencies: [["drv_sdspi", "spi"]]
+dependencies: [[drv_sdspi, spi]]
 supported:
   adc plus:
     name: IO1_LightSensor

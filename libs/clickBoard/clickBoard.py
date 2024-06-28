@@ -14,16 +14,23 @@ class ClickBoard:
                 boardYamlFile = path.join(item, yamlFileName)
                 break
         else:
-            return None
+            raise AttributeError("clickBoards path is not found in sys path")
 
         if not path.isfile(boardYamlFile):
-            return None
+            raise AttributeError("{} does not exist".format(boardYamlFile))
         
         import yaml
         with open(boardYamlFile, 'r') as file:
             self.__defaultConfig = yaml.safe_load(file)
+            if isinstance(self.__defaultConfig, dict) == False:
+                raise AttributeError("{} file format is not correct".format(boardYamlFile))
+
+            if self.__defaultConfig.get('supported') == None:
+                raise AttributeError("{} data content is not correct".format(boardYamlFile))
+
             self.__currentConfig = deepcopy(self.__defaultConfig)
 
+                    
     def __str__(self):
         return "{}".format(self.__currentConfig)
 

@@ -17,10 +17,7 @@ def loadModule():
     
     import yaml
 
-    plugInFile = dict()
     plugInMainBoardList = []
-    clickBoardPathList = []
-    clickBoardConfigList = []
     
     mainBoardCompatibleList = []
     mainBoardFileList = glob.glob(path.join(boardPath, '*.yml'))
@@ -29,8 +26,9 @@ def loadModule():
         if mainBoardYaml['processor']['name'] == processor:
             connectorList = []
             connectors = mainBoardYaml.get('connectors')
-            for connector in connectors:
-                connectorList.append((connector.get('name'), connector.get('compatible')))
+            if connectors != None:
+                for connector in connectors:
+                    connectorList.append((connector.get('name'), connector.get('compatible')))
             mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'), connectorList)) 
             plugInMainBoardList.append(path.relpath(mainBoardFile, shdPath).replace("\\", "/"))
     
@@ -44,43 +42,9 @@ def loadModule():
                                             "/boards/"+ config)
             shdModule.setDisplayType("MAIN BOARD")
         
-            # for connector in connectorList:
-            #     connectorName, compatible = connector
-            #     shdModule.addCapability(connectorName, compatible)
-
-    clickBoardList = []
-    clickBoardFileList = glob.glob(path.join(clickBoardPath, '*.yml'))
-    for clickBoardFile in clickBoardFileList:
-        if 'clickBoards.yml' not in clickBoardFile:
-            clickBoardYaml = yaml.safe_load(open(clickBoardFile, 'r'))
-            clickBoardList.append((clickBoardYaml.get('name'), clickBoardYaml.get('config'), clickBoardYaml.get('compatible'))) 
-            clickBoardPathList.append(path.relpath(clickBoardFile, shdPath).replace("\\", "/"))
-            clickBoardConfigList.append(clickBoardFile.split("\\")[-1])
-    
-    for clickBoard in clickBoardList:
-        boardName, config, connector = clickBoard
-        if config != None:
-            clickModule = Module.CreateComponent(config.split(".")[0].upper(),
-                                                boardName.upper(),
-                                                "/System Hardware Definitions (SHD)/Click Boards/",
-                                                "/clickBoards/" + config)
-            clickModule.addDependency(connector, connector, None, False, True)
-            clickModule.setDisplayType("CLICK BOARD")
-            # mikroBUS click boards must include a xplainpro dependency 
-            # to be able to use mikroBus-XplainPro adaptation board
-            if connector == 'mikrobus':
-                clickModule.addDependency('xplainpro', 'xplainpro', None, False, True)
-
-
-    plugInFileName = path.join(shdPath, 'config', 'hw_description.yml')
-    plugInFile.setdefault('mainboards', plugInMainBoardList)
-    plugInFile.setdefault('clickboards', clickBoardPathList)
-    with open(plugInFileName, 'w') as file:
-        print('CHRIS dbg -> creating {}'.format(plugInFileName))
-        yaml.safe_dump(plugInFile, file, encoding='utf-8', allow_unicode=True)
-
-    fileName = path.join(clickBoardPath, 'clickBoards.yml')
-    with open(fileName, 'w') as file:
-        print('CHRIS dbg -> creating {}'.format(fileName))
-        yaml.safe_dump(clickBoardConfigList, file, encoding='utf-8', allow_unicode=True)
-    
+    # plugInFileName = path.join(shdPath, 'config', 'hw_description.yml')
+    # plugInFile.setdefault('mainboards', plugInMainBoardList)
+    # plugInFile.setdefault('clickboards', clickBoardPathList)
+    # with open(plugInFileName, 'w') as file:
+    #     print('CHRIS dbg -> creating {}'.format(plugInFileName))
+    #     yaml.safe_dump(plugInFile, file, encoding='utf-8', allow_unicode=True)

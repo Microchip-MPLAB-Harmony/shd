@@ -1,0 +1,317 @@
+name: pic32mk-mcm-pim-mc-mclv2
+config: pic32mk_mcm_pim_mc_mclv2.py
+documentation: https://www.microchip.com/en-us/development-tool/MA320211
+processor:
+  name: PIC32MK1024MCM100
+  architecture: MIPS
+  family: PIC32MK1024MCM100
+  series: PIC32MK
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led 1
+        description: User Led 1 - Active High
+        pinctrl:
+          gpio:
+            pinId: RF5
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 2
+        description: User Led 2 - Active High
+        pinctrl:
+          gpio:
+            pinId: RG15
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Button 1
+        description: User Button 1 - Active High
+        pinctrl:
+          gpio:
+            pinId: RG1
+            name: BUTTON1
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+      - name: User Button 2
+        description: User Button 2 - Active High
+        pinctrl:
+          gpio:
+            pinId: RC7
+            name: BUTTON2
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: General IO PIM_GEN1
+        description: General IO PIM_GEN1
+        pinctrl:
+          gpio:
+            pinId: RD5
+            name: PIM_GEN1
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: General IO PIM_GEN2
+        description: General IO PIM_GEN2
+        pinctrl:
+          gpio:
+            pinId: RG11
+            name: PIM_GEN2
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: General IO PIM_FLT_OUT2
+        description: General IO PIM_FLT_OUT2
+        pinctrl:
+          gpio:
+            pinId: RD13
+            name: PIM_FLT_OUT2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: General IO PIM_FLT_OUT1
+        description: General IO PIM_FLT_OUT1
+        pinctrl:
+          gpio:
+            pinId: RF6
+            name: PIM_FLT_OUT1
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Analog interface
+    description: Analog peripheral configurations
+    options:
+      - name: IA
+        description: Phase current signal
+        dependencies: [[pmsm_foc, adchs]]
+        pinctrl:
+          adc plus:
+            pinId: RA0
+            name: IA
+            function: ADCHS_AN0
+      - name: IB
+        description: Phase current signal
+        dependencies: [[pmsm_foc, adchs]]
+        pinctrl:
+          adc plus:
+            pinId: RB2
+            name: IB
+            function: ADCHS_AN4
+      - name: VPOT
+        description: Potentiometer signal
+        dependencies: [[pmsm_foc, adchs]]
+        pinctrl:
+          adc plus:
+            pinId: RE15
+            name: PIM_POT
+            function: ADCHS_AN15
+      - name: VDC
+        description: DC bus voltage
+        dependencies: [[pmsm_foc, adchs]]
+        pinctrl:
+          adc plus:
+            pinId: RA12
+            name: PIM_VBUS
+            function: ADCHS_AN10
+      - name: Phase M1 Voltage
+        description: Phase M1 Voltage Feedback Signal
+        pinctrl:
+          adc plus:
+            pinId: RC2
+            name: PIM_V_M1
+            function: ADCHS_AN8
+      - name: Phase M2 Voltage
+        description: Phase M2 Voltage Feedback Signal
+        pinctrl:
+          adc plus:
+            pinId: RB2
+            name: PIM_V_M2
+            function: ADCHS_AN4
+      - name: Phase M3 Voltage
+        description: Phase M3 Voltage Feedback Signal
+        pinctrl:
+          adc plus:
+            pinId: RA1
+            name: PIM_V_M3
+            function: ADCHS_AN1
+      - name: DC Bus Current Signal
+        description: DC Bus Current Signal
+        pinctrl:
+          adc plus:
+            pinId: RB7
+            name: PIM_IMOTOR_SUM
+            function: ADCHS_AN25
+      - name: Phase A Current Signal
+        description: Phase A Current Signal
+        pinctrl:
+          adc plus:
+            pinId: RA4
+            name: PIM_IMOTOR1
+            function: ADCHS_AN24
+      - name: Phase B Current Signal
+        description: Phase B Current Signal
+        pinctrl:
+          adc plus:
+            pinId: RA11
+            name: PIM_IMOTOR2
+            function: ADCHS_AN9
+      - name: Recreated Motor Neutral Voltage
+        description: Recreated Motor Neutral Voltage Signal
+        pinctrl:
+          adc plus:
+            pinId: RG7
+            name: PIM_REC_NEUTR
+            function: ADCHS_AN18
+      - name: PIM Monitor 1
+        description: Hall sensor A/Phase A Current signal/Phase M1 Voltage feedback signal
+        pinctrl:
+          adc plus:
+            pinId: RG9
+            name: PIM_MONITOR_1
+            function: ADCHS_AN16
+      - name: PIM Monitor 2
+        description: Hall sensor B/Phase B Current signal/Phase M2 Voltage feedback signal
+        pinctrl:
+          adc plus:
+            pinId: RG8
+            name: PIM_MONITOR_2
+            function: ADCHS_AN17
+      - name: PIM Monitor 3
+        description: Hall sensor C/DC Bus Current signal/Phase M3 Voltage feedback signal
+        pinctrl:
+          adc plus:
+            pinId: RC9
+            name: PIM_MONITOR_3
+            function: ADCHS_AN41
+      - name: HALL A
+        description: Hall Sensor A/QEI - A Input
+        pinctrl:
+          adc plus:
+            pinId: RC9
+            name: HALLA
+            function: ADCHS_AN14
+      - name: HALL B
+        description: Hall Sensor B/QEI - B Input
+        pinctrl:
+          adc plus:
+            pinId: RE14
+            name: HALLB
+            function: ADCHS_AN14
+      - name: HALL C
+        description: Hall Sensor C/QEI - INDX Input
+        pinctrl:
+          adc plus:
+            pinId: RA14
+            name: HALLC
+            function: ADCHS_AN46
+
+  - name: Position Decoder interface
+    description: Position decoder configurations
+    options:
+      - name: QEA
+        description: QEA signal
+        pinctrl:
+          qea:
+            pinId: RG9
+            name: ENCODER_QEA
+            function: QEI2_QEA2
+      - name: QEB
+        description: QEB signal
+        pinctrl:
+          qea:
+            pinId: RG8
+            name: ENCODER_QEB
+            function: QEI2_QEB2
+
+  - name: Inverter interface
+    description: Three-Phase Inverter configurations
+    options:
+      - name: Phase A
+        description: Phase A Inverter signals
+        dependencies: [[pmsm_foc, mcpwm]]
+        pinctrl:
+          low:
+            pinId: RB15
+            name: PHASE_A_PWML
+            function: MCPWM_PWM1L
+          high:
+            pinId: RB14
+            name: PHASE_A_PWMH
+            function: MCPWM_PWM1H
+      - name: Phase B
+        description: Phase B Inverter signals
+        dependencies: [[pmsm_foc, mcpwm]]
+        pinctrl:
+          low:
+            pinId: RB13
+            name: PHASE_B_PWML
+            function: MCPWM_PWM2L
+          high:
+            pinId: RB12
+            name: PHASE_B_PWMH
+            function: MCPWM_PWM2H
+      - name: Phase C
+        description: Phase C Inverter signals
+        dependencies: [[pmsm_foc, mcpwm]]
+        pinctrl:
+          low:
+            pinId: RB11
+            name: PHASE_C_PWML
+            function: MCPWM_PWM3L
+          high:
+            pinId: RB10
+            name: PHASE_C_PWMH
+            function: MCPWM_PWM3H
+      - name: Fault
+        description: DC bus Current Fault
+        pinctrl:
+          gpio:
+            pinId: RB4
+            name: FAULT_PWM
+            function: MCPWM_FLT15
+
+  - name: Communication interface
+    description: Communication Port options
+    options:
+      - name: USART X2CScope interface
+        description: USART X2CScope interface
+        dependencies: [[X2CScope, uart2]]
+        pinctrl:
+          tx:
+            pinId: RB9
+            name: UART_TX
+            function: UART2_U2TX
+          rx:
+            pinId: RC8
+            name: UART_RX
+            function: UART2_U2RX
+      - name: USB X2CScope interface
+        description: USB X2CScope interface
+        dependencies: [[X2CScope, uart3]]
+        pinctrl:
+          tx:
+            pinId: RA7
+            name: USB_TX
+            function: UART3_U3TX
+          rx:
+            pinId: RA15
+            name: USB_RX
+            function: UART3_U3RX
+      - name: CAN interface
+        description: CAN interface
+        pinctrl:
+          tx:
+            pinId: RE0
+            name: CAN_TX
+            function: CAN1_C1TX
+          rx:
+            pinId: RF0
+            name: CAN_RX
+            function: CAN1_C1RX

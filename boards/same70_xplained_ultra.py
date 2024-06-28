@@ -31,10 +31,6 @@ def handleMessage(messageID, args):
 def instantiateComponent(boardComponent):
     global mainBoard
 
-    # componentIDs = ['sercom6', 'drv_i2c']
-    # Database.activateComponents(componentIDs)
-    # connectComponentDependencies(Database, componentIDs)
-    
     # Create new instance of the SHD mainBoard
     mainBoard = MainBoard("same70_xplained_ultra.yml", Database, ATDF)
     boardName = mainBoard.getName()
@@ -107,4 +103,9 @@ def instantiateComponent(boardComponent):
     # bspHeaderGPIOFile.setOutputName("core.LIST_BSP_MACRO_INCLUDES")
     # bspHeaderGPIOFile.setSourcePath("boards/templates/bsp_pio_11264.h.ftl")
     # bspHeaderGPIOFile.setMarkup(True)
+
+def destroyComponent(boardComponent):
+    global mainBoard
+
+    mainBoard.resetSignalConfiguration()
 

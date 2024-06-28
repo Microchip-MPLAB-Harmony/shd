@@ -92,7 +92,7 @@ interfaces:
     options:
       - name: USB
         description: Target USB configuration
-        dependencies: [drv_usbfs_v1]
+        dependencies: [[drv_usbfs_v1]]
         pinctrl:
           usb_p:
             pinId: PA25
@@ -114,7 +114,7 @@ interfaces:
     options:
       - name: SST26VF064B interface
         description: SST26VF064B QSPI flash memory
-        dependencies: ["drv_sst26", "qspi"]
+        dependencies: [[drv_sst26, qspi]]
         pinctrl:
           qsck:
             pinId: PB10
@@ -137,7 +137,7 @@ interfaces:
             pull up: True
       - name: AT24MAC402 interface
         description: Serial EEPROM with EIA-48 MAC address
-        dependencies: ["drv_at24", "sercom6"]
+        dependencies: [[drv_at24, sercom6]]
         pinctrl:
           sda:
             pinId: PD09
@@ -149,7 +149,7 @@ interfaces:
             function: SERCOM6_PAD1
       - name: SDCARD interface
         description: SD/MMC Host Controller - SDHCx
-        dependencies: ["drv_sdmmc", "sdhc1"]
+        dependencies: [[drv_sdmmc, sdhc1]]
         pinctrl:
           cd:
             pinId: PD20
@@ -278,7 +278,7 @@ interfaces:
             function: SERCOM6_PAD1
       - name: I2S interface
         description: Audio I2S interface
-        dependencies: ["a_drv_i2s", "a_i2s"]
+        dependencies: [[a_drv_i2s, a_i2s]]
         pinctrl:
           stbrst:
             pinId: PC18
@@ -596,6 +596,7 @@ interfaces:
     options:
       - name: Virtual COM Port interface
         description: Serial Debug Console
+        dependencies: [[sys_console, sercom1]]
         pinctrl:
           tx:
             pinId: PC27

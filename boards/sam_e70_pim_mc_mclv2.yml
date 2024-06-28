@@ -1,0 +1,177 @@
+name: same70-pim-mc-mclv2
+config: sam_e70_pim_mc_mclv2.py
+documentation: https://www.microchip.com/en-us/development-tool/MA320207
+processor:
+  name: ATSAME70Q21B
+  architecture: CORTEX-M7
+  family: SAME
+  series: SAME70
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led 1
+        description: User Led 1 - Active High
+        pinctrl:
+          gpio:
+            pinId: PC23
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 2
+        description: User Led 2 - Active High
+        pinctrl:
+          gpio:
+            pinId: PA24
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Button 1
+        description: User Button 1 - Active High
+        pinctrl:
+          gpio:
+            pinId: PC3
+            name: BUTTON1
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Button 2
+        description: User Button 2 - Active High
+        pinctrl:
+          gpio:
+            pinId: PC1
+            name: BUTTON2
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Analog interface
+    description: Analog peripheral configurations
+    options:
+      - name: IA
+        description: Phase current signal
+        dependencies: [[pmsm_foc, afec0]]
+        pinctrl:
+          adc plus:
+            pinId: PD30
+            name: IA
+            function: AFEC0_AD0
+      - name: IB
+        description: Phase current signal
+        dependencies: [[pmsm_foc, afec0]]
+        pinctrl:
+          adc plus:
+            pinId: PA17
+            name: IB
+            function: AFEC0_AD6
+      - name: VPOT
+        description: Potentiometer signal
+        dependencies: [[pmsm_foc, afec0]]
+        pinctrl:
+          adc plus:
+            pinId: PB0
+            name: VPOT
+            function: AFEC0_AD10
+      - name: VDC
+        description: DC bus voltage
+        dependencies: [[pmsm_foc, afec0]]
+        pinctrl:
+          adc plus:
+            pinId: PA18
+            name: VDC
+            function: AFEC0_AD7
+
+  - name: Position Decoder interface
+    description: Position decoder configurations
+    options:
+      - name: QEA
+        description: QEA signal
+        pinctrl:
+          qea:
+            pinId: PA0
+            name: QEA
+            function: TC0_TIOA0
+      - name: QEB
+        description: QEB signal
+        pinctrl:
+          qea:
+            pinId: PA1
+            name: QEB
+            function: TC0_TIOB0
+
+  - name: Inverter interface
+    description: Three-Phase Inverter configurations
+    options:
+      - name: Phase A
+        description: Phase A Inverter signals
+        dependencies: [[pmsm_foc, pwm0]]
+        pinctrl:
+          low:
+            pinId: PD24
+            name: PWM_AL
+            function: PWM0_PWML0
+          high:
+            pinId: PA11
+            name: PWM_AH
+            function: PWM0_PWMH0
+      - name: Phase B
+        description: Phase B Inverter signals
+        dependencies: [[pmsm_foc, pwm0]]
+        pinctrl:
+          low:
+            pinId: PD25
+            name: PWM_BL
+            function: PWM0_PWML1
+          high:
+            pinId: PA12
+            name: PWM_BH
+            function: PWM0_PWMH1
+      - name: Phase C
+        description: Phase C Inverter signals
+        dependencies: [[pmsm_foc, pwm0]]
+        pinctrl:
+          low:
+            pinId: PD26
+            name: PWM_CL
+            function: PWM0_PWML2
+          high:
+            pinId: PA13
+            name: PWM_CH
+            function: PWM0_PWMH2
+      - name: Fault
+        description: DC bus Current Fault
+        pinctrl:
+          gpio:
+            pinId: PD9
+            name: FAULT_PWM
+            function: PWM0_PWMFI2
+
+  - name: Communication interface
+    description: Communication Port options
+    options:
+      - name: USART X2CScope interface
+        description: USART X2CScope interface
+        dependencies: [[X2CScope, uart0]]
+        pinctrl:
+          tx:
+            pinId: PA10
+            name: UART_TX
+            function: UART0_UTXD0
+          rx:
+            pinId: PA9
+            name: UART_RX
+            function: UART0_URXD0
+      - name: CAN interface
+        description: Control Area Network interface
+        pinctrl:
+          tx:
+            pinId: PD12
+            name: CAN_TX
+            function: MCAN1_CANTX1
+          rx:
+            pinId: PC12
+            name: CAN_RX
+            function: MCAN1_CANRX1
