@@ -1,6 +1,6 @@
 name: samd21_curiosity_cnano
 config: samd21_curiosity_cnano.py
-documentation: https://ww1.microchip.com/downloads/aemDocuments/documents/MCU32/ProductDocuments/UserGuides/SAMD21-Curiosity-Nano-Evaluation-Kit-User-Guide-DS70005409D.pdf
+documentation: https://www.microchip.com/en-us/development-tool/DM320119
 processor:
   name: ATSAMD21G17D
   architecture: CORTEX-M0PLUS

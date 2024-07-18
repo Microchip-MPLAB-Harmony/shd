@@ -1,6 +1,6 @@
 name: same54-pim-mc-mchv3
 config: sam_e54_pim_mc_mchv3.py
-documentation: https://www.microchip.com/en-us/development-tool/dm330023-3
+documentation: https://www.microchip.com/en-us/development-tool/MA320207
 processor:
   name: ATSAME54P20A
   architecture: CORTEX-M4

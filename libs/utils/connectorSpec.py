@@ -144,6 +144,17 @@ __connectorSpec = {
         'pwm1l2': 98,
         'pwm1h2': 99,
         'pwm1l3': 100
+    },
+    'pic32mx_eth_sk2_exp120': {
+        'trace': {
+            'sda': 5,
+            'scl': 6,
+        },
+        'gpio': 3,
+        'i2c': {
+            'sda': 5,
+            'scl': 6,
+        }
     }
 }
 
@@ -163,7 +174,8 @@ __drvDependencies = {
     'stdio': 'UART',
     'sys_console': 'UART',
     'X2CScope': 'UART',
-    'pmsm_foc': 'ADC'
+    'pmsm_foc': 'ADC',
+    'drvGmac': 'PHY'
 }
 
 def __checkSubstringList(substringList, string):
@@ -199,7 +211,7 @@ def getConnectorSignalMapMikroBUSXplainPro():
 
     return signalMap
 
-def getAutoconnectTable(idDependency, idCapability):
+def getAutoconnectTable(family, idDependency, idCapability):
     connectionTable = []
     print("CHRIS dbg >> getAutoconnectTable dep:{} cap:{}".format(idDependency, idCapability)) 
     for depId, capId in __drvDependencies.items():
@@ -234,6 +246,9 @@ def getAutoconnectTable(idDependency, idCapability):
                     continue
                 
                 print("CHRIS dbg >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType)) 
+            elif 'drvGmac' == depId:
+                exception = True
+                depType = "ETH_PHY_Dependency"
             else:
                 depType = depId
 
@@ -244,10 +259,27 @@ def getAutoconnectTable(idDependency, idCapability):
             
             # Add capability
             # handle name exceptions
+            exception = False
             connection.append(idCapability)
-            if idCapability[:2] == 'a_':
-                idCapability = idCapability.replace("a_", "")
-            connection.append("{}_{}".format(idCapability.upper(), capId))
+            if idCapability == "i2c_bb":
+                idCapability = "I2C"
+                exception = True
+            elif family == "PIC32MX":
+                if "a_i2s" in capId[:5]:
+                    instance = idCapability[-1]
+                    idCapability = "I2S{}_I2S".format(instance)
+                    exception = True
+            else:
+                if idCapability[:2] == 'a_':
+                    idCapability = idCapability.replace("a_", "")
+                elif 'drvExtPhy' in idCapability:
+                    exception = True
+                    idCapability = "lib{}".format(idCapability)
+
+            if exception == True:
+                connection.append("{}".format(idCapability))
+            else:
+                connection.append("{}_{}".format(idCapability.upper(), capId))
             
             connectionTable.append(connection)
 
@@ -270,3 +302,13 @@ def getDriverDependencyFromPinName(pinName):
         dep = "drv_usart"
         
     return dep
+
+def checkPlibFromSignalConnector(plib, signal):
+    if plib.lower() == signal.lower():
+        return True
+    elif __checkSubstringList(['i2c', 'uart', 'spi'], signal.lower()) == True:
+        # Check if Plib supports these communication signals
+        if __checkSubstringList(['i2c', 'twi', 'spi', 'sercom', 'flexcom'], plib.lower()) == True:
+            return True
+
+    return False

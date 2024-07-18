@@ -1,6 +1,6 @@
 name: samd21-xplained-pro
 config: samd21_xplained_pro.py
-documentation: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-42220-SAMD21-Xplained-Pro_User-Guide.pdf
+documentation: https://www.microchip.com/en-us/development-tool/ATSAMD21-XPRO
 processor:
   name: ATSAMD21J18A
   architecture: CORTEX-M0PLUS

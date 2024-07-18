@@ -1,6 +1,6 @@
 name: same54-curiosity-ultra
 config: same54_curiosity_ultra.py
-documentation: https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/UserGuides/SAME54_Curiosity_Ultra_Users_Guide_DS70005405A.pdf
+documentation: https://www.microchip.com/en-us/development-tool/DM320210
 processor:
   name: ATSAME54P20A
   architecture: CORTEX-M4

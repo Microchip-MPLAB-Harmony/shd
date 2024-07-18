@@ -1,0 +1,252 @@
+name: wbz351-curiosity
+config: wbz351_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/ev19j06a
+processor:
+  name: WBZ351
+  architecture: CORTEX-M4
+  family: WBZ3
+  series: WBZ35
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User LED
+        description: User LED
+        pinctrl:
+          gpio:
+            pinId: RB7
+            name: USER_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: RGB LED - Red
+        description: RGB LED - Red
+        pinctrl:
+          gpio:
+            pinId: RB0
+            name: RGB_LED_RED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: RGB LED - Green
+        description: RGB LED - Green
+        pinctrl:
+          gpio:
+            pinId: RB3
+            name: RGB_LED_GREEN
+            function: GPIO
+            direction: out
+            latch: high
+      - name: RGB LED - Blue
+        description: RGB LED - Blue
+        pinctrl:
+          gpio:
+            pinId: RB5
+            name: RGB_LED_BLUE
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Button 1 (SW2)
+        description: User Button 1 (SW2)
+        pinctrl:
+          gpio:
+            pinId: RB9
+            name: USER_SW2
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Button 2 (SW3)
+        description: User Button 2 (SW3)
+        pinctrl:
+          gpio:
+            pinId: RA4
+            name: USER_SW3
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B QSPI flash memory
+        dependencies: [[drv_sst26, qspi]]
+        pinctrl:
+          qsck:
+            pinId: RA1
+            function: QSPI_SCK
+          qcs:
+            pinId: RB13
+            function: QSPI_CS
+          sio0:
+            pinId: RA0
+            function: QSPI_DATA0
+          sio1:
+            pinId: RB12
+            function: QSPI_DATA1
+          sio2:
+            pinId: RB11
+            function: QSPI_DATA2
+          sio3:
+            pinId: RA2
+            function: QSPI_DATA3
+            pull up: True
+
+  - name: Sensors interface
+    description: On-board sensors configurations
+    options:
+      - name: MCP9700A interface
+        description: Temperature Sensor MCP9700A
+        pinctrl:
+          an:
+            pinId: RB6
+            name: MCP9700A_AN
+            function: ADCHS_AN2
+
+  - name: USB-to-UART interface
+    description: USB-to-UART configurations
+    options:
+      - name: USART Port interface
+        description: USART Port interface
+        pinctrl:
+          tx:
+            pinId: RA5
+            name: USB_USART_TX
+            function: SERCOM0_PAD0
+          rx:
+            pinId: RA6
+            name: USB_USART_RX
+            function: SERCOM0_PAD1
+      - name: USART HW Flow Control
+        description: USART HW Flow Control
+        pinctrl:
+          rts:
+            pinId: RB4
+            name: USB_USART_RTS
+            function: SERCOM0_PAD2
+          cts:
+            pinId: RA3
+            name: USB_USART_CTS
+            function: SERCOM0_PAD3
+
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS Header
+    description: MikroBUS Standard Extension Header
+    pinctrl:
+      an:
+        pinId: RB1
+        name: MikroBUS_AN
+        function: ADCHS_AN5
+      rst:
+        pinId: RB2
+        name: MikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RA9
+          name: MikroBUS_SPI_CS
+          function: SERCOM1_PAD2
+        sck:
+          pinId: RA8
+          name: MikroBUS_SPI_SCK
+          function: SERCOM1_PAD1
+        miso:
+          pinId: RA10
+          name: MikroBUS_SPI_MISO
+          function: SERCOM1_PAD3
+        mosi:
+          pinId: RA7
+          name: MikroBUS_SPI_MOSI
+          function: SERCOM1_PAD0
+      int:
+        pinId: RB10
+        name: MikroBUS_INT
+        function: EIC_EXTINT2
+      uart:
+        tx:
+          pinId: RA7
+          name: MikroBUS_UART_TX
+          function: SERCOM1_PAD0
+        rx:
+          pinId: RA8
+          name: MikroBUS_UART_RX
+          function: SERCOM1_PAD1
+      i2c:
+        sda:
+          pinId: RA13
+          name: MikroBUS_I2C_SDA
+          function: SERCOM2_SDA
+        scl:
+          pinId: RA14
+          name: MikroBUS_I2C_SCL
+          function: SERCOM2_SCL
+
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header 1
+    pinctrl:
+      adc plus:
+        pinId: RB0
+        name: EXT1_ADC_PLUS
+        function: ADCHS_AN4
+      adc minus:
+        pinId: RB3
+        name: EXT1_ADC_PLUS2
+        function: ADCHS_AN7
+      gpio1:
+        pinId: RB10
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: RA4
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: RB5
+        name: EXT1_PWM_PLUS
+        function: TCC0_WO0
+      pwm minus:
+        pinId: RB1
+        name: EXT1_PWM_MINUS
+        function: TCC0_WO1
+      irq:
+        pinId: RB2
+        name: EXT1_IRQ
+        function: EIC_EXTINT2
+      gpio ss:
+        pinId: RB4
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: RA13
+          name: EXT1_I2C_SDA
+          function: SERCOM2_SDA
+        scl:
+          pinId: RA14
+          name: EXT1_I2C_SCL
+          function: SERCOM2_SCL
+      spi:
+        cs:
+          pinId: RA9
+          name: EXT1_SPI_CS
+          function: SERCOM1_PAD2
+        sck:
+          pinId: RA8
+          name: EXT1_SPI_SCK
+          function: SERCOM1_PAD1
+        miso:
+          pinId: RA10
+          name: EXT1_SPI_MISO
+          function: SERCOM1_PAD3
+        mosi:
+          pinId: RA7
+          name: EXT1_SPI_MOSI
+          function: SERCOM1_PAD0

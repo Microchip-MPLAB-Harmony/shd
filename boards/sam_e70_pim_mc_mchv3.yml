@@ -1,6 +1,6 @@
 name: same70-pim-mc-mchv3
 config: sam_e70_pim_mc_mchv3.py
-documentation: https://www.microchip.com/en-us/development-tool/dm330023-3
+documentation: https://www.microchip.com/en-us/development-tool/MA320203
 processor:
   name: ATSAME70Q21B
   architecture: CORTEX-M7

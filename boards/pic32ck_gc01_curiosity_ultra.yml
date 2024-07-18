@@ -1,0 +1,812 @@
+name: pic32ck-gc01-curiosity-ultra
+config: pic32ck_gc01_curiosity_ultra.py
+documentation: https://www.microchip.com/en-us/development-tool/EV44P93A
+processor:
+  name: PIC32CK2051GC01144
+  architecture: CORTEX-M33
+  family: PIC32CK
+  series: PIC32CKGC01
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User LED 0
+        description: User LED 0
+        pinctrl:
+          gpio:
+            pinId: PD20
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User LED 1
+        description: User LED 1
+        pinctrl:
+          gpio:
+            pinId: PB25
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Switch 0
+        description: User Switch 0
+        pinctrl:
+          gpio:
+            pinId: PB26
+            name: USER_SWTICH0
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Switch 1
+        description: User Switch 1
+        pinctrl:
+          gpio:
+            pinId: PD02
+            name: USER_SWITCH1
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B QSPI flash memory
+        dependencies: [[drv_sst26, sqi]]
+        pinctrl:
+          qsck:
+            pinId: PD10
+            function: SQI_CLK
+          qcs:
+            pinId: PD05
+            function: SQI_CS1
+          quio0:
+            pinId: PD07
+            function: SQI_DATA0
+          quio1:
+            pinId: PD11
+            function: SQI_DATA1
+          quio2:
+            pinId: PD08
+            function: SQI_DATA2
+          quio3:
+            pinId: PD09
+            function: SQI_DATA3
+            pull up: True
+      - name: AT24MAC402 interface
+        description: Serial EEPROM with EIA-48 MAC address
+        dependencies: [[drv_at24, sercom4]]
+        pinctrl:
+          sda:
+            pinId: PB09
+            name: AT24MAC402_I2C_SDA
+            function: SERCOM4_PAD0
+          scl:
+            pinId: PB10
+            name: AT24MAC402_I2C_SCL
+            function: SERCOM4_PAD1
+      - name: SDCARD interface
+        description: SD/MMC Host Controller - SDHCx
+        dependencies: [[drv_sdmmc, sdmmc0]]
+        pinctrl:
+          cd:
+            pinId: PD12
+            name: SDCARD_CD
+            function: SDMMC0_SDCD
+          cmd:
+            pinId: PD06
+            name: SDCARD_CMD
+            function: SDMMC0_SDCMD
+          ck:
+            pinId: PD10
+            name: SDCARD_CK
+            function: SDMMC0_SDCK
+          dat0:
+            pinId: PD07
+            name: SDCARD_DAT0
+            function: SDMMC0_SDDAT0
+          dat1:
+            pinId: PD11
+            name: SDCARD_DAT1
+            function: SDMMC0_SDDAT1
+          dat2:
+            pinId: PD08
+            name: SDCARD_DAT2
+            function: SDMMC0_SDDAT2
+          dat3:
+            pinId: PD09
+            name: SDCARD_DAT3
+            function: SDMMC0_SDDAT3
+
+  - name: Ethernet interface
+    description: Modular Ethernet PHY system
+    options:
+      - name: Ethernet Media Access Controller interface
+        description: Ethernet Media Access configuration
+        dependencies: [[drvGmac, drvExtPhyKsz8091]]
+        pinctrl:
+          rxd0:
+            pinId: PC07
+            name: ETH_RXD0
+            function: ETH_RXD0
+          txd0:
+            pinId: PC12
+            name: ETH_TXD0
+            function: ETH_TXD0
+          rxd1:
+            pinId: PC06
+            name: ETH_RXD1
+            function: ETH_RXD1
+          txd1:
+            pinId: PC13
+            name: ETH_TXD1
+            function: ETH_TXD1
+          txen:
+            pinId: PC11
+            name: ETH_TXEN
+            function: ETH_TXEN
+          mdc:
+            pinId: PC03
+            name: ETH_MDC
+            function: ETH_MDC
+          mdio:
+            pinId: PC04
+            name: ETH_MDIO
+            function: ETH_MDIO
+          rxdv:
+            pinId: PC10
+            name: ETH_RXDV
+            function: ETH_RXDV
+          rxer:
+            pinId: PC09
+            name: ETH_RXER
+            function: ETH_RXER
+          refclk:
+            pinId: PC00
+            name: ETH_REF_CLK
+            function: ETH_REF_CLK
+          reset:
+            pinId: PD21
+            name: ETH_RESET
+            function: GPIO
+            direction: out
+            latch: high
+          int:
+            pinId: PC14
+            name: ETH_INT
+            function: EIC_EXTINT14
+
+  - name: X32 Audio interface
+    description: X32 Audio Signal configuration
+    options:
+      - name: USART interface
+        description: Audio USART interface
+        pinctrl:
+          tx:
+            pinId: PB21
+            name: X32_USART_TX
+            function: SERCOM3_PAD0
+          rx:
+            pinId: PB22
+            name: X32_USART_RX
+            function: SERCOM3_PAD1
+          rts:
+            pinId: PA26
+            name: X32_USART_RTS
+            function: GPIO
+            direction: out
+          cts:
+            pinId: PA28
+            name: X32_USART_CTS
+            function: GPIO
+            direction: in
+      - name: I2C interface
+        description: Audio I2C interface
+        pinctrl:
+          sda:
+            pinId: PB09
+            name: X32_I2C_SDA
+            function: SERCOM4_PAD0
+          scl:
+            pinId: PB10
+            name: X32_I2C_SCL
+            function: SERCOM4_PAD1
+      - name: I2S interface
+        description: Audio I2S interface - Connector J801
+        pinctrl:
+          din:
+            pinId: PD16
+            name: X32_I2S0_DI
+            function: SPI_IXS_SDI
+          dout:
+            pinId: PD17
+            name: X32_I2S0_DO
+            function: SPI_IXS_SDO
+          ws:
+            pinId: PD13
+            name: X32_I2S0_WS
+            function: SPI_IXS_FSYNC
+          sck:
+            pinId: PD14
+            name: X32_I2SC_SCK
+            function: SPI_IXS_SCK
+          mck:
+            pinId: PC05
+            name: X32_I2SC_MCK
+            function: GCLK_IO7
+      - name: X32 StandBy / Reset
+        description: StandBy / Reset control signal
+        pinctrl:
+          stbyrst:
+            pinId: PC20
+            name: X32_STBYRST
+            function: GPIO
+            direction: out
+            latch: high
+      - name: ADC Channel
+        description: ADC channel - Connector J800
+        pinctrl:
+          analog pot:
+            pinId: PA09
+            name: X32_ADC_CHANNEL
+            function: ADC_VINP5
+
+  - name: CAN interface
+    description: Control Area Network - CAN
+    options:
+      - name: CAN0 Interface
+        description: CAN0 Interface - Connector J704
+        pinctrl:
+          tx:
+            pinId: PB16
+            name: CAN0_TX
+            function: CAN0_TX
+          rx:
+            pinId: PB17
+            name: CAN0_RX
+            function: CAN0_RX
+      - name: CAN1 Interface
+        description: CAN1 Interface - Connector J705
+        pinctrl:
+          tx:
+            pinId: PB23
+            name: CAN1_TX
+            function: CAN1_TX
+          rx:
+            pinId: PB24
+            name: CAN1_RX
+            function: CAN1_RX
+
+  - name: PDEC interface
+    description: Position Decoder interface - PDEC
+    options:
+      - name: QDI0 Interface
+        description: QDI0 Interface - Connector J503
+        pinctrl:
+          qdi:
+            pinId: PB04
+            name: QDI_0
+            function: PDEC_QDI0
+      - name: QDI1 Interface
+        description: QDI1 Interface - Connector J503
+        pinctrl:
+          qdi:
+            pinId: PB05
+            name: QDI_1
+            function: PDEC_QDI1
+      - name: QDI2 Interface
+        description: QDI0 Interface - Connector J503
+        pinctrl:
+          qdi:
+            pinId: PB13
+            name: QDI_2
+            function: PDEC_QDI2
+
+  - name: Graphics interface
+    description: Graphics Data and Control configuration
+    options:
+      - name: Parallel Data Interface
+        description: GFX Parallel data interface
+        pinctrl:
+          lcden:
+            pinId: PB15
+            name: GFX_DISP_INTF_PIN_DE
+            function: GPIO
+            direction: out
+            latch: high
+          lcdhsync:
+            pinId: PA21
+            name: GFX_DISP_INTF_PIN_HSYNC
+            function: GPIO
+            direction: out
+            latch: low
+          lcdvsync:
+            pinId: PA22
+            name: GFX_DISP_INTF_PIN_VSYNC
+            function: GPIO
+            direction: out
+            latch: low
+          lcdpclk:
+            pinId: PC24
+            name: GFX_DISP_INTF_PIN_PCLK
+            function: EBI_NWE_NWR0
+          lcdd0:
+            pinId: PA13
+            name: GFX_DISP_INTF_PIN_D0
+            function: EBI_D0
+          lcdd1:
+            pinId: PA14
+            name: GFX_DISP_INTF_PIN_D1
+            function: EBI_D1
+          lcdd2:
+            pinId: PA15
+            name: GFX_DISP_INTF_PIN_D2
+            function: EBI_D2
+          lcdd3:
+            pinId: PA16
+            name: GFX_DISP_INTF_PIN_D3
+            function: EBI_D3
+          lcdd4:
+            pinId: PA17
+            name: GFX_DISP_INTF_PIN_D4
+            function: EBI_D4
+          lcdd5:
+            pinId: PA04
+            name: GFX_DISP_INTF_PIN_D5
+            function: EBI_D5
+          lcdd6:
+            pinId: PA05
+            name: GFX_DISP_INTF_PIN_D6
+            function: EBI_D6
+          lcdd7:
+            pinId: PA06
+            name: GFX_DISP_INTF_PIN_D7
+            function: EBI_D7
+          lcdd8:
+            pinId: PA07
+            name: GFX_DISP_INTF_PIN_D8
+            function: EBI_D8
+          lcdd9:
+            pinId: PA08
+            name: GFX_DISP_INTF_PIN_D9
+            function: EBI_D9
+          lcdd10:
+            pinId: PB11
+            name: GFX_DISP_INTF_PIN_D10
+            function: EBI_D10
+          lcdd11:
+            pinId: PB12
+            name: GFX_DISP_INTF_PIN_D11
+            function: EBI_D11
+          lcdd12:
+            pinId: PB05
+            name: GFX_DISP_INTF_PIN_D12
+            function: EBI_D12
+          lcdd13:
+            pinId: PB13
+            name: GFX_DISP_INTF_PIN_D13
+            function: EBI_D13
+          lcdd14:
+            pinId: PB06
+            name: GFX_DISP_INTF_PIN_D14
+            function: EBI_D14
+          lcdd15:
+            pinId: PB14
+            name: GFX_DISP_INTF_PIN_D15
+            function: EBI_D15
+      - name: LCD Touch Control
+        description: GFX LCD Touch Control
+        pinctrl:
+          irq1:
+            pinId: PD19
+            name: BSP_MAXTOUCH_CHG
+            function: GPIO
+            direction: in
+      - name: Touch I2C interface
+        description: GFX Touch I2C interface
+        pinctrl:
+          sda:
+            pinId: PB09
+            name: GFX_TOUCH_I2C_SDA
+            function: SERCOM4_PAD0
+          scl:
+            pinId: PB10
+            name: GFX_TOUCH_I2C_SCL
+            function: SERCOM4_PAD1
+      - name: SPI interface
+        description: GFX SPI interface
+        pinctrl:
+          cs:
+            pinId: PD15
+            name: GFX_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: PC16
+            name: GFX_SPI_SCK
+            function: SERCOM2_PAD1
+          miso:
+            pinId: PC17
+            name: GFX_SPI_MISO
+            function: SERCOM2_PAD2
+          mosi:
+            pinId: PC15
+            name: GFX_SPI_MOSI
+            function: SERCOM2_PAD0
+      - name: LCD Display Enable
+        description: GFX GPIO 1 control
+        pinctrl:
+          gpio:
+            pinId: PA20
+            name: GFX_DISP_INTF_PIN_LCDDISPEN
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LCD Backlight Control
+        description: GFX LCD backlight control
+        pinctrl:
+          pwm:
+            pinId: PA23
+            name: GFX_DISP_INTF_PIN_BACKLIGHT
+            function: GPIO
+            direction: out
+            latch: high
+      - name: STBYRST
+        description: GFX STBY/RST control
+        pinctrl:
+          reset:
+            pinId: PC20
+            name: GFX_DISP_INTF_PIN_RESET
+            function: GPIO
+            direction: out
+            latch: high
+
+  - name: USB debugger interface
+    description: On-Board Debugger (EDBG)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[sys_console, sercom5]]
+        pinctrl:
+          tx:
+            pinId: PA24
+            name: VIRTUAL_COM_TX
+            function: SERCOM5_PAD0
+          rx:
+            pinId: PA25
+            name: VIRTUAL_COM_RX
+            function: SERCOM5_PAD1
+
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS Header
+    description: MikroBUS Standard Extension Header
+    pinctrl:
+      an:
+        pinId: PB11
+        name: MikroBUS_AN
+        function: ADC_VINP10
+      rst:
+        pinId: PD21
+        name: MikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PD15
+          name: MikroBUS_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PC16
+          name: MikroBUS_SPI_SCK
+          function: SERCOM2_PAD1
+        miso:
+          pinId: PC17
+          name: MikroBUS_SPI_MISO
+          function: SERCOM2_PAD2
+        mosi:
+          pinId: PC15
+          name: MikroBUS_SPI_MOSI
+          function: SERCOM2_PAD0
+      pwm:
+        pinId: PB12
+        name: MikroBUS_PWM
+        function: TCC4_WO0
+      int:
+        pinId: PD18
+        name: MikroBUS_INT
+        function: EIC_EXTINT2
+      uart:
+        tx:
+          pinId: PD13
+          name: MikroBUS_UART_TX
+          function: SERCOM1_PAD0
+        rx:
+          pinId: PD14
+          name: MikroBUS_UART_RX
+          function: SERCOM1_PAD1
+      i2c:
+        sda:
+          pinId: PB09
+          name: MikroBUS_I2C_SDA
+          function: SERCOM4_PAD0
+        scl:
+          pinId: PB10
+          name: MikroBUS_I2C_SCL
+          function: SERCOM4_PAD1
+
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header 1
+    pinctrl:
+      adc plus:
+        pinId: PA04
+        name: EXT1_ADC_PLUS
+        function: ADC_VINP0
+      adc minus:
+        pinId: PA05
+        name: EXT1_ADC_PLUS2
+        function: ADC_VINM0
+      gpio1:
+        pinId: PD18
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PC26
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PC01
+        name: EXT1_PWM_PLUS
+        function: TCC0_WO2
+      pwm minus:
+        pinId: PC02
+        name: EXT1_PWM_MINUS
+        function: TCC0_WO3
+      irq:
+        pinId: PC19
+        name: EXT1_IRQ
+        function: EIC_EXTINT3
+      gpio ss:
+        pinId: PB15
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PB09
+          name: EXT1_I2C_SDA
+          function: SERCOM4_PAD0
+        scl:
+          pinId: PB10
+          name: EXT1_I2C_SCL
+          function: SERCOM4_PAD1
+      uart:
+        tx:
+          pinId: PB21
+          name: EXT1_USART_TX
+          function: SERCOM3_PAD0
+        rx:
+          pinId: PB22
+          name: EXT1_USART_RX
+          function: SERCOM3_PAD1
+      spi:
+        cs:
+          pinId: PC14
+          name: EXT1_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PC16
+          name: EXT1_SPI_SCK
+          function: SERCOM2_PAD1
+        miso:
+          pinId: PC17
+          name: EXT1_SPI_MISO
+          function: SERCOM2_PAD2
+        mosi:
+          pinId: PC15
+          name: EXT1_SPI_MOSI
+          function: SERCOM2_PAD0
+
+  - compatible: xplainpro
+    name: Extension Header EXT2
+    description: Xplained Pro Standard Extension Header 2
+    pinctrl:
+      adc plus:
+        pinId: PA06
+        name: EXT2_ADC_PLUS
+        function: ADC_VINP2
+      adc minus:
+        pinId: PA07
+        name: EXT2_ADC_PLUS2
+        function: ADC_VINM2
+      gpio1:
+        pinId: PC27
+        name: EXT2_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PC18
+        name: EXT2_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PB07
+        name: EXT2_PWM_PLUS
+        function: TCC7_WO0
+      pwm minus:
+        pinId: PB08
+        name: EXT2_PWM_MINUS
+        function: TCC7_WO1
+      irq:
+        pinId: PC29
+        name: EXT2_IRQ
+        function: EIC_EXTINT13
+      gpio ss:
+        pinId: PC28
+        name: EXT2_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PB09
+          name: EXT2_I2C_SDA
+          function: SERCOM4_PAD0
+        scl:
+          pinId: PB10
+          name: EXT2_I2C_SCL
+          function: SERCOM4_PAD1
+      uart:
+        tx:
+          pinId: PD13
+          name: EXT2_USART_TX
+          function: SERCOM1_PAD0
+        rx:
+          pinId: PD14
+          name: EXT2_USART_RX
+          function: SERCOM1_PAD1
+      spi:
+        cs:
+          pinId: PC23
+          name: EXT2_SPI_CS
+          function: SPI0_NPCS3
+        sck:
+          pinId: PC16
+          name: EXT2_SPI_SCK
+          function: SERCOM2_PAD1
+        miso:
+          pinId: PC17
+          name: EXT2_SPI_MISO
+          function: SERCOM2_PAD2
+        mosi:
+          pinId: PC15
+          name: EXT2_SPI_MOSI
+          function: SERCOM2_PAD0
+
+  - compatible: arduino
+    name: Arduino Uno Header
+    description: Arduino Uno compatible header
+    pinctrl:
+      adc0:
+        pinId: PA12
+        name: Arduino_ADC0
+        function: ADC_VINP8
+      adc1:
+        pinId: PA09
+        name: Arduino_ADC1
+        function: ADC_VINP5
+      adc2:
+        pinId: PA10
+        name: Arduino_ADC2
+        function: ADC_VINP6
+      adc3:
+        pinId: PA18
+        name: Arduino_ADC3
+        function: ADC_VINM4
+      adc4:
+        pinId: PB00
+        name: Arduino_ADC4
+        function: ADC_VINP9
+      adc5:
+        pinId: PA11
+        name: Arduino_ADC5
+        function: ADC_VINP7
+      i2c:
+        sda:
+          pinId: PB09
+          name: Arduino_D14_I2C_SDA
+          function: SERCOM4_PAD0
+        scl:
+          pinId: PB10
+          name: Arduino_D15_I2C_SCL
+          function: SERCOM4_PAD1
+      uart:
+        tx:
+          pinId: PD13
+          name: Arduino_D1_UART_TX
+          function: SERCOM1_PAD0
+        rx:
+          pinId: PD14
+          name: Arduino_D0_UART_RX
+          function: SERCOM1_PAD1
+      d2:
+        pinId: PD18
+        name: Arduino_D2
+        function: GPIO
+        direction: out
+        latch: low
+      d3:
+        pinId: PA19
+        name: Arduino_D3
+        function: GPIO
+        direction: out
+        latch: low
+      d4:
+        pinId: PC25
+        name: Arduino_D4
+        function: GPIO
+        direction: out
+        latch: low
+      d5:
+        pinId: PC18
+        name: Arduino_D5
+        function: GPIO
+        direction: out
+        latch: low
+      d6:
+        pinId: PC28
+        name: Arduino_D6
+        function: GPIO
+        direction: out
+        latch: low
+      d7:
+        pinId: PC27
+        name: Arduino_D7
+        function: GPIO
+        direction: out
+        latch: low
+      d8:
+        pinId: PC23
+        name: Arduino_D8
+        function: GPIO
+        direction: out
+        latch: low
+      d9:
+        pinId: PB08
+        name: Arduino_D9
+        function: GPIO
+        direction: out
+        latch: low
+      d10:
+        pinId: PB07
+        name: Arduino_D10
+        function: GPIO
+        direction: out
+        latch: low
+      d11:
+        pinId: PC15
+        name: Arduino_D11
+        function: GPIO
+        direction: out
+        latch: low
+      d12:
+        pinId: PC17
+        name: Arduino_D12
+        function: GPIO
+        direction: out
+        latch: low
+      d13:
+        pinId: PC16
+        name: Arduino_D13
+        function: GPIO
+        direction: out
+        latch: low

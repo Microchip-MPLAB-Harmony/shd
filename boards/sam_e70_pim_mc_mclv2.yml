@@ -1,6 +1,6 @@
 name: same70-pim-mc-mclv2
 config: sam_e70_pim_mc_mclv2.py
-documentation: https://www.microchip.com/en-us/development-tool/MA320207
+documentation: https://www.microchip.com/en-us/development-tool/MA320203
 processor:
   name: ATSAME70Q21B
   architecture: CORTEX-M7
