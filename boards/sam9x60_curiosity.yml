@@ -1,0 +1,445 @@
+name: sam9x60-curiosity
+config: sam9x60_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/EV40E67A
+processor:
+  name: SAM9X60D1G
+  architecture: ARM926EJ-S
+  family: SAM9
+  series: SAM9X6
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: RGB Red Led
+        description: RGB Red Led
+        pinctrl:
+          gpio:
+            pinId: PD17
+            name: RGB_RED_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: RGB Green Led
+        description: RGB Green Led
+        pinctrl:
+          gpio:
+            pinId: PD19
+            name: RGB_GREEN_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: RGB Blue Led
+        description: RGB Blue Led
+        pinctrl:
+          gpio:
+            pinId: PD21
+            name: RGB_BLUE_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Button
+        description: User Button
+        pinctrl:
+          gpio:
+            pinId: PA29
+            name: USER_BUTTON
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: CAN interface
+    description: Control Area Network - CAN
+    options:
+      - name: CAN0 interface
+        description: CAN0 interface
+        pinctrl:
+          tx:
+            pinId: PA10
+            name: CAN0_TX
+            function: CAN0_CANTX0
+          rx:
+            pinId: PA9
+            name: CAN0_RX
+            function: CAN0_CANRX0
+          stby:
+            pinId: PC9
+            name: CAN0_STBY
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: CAN1 interface
+        description: CAN1 interface
+        pinctrl:
+          tx:
+            pinId: PA5
+            name: CAN1_TX
+            function: CAN1_CANTX1
+          rx:
+            pinId: PA6
+            name: CAN1_RX
+            function: CAN1_CANRX1
+          stby:
+            pinId: PB17
+            name: CAN1_STBY
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Graphics interface
+    description: Graphics Data and Control configuration
+    options:
+      - name: Parallel Data Interface
+        description: GFX Parallel data interface
+        dependencies: [[le_gfx_lcdc, lcdc]]
+        pinctrl:
+          lcden:
+            pinId: PC29
+            name: GFX_DISP_INTF_PIN_EN
+            function: GPIO
+            direction: out
+            latch: high
+          lcdhsync:
+            pinId: PC28
+            name: GFX_DISP_INTF_PIN_HSYNC
+            function: GPIO
+            direction: out
+            latch: high
+          lcdvsync:
+            pinId: PC27
+            name: GFX_DISP_INTF_PIN_VSYNC
+            function: GPIO
+            direction: out
+            latch: high
+          lcdpclk:
+            pinId: PC30
+            name: GFX_DISP_INTF_PIN_PCLK
+            function: LCDC_LCDPCK
+          lcdd2:
+            pinId: PC2
+            name: GFX_DISP_INTF_PIN_D2
+            function: LCDC_LCDDAT2
+          lcdd3:
+            pinId: PC3
+            name: GFX_DISP_INTF_PIN_D3
+            function: LCDC_LCDDAT3
+          lcdd4:
+            pinId: PC4
+            name: GFX_DISP_INTF_PIN_D4
+            function: LCDC_LCDDAT4
+          lcdd5:
+            pinId: PC5
+            name: GFX_DISP_INTF_PIN_D5
+            function: LCDC_LCDDAT5
+          lcdd6:
+            pinId: PC6
+            name: GFX_DISP_INTF_PIN_D6
+            function: LCDC_LCDDAT6
+          lcdd7:
+            pinId: PC7
+            name: GFX_DISP_INTF_PIN_D7
+            function: LCDC_LCDDAT7
+          lcdd10:
+            pinId: PC10
+            name: GFX_DISP_INTF_PIN_D10
+            function: LCDC_LCDDAT10
+          lcdd11:
+            pinId: PC11
+            name: GFX_DISP_INTF_PIN_D11
+            function: LCDC_LCDDAT11
+          lcdd12:
+            pinId: PC12
+            name: GFX_DISP_INTF_PIN_D12
+            function: LCDC_LCDDAT12
+          lcdd13:
+            pinId: PC13
+            name: GFX_DISP_INTF_PIN_D13
+            function: LCDC_LCDDAT13
+          lcdd14:
+            pinId: PC14
+            name: GFX_DISP_INTF_PIN_D14
+            function: LCDC_LCDDAT14
+          lcdd15:
+            pinId: PC15
+            name: GFX_DISP_INTF_PIN_D15
+            function: LCDC_LCDDAT15
+          lcdd18:
+            pinId: PC18
+            name: GFX_DISP_INTF_PIN_D18
+            function: LCDC_LCDDAT18
+          lcdd19:
+            pinId: PC19
+            name: GFX_DISP_INTF_PIN_D19
+            function: LCDC_LCDDAT19
+          lcdd20:
+            pinId: PC20
+            name: GFX_DISP_INTF_PIN_D20
+            function: LCDC_LCDDAT20
+          lcdd21:
+            pinId: PC21
+            name: GFX_DISP_INTF_PIN_D21
+            function: LCDC_LCDDAT21
+          lcdd22:
+            pinId: PC22
+            name: GFX_DISP_INTF_PIN_D22
+            function: LCDC_LCDDAT22
+          lcdd23:
+            pinId: PC23
+            name: GFX_DISP_INTF_PIN_D23
+            function: LCDC_LCDDAT23
+      - name: IRQ LCD Touch
+        description: GFX LCD Touch interrupt
+        pinctrl:
+          irq1:
+            pinId: PC25
+            name: BSP_MAXTOUCH_CHG
+            function: GPIO
+            direction: in
+      - name: IRQ Q Touch
+        description: GFX Q Touch interrupt
+        pinctrl:
+          irq1:
+            pinId: PC31
+            name: GFX_CTRL_IRQ2
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: Touch I2C interface
+        description: GFX Touch I2C interface
+        pinctrl:
+          sda:
+            pinId: PA30
+            name: GFX_TOUCH_I2C_SDA
+            function: FLEXCOM6_IO0
+          scl:
+            pinId: PA31
+            name: GFX_TOUCH_I2C_SCL
+            function: FLEXCOM6_IO1
+      - name: LCD PWM interface
+        description: GFX LCD PWM interface used as backlight control
+        pinctrl:
+          pwm:
+            pinId: PC26
+            name: GFX_DISP_INTF_PIN_BACKLIGHT
+            function: LCDC_LCDPWM
+      - name: LCD DISP interface
+        description: GFX LCD DISP
+        pinctrl:
+          disp:
+            pinId: PC24
+            name: GFX_DISP
+            function: LCDC_LCDDISP
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: Serial EEPROM interface
+        description: Serial EEPROM with EIA-48 MAC address (24AA025E48)
+        dependencies: [[drv_at24, flexcom0]]
+        pinctrl:
+          sda:
+            pinId: PA0
+            name: EEPROM_I2C_SDA
+            function: FLEXCOM0_IO0
+          scl:
+            pinId: PA1
+            name: EEPROM_I2C_SCL
+            function: FLEXCOM0_IO1
+      - name: SDMMC 0 interface
+        description: Secure Digital Multimedia Card 0 (SDMMC0)
+        dependencies: [[drv_sdmmc, sdmmc0]]
+        pinctrl:
+          cd:
+            pinId: PA25
+            name: SDMMC0_CD
+            function: GPIO
+            direction: in
+          cmd:
+            pinId: PA16
+            name: SDMMC0_CMD
+            function: SDMMC0_CMD
+          ck:
+            pinId: PA17
+            name: SDMMC0_CK
+            function: SDMMC0_CK
+          dat0:
+            pinId: PA15
+            name: SDMMC0_DAT0
+            function: SDMMC0_DAT0
+          dat1:
+            pinId: PA18
+            name: SDMMC0_DAT1
+            function: SDMMC0_DAT1
+          dat2:
+            pinId: PA19
+            name: SDMMC0_DAT2
+            function: SDMMC0_DAT2
+          dat3:
+            pinId: PA20
+            name: SDMMC0_DAT3
+            function: SDMMC0_DAT3
+      - name: SDMMC 1 interface
+        description: Secure Digital Multimedia Card 1 (SDMMC1)
+        dependencies: [[drv_sdmmc, sdmmc1]]
+        pinctrl:
+          cd:
+            pinId: PC8
+            name: SDMMC1_CD
+            function: GPIO
+            direction: in
+          wp:
+            pinId: PA14
+            name: SDMMC1_WP
+            function: GPIO
+            direction: in
+          cmd:
+            pinId: PA12
+            name: SDMMC1_CMD
+            function: SDMMC1_CMD
+          ck:
+            pinId: PA13
+            name: SDMMC1_CK
+            function: SDMMC1_CK
+          dat0:
+            pinId: PA11
+            name: SDMMC1_DAT0
+            function: SDMMC1_DAT0
+          dat1:
+            pinId: PA2
+            name: SDMMC1_DAT1
+            function: SDMMC1_DAT1
+          dat2:
+            pinId: PA3
+            name: SDMMC1_DAT2
+            function: SDMMC1_DAT2
+          dat3:
+            pinId: PA4
+            name: SDMMC1_DAT3
+            function: SDMMC1_DAT3
+
+  - name: Ethernet interface
+    description: Modular Ethernet PHY system
+    options:
+      - name: Ethernet RMII interface
+        description: Ethernet GMAC configuration
+        dependencies: [[drvEmac0, drvExtPhyKsz8081]]
+        pinctrl:
+          gtxen:
+            pinId: PB7
+            function: EMAC0_E0_TXEN
+          gtxck:
+            pinId: PB4
+            function: EMAC0_E0_TXCK
+          gtx0:
+            pinId: PB9
+            function: EMAC0_E0_TX0
+          gtx1:
+            pinId: PB10
+            function: EMAC0_E0_TX1
+          gtxer:
+            pinId: PB8
+            function: EMAC0_E0_TXER
+          grx0:
+            pinId: PB0
+            function: EMAC0_E0_RX0
+          grx1:
+            pinId: PB1
+            function: EMAC0_E0_RX1
+          grxer:
+            pinId: PB2
+            function: EMAC0_E0_RXER
+          grxdv:
+            pinId: PB3
+            function: EMAC0_E0_RXDV
+          gmdc:
+            pinId: PB6
+            function: EMAC0_E0_MDC
+          gmdio:
+            pinId: PB5
+            function: EMAC0_E0_MDIO
+
+      - name: Ethernet Reset interface
+        description: Ethernet Reset configuration
+        pinctrl:
+          rst:
+            pinId: PB25
+            name: ETH_NRESET
+            function: GPIO
+            direction: out
+            latch: high
+
+  - name: Debugging interface
+    description: Debugging interface
+    options:
+      - name: Serial Debug interface
+        description: Serial Debug Com Port (FTDI)
+        dependencies: [[sys_console, dbgu]]
+        pinctrl:
+          tx:
+            pinId: PA10
+            name: DEBUG_TX
+            function: DBGU_DTXD
+          rx:
+            pinId: PA9
+            name: DEBUG_RX
+            function: DBGU_DRXD
+
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS Header
+    description: MikroBUS Standard Extension Header
+    pinctrl:
+      an:
+        pinId: PB14
+        name: MikroBUS_AN
+        function: ADC_AD3
+      rst:
+        pinId: PD16
+        name: MikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PA8
+          name: MikroBUS_SPI_CS
+          function: FLEXCOM5_IO3
+        sck:
+          pinId: PA23
+          name: MikroBUS_SPI_SCK
+          function: FLEXCOM5_IO2
+        miso:
+          pinId: PA21
+          name: MikroBUS_SPI_MISO
+          function: FLEXCOM5_IO1
+        mosi:
+          pinId: PA22
+          name: MikroBUS_SPI_MOSI
+          function: FLEXCOM5_IO0
+      pwm:
+        pinId: PB13
+        name: MikroBUS_PWM
+        function: PWM_PWM2
+      int:
+        pinId: PB18
+        name: MikroBUS_INT
+        function: AIC_IRQ
+      uart:
+        tx:
+          pinId: PC0
+          name: MikroBUS_UART_TX
+          function: FLEXCOM7_IO0
+        rx:
+          pinId: PC1
+          name: MikroBUS_UART_RX
+          function: FLEXCOM7_IO1
+      i2c:
+        sda:
+          pinId: PA0
+          name: MikroBUS_I2C_SDA
+          function: FLEXCOM0_IO0
+        scl:
+          pinId: PA1
+          name: MikroBUS_I2C_SCL
+          function: FLEXCOM0_IO1

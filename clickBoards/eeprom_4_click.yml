@@ -20,7 +20,7 @@ supported:
     mosi:
       name: EEPROM4_MOSI
   pwm:
-    name: EEPROM4_HLD
+    name: EEPROM4_HOLD
     function: GPIO
     direction: out
     latch: low

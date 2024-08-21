@@ -31,36 +31,42 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
                     signalList = signalsNode.getChildrenByName("signal")
                     signalFunctionPrev = None
                     for signal in signalList:
-                        signalPadName = signal.getAttribute("pad")
-                        # print("CHRIS dbg: getDeviceFunctionListByPinId signalPadName1:{}".format(signalPadName))
+                        signalPad = signal.getAttribute("pad")
+                        # print("CHRIS dbg: getDeviceFunctionListByPinId signalPad1:{}".format(signalPad))
                         
                         # Adapt nomeclature used in Pin Configurator (PlugIn) for WBZ devices
                         if "WBZ" in family:
-                            signalPadName = signalPadName.replace("P", "R")
+                            signalPad = signalPad.replace("P", "R")
 
-                        # print("CHRIS dbg: getDeviceFunctionListByPinId signalPadName2:{} = {}".format(signalPadName, pinId))
+                        # print("CHRIS dbg: getDeviceFunctionListByPinId signalPad2:{} = {}".format(signalPad, pinId))
                              
-                        if pinId == signalPadName:
+                        # Handle multiple signals on the same pad
+                        if pinId == signalPad:
                             signalFunction = signal.getAttribute("function")
                                 
                             # print("CHRIS dbg: getDeviceFunctionListByPinId signalFunction:{} -> {}".format(signalFunctionPrev, signalFunction))
                             if signalFunction != signalFunctionPrev:
                                 if signalFunctionPrev != None:
                                     functionList.append(functionName)
-                                    # print("CHRIS dbg: getDeviceFunctionListByPinId functionList:{}".format(functionList))
+                                    print("CHRIS dbg: getDeviceFunctionListByPinId functionList1:{}".format(functionList))
                                 functionName = "{}_".format(instanceName)
                                 signalFunctionPrev = signalFunction
                                 foundSignal = False
+
+                            # print("CHRIS dbg: getDeviceFunctionListByPinId functionName1:{}".format(functionName))
                             
                             if foundSignal:
                                 functionName += '/'
                                 # Handle MCSPI exception
                                 if instanceName == 'MCSPI':
                                     functionName += 'MCSPI_'
+
+                            # print("CHRIS dbg: getDeviceFunctionListByPinId functionName2:{}".format(functionName))
                                 
                             groupName = signal.getAttribute("group")
                             groupNameSplitted = groupName.split("_")
-                            if groupNameSplitted[0] == instanceName:
+                            if (len(groupNameSplitted) > 1) and (groupNameSplitted[0] == instanceName):
+                                # Remove instance from group when they are the same word (ie: flexcom0, flexcom0_io)
                                 groupName = "_".join(groupNameSplitted[1:])
 
                             functionName += groupName
@@ -69,11 +75,13 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
                             if index != None:
                                 functionName += index
                                 
+                            # print("CHRIS dbg: getDeviceFunctionListByPinId functionName3:{}".format(functionName))
+                            
                             foundSignal = True
 
                             if "FLEXCOM" in instanceName:
                                 functionList.append(functionName)
-                                functionName = "{}_".format(instanceName)
+                                # print("CHRIS dbg: getDeviceFunctionListByPinId Flexcom functionList:{}".format(functionList))
                                 foundSignal = False
 
                 if foundSignal:
@@ -216,10 +224,6 @@ def getConfigDatabaseADC(periphID, settings):
         if pinNameValue.split('_')[-1] == 'MINUS':
             isNegInput = True
 
-        if channel > 15:
-            print("ERROR in SHD Main Board configuration: ADC channel is out of range.[{}]".format(channel))
-            return configDB
-        
         if isNegInput == True:
             if (channel % 2) == 1:
                 print("ERROR in SHD Main Board configuration: Negative input is not permitted.[{}]".format(fnValue))
@@ -353,9 +357,15 @@ def getConfigDatabasePWM(periphID, settings):
         polarity = setting[-1] #'l' or 'h'
             
         configDB.setdefault('config', (channel, polarity, enable))
+
+    elif periphID == 'PWM_6044':
+        # get pwm channel
+        channel = int("".join(filter(lambda x: x.isdigit(), setting)))
+            
+        configDB.setdefault('config', (channel, enable))
         
     # elif periphID == 'PWM_54':
-    # elif periphID == 'PWM_6044':
+
     else:
         print("CHRIS dbg >> getConfigDatabasePWM {} NOT FOUND!!!".format(periphID))
 
@@ -453,12 +463,33 @@ def getConfigDatabaseEIC(periphID, settings):
         channel = "".join(filter(lambda x: x.isdigit(), setting))
         configDB.setdefault('config', (channel, enable))
         
-    # elif periphID == 'EIC_44139':
+    elif periphID == 'EIC_44139':
+        channel = "".join(filter(lambda x: x.isdigit(), setting))
+        configDB.setdefault('config', (channel, enable))
 
     else:
         print("CHRIS dbg >> getConfigDatabaseEIC {} NOT FOUND!!!".format(periphID))
 
     return configDB
+
+def getConfigDatabaseAIC(periphID, settings):
+    # fnValue format -> '{}_{}'.format(componentID, setting)
+    signal, pinId, fnValue, pinNameValue, enable = settings
+    componentID = fnValue.split('_')[0].lower()
+    setting = fnValue.split('_')[-1].split('/')[0].lower()
+
+    configDB = dict()
+    configDB.setdefault('msgID', 'AIC_CONFIG_HW_IO')
+    
+    periphID = periphID.upper()
+    if periphID == 'AIC_11051':
+        configDB.setdefault('config', (pinId, enable))
+        componentID = "core"
+        
+    else:
+        print("CHRIS dbg >> getConfigDatabaseAIC {} NOT FOUND!!!".format(periphID))
+
+    return componentID, configDB
 
 def getConfigDatabaseSUPC(periphID, settings):
     # fnValue format -> '{}_{}'.format(componentID, setting)
@@ -595,7 +626,8 @@ def getDevicePLIBConfigurationDBMessage(ATDF, settings):
                 break
 
         if plib == 'gpio':
-            if "i2c_bb" in pinNameValue.lower():
+            pinNameLower = pinNameValue.lower()
+            if "i2c_bb" in pinNameLower or "_scl" in pinNameLower or "_sda" in pinNameLower:
                 componentID = "i2c_bb"
                 configDB = getConfigDatabaseI2CBB(periphID, settings);
 
@@ -625,6 +657,9 @@ def getDevicePLIBConfigurationDBMessage(ATDF, settings):
             
         elif plib == 'eic':
             configDB = getConfigDatabaseEIC(periphID, settings)
+
+        elif plib == 'aic':
+            componentID, configDB = getConfigDatabaseAIC(periphID, settings)
             
         elif plib == 'supc':
             componentID, configDB = getConfigDatabaseSUPC(periphID, settings)
@@ -703,6 +738,19 @@ def getConfigDatabaseDrvSST26(settings):
     
     return configDB
 
+def getConfigDatabaseDrvAT25(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+
+    pinFn = nameValue.split("_")[-1].upper()
+    print("CHRIS dbg >> getConfigDatabaseDrvAT25 pinFn: {} ".format(pinFn))
+    if pinFn in ["WP", "CS", "HOLD"]:
+        configDB.setdefault('msgID', 'AT25_CONFIG_HW_IO')
+        configDB.setdefault('config', (pinFn, pinId, enable))
+    
+    return configDB
+
 def getDeviceDriverConfigurationDBMessage(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
     
@@ -718,6 +766,8 @@ def getDeviceDriverConfigurationDBMessage(settings):
         configDB = getConfigDatabaseDrvPMSMFOC(settings)
     elif driver == 'drv_sst26':
         configDB = getConfigDatabaseDrvSST26(settings)
+    elif driver == 'drv_at25':
+        configDB = getConfigDatabaseDrvAT25(settings)
     else:
         print("CHRIS dbg >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
         

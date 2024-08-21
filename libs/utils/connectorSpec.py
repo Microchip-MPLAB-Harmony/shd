@@ -175,7 +175,9 @@ __drvDependencies = {
     'sys_console': 'UART',
     'X2CScope': 'UART',
     'pmsm_foc': 'ADC',
-    'drvGmac': 'PHY'
+    'drvGmac': 'PHY',
+    'le_gfx_lcdc': 'LCDC',
+    'drvEmac': 'PHY'
 }
 
 def __checkSubstringList(substringList, string):
@@ -248,7 +250,20 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 print("CHRIS dbg >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType)) 
             elif 'drvGmac' == depId:
                 exception = True
-                depType = "ETH_PHY_Dependency"
+                # print("CHRIS dbg >> getAutoconnectTable drvGmac: family:{} - depId:{}".format(family, depId)) 
+                if family == "SAMA":
+                    instance = "".join(filter(lambda x: x.isdigit(), idDependency))
+                    depType = "GMAC{}_PHY_Dependency".format(instance)
+                else:
+                    depType = "ETH_PHY_Dependency"
+            elif 'le_gfx_lcdc' == depId:
+                exception = True
+                depType = "LCDC"
+            elif 'drvEmac' == depId:
+                exception = True
+                # get Instance number
+                instance = "".join(filter(lambda x: x.isdigit(), idDependency))
+                depType = "MAC_PHY_Dependency{}".format(instance)
             else:
                 depType = depId
 
@@ -291,7 +306,7 @@ def getDriverDependencyFromPinName(pinName):
     string = pinName.upper()
     if __checkSubstringList(['MCSPI'], string) == True:
         dep = ""
-    elif __checkSubstringList(['I2C', 'TWI', 'SDA', 'SCL'], string) == True:
+    elif __checkSubstringList(['I2C', 'TWI', 'SDA', 'SCL', 'TWD', 'TWCK'], string) == True:
         dep = "drv_i2c"
     elif __checkSubstringList(['SPI', 'MISO', 'MOSI', 'CS', 'SCK'], string) == True:
         if __checkSubstringList(['LIN'], string) == True:

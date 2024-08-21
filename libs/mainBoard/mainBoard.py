@@ -71,10 +71,10 @@ class MainBoard:
         idActiveList = self.__db.getActiveComponentIDs()
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
             settings = (signalId, pinId, functionValue, nameValue, value)
-            # print("CHRIS dbg >> __setPLIBSettings : {}".format(settings))
+            print("CHRIS dbg >> __setPLIBSettings : {}".format(settings))
             componentID, messageID, params = getDevicePLIBConfigurationDBMessage(self.__atdf, settings)
             if messageID != None and componentID in idActiveList:
-                # print("CHRIS dbg >> __setPLIBSettings: sending message to {} : {}. params: {}".format(componentID, messageID, params))
+                print("CHRIS dbg >> __setPLIBSettings: sending message to {} : {}. params: {}".format(componentID, messageID, params))
                 res = self.__db.sendMessage(componentID, messageID, params)
                 if res != None and res.get("Result") != "Success":
                     print("SHD mainBoard: Error in sending message to PLIB {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
@@ -87,7 +87,7 @@ class MainBoard:
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
             for plib, driver in self.__connections.items():
                 settings = (driver, signalId, pinId, functionValue, nameValue, value)
-                # print("CHRIS dbg >> __setDriverSettings : {}".format(settings))
+                print("CHRIS dbg >> __setDriverSettings : {}".format(settings))
                 componentID, messageID, params = getDeviceDriverConfigurationDBMessage(settings)
                 if messageID != None:
                     # print("CHRIS dbg >> __setDriverSettings: sending message - {} : {}. params: {}".format(componentID, messageID, params))
@@ -120,18 +120,18 @@ class MainBoard:
                 if pinCtrlFunction in function:
                     return function
 
-        #Adapt function name for some family devices (WBZ)
+        # Adapt function name for some family devices (WBZ)
         if "WBZ" in self.__family:
             if "ADCHS" in pinCtrlFunction:
                 pinCtrlFunction = pinCtrlFunction.split("_")[-1]
                 
             return pinCtrlFunction
 
-        #Adapt function name for MIPS architecture
+        # Adapt function name for MIPS architecture
         if self.__architecture == "MIPS":
             pinCtrlFunction = pinCtrlFunction.split("_")[-1]
             # print("CHRIS dbg: __handleFunctionPioManager MIPS: {}".format(pinCtrlFunction))
-        
+
         if pinCtrlFunction in functionByPinId:
             return functionByPinId
 
@@ -144,7 +144,7 @@ class MainBoard:
 
         # Get function values list from the pinNumber
         functionList = getDeviceFunctionListByPinId(self.__db, self.__atdf, pinId)
-        # print("CHRIS dbg: functionList {}".format(functionList))
+        print("CHRIS dbg: functionList {}".format(functionList))
 
         # Sort dictionary by key to set function as first setting
         sortedKeys = sorted(pinControl.keys())
@@ -185,7 +185,7 @@ class MainBoard:
             params.setdefault('pinNumber', pinNumber)
             params.setdefault('setting', key)
             params.setdefault('value', value)
-            # print("CHRIS dbg >> send Message PIN_SET_CONFIG_VALUE : {}".format(params))
+            print("CHRIS dbg >> send Message PIN_SET_CONFIG_VALUE : {}".format(params))
             self.__db.sendMessage("core", "PIN_SET_CONFIG_VALUE", params)
 
     def __checkPinIsConfigured(self, pinId):
