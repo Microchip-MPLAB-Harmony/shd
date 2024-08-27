@@ -70,6 +70,7 @@
     Refer to bsp.h for usage information.
 */
 {% set board = namespace() %}
+{% set deviceFamily = values["core"]["DeviceFamily"] %}
 {% for component in values %}
   {% if "mainBoard_" in component %}
     {% set board.ppio = values[component]["SHD_MAINBOARD_PIO_PERIPH"] %}
@@ -79,6 +80,18 @@
   {% from 'macros_port_u2210.j2' import generateLedsInitialization %}
 {% elif board.ppio in ['PIO_11264'] %}
   {% from 'macros_pio_11264.j2' import generateLedsInitialization %}
+{% elif board.ppio in ['PIO_11004'] %}
+  {% from 'macros_pio_11004.j2' import generateLedsInitialization %}
+{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922']%}
+  {% from 'macros_gpio_02922.j2' import generateLedsInitialization %}
+{% elif board.ppio in ['GPIO_02467'] %}
+  {% if deviceFamily in ['PIC32CX_BZ'] %}
+    {% from 'macros_gpio_02467_pic32c.j2' import generateLedsInitialization %}
+  {% else %}
+    {% from 'macros_gpio_02467.j2' import generateLedsInitialization %}
+  {% endif %}
+{% elif board.ppio in ['GPIO_26'] %}
+  {% from 'macros_gpio_26.j2' import generateLedsInitialization %}
 {% endif %}
 void BSP_Initialize(void )
 {

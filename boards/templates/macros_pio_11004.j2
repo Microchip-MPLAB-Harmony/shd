@@ -26,10 +26,7 @@
 #define BSP_{{ funcName|upper() }}_On()       (PIO{{ port }}_REGS->PIO_SODR = (1UL<<{{ pin }}))
 #define BSP_{{ funcName|upper() }}_Off()      (PIO{{ port }}_REGS->PIO_CODR = (1UL<<{{ pin }}))
 {% endif -%}  
-#define BSP_{{ funcName|upper() }}_Toggle()   do {\
-                                    PIO{{ port }}_REGS->PIO_MSKR = (1<<{{ pin }}); \
-                                    PIO{{ port }}_REGS->PIO_ODSR ^= (1<<{{ pin }});\
-                                } while (0)
+#define BSP_{{ funcName|upper() }}_Toggle()   (PIO{{ port }}_REGS->PIO_ODSR ^= (1UL<<{{ pin }}))
 
             {% endif %}
         {% endif %}

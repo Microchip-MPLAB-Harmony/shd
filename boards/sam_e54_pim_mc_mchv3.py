@@ -46,15 +46,6 @@ def instantiateComponent(boardComponent):
     ################################ Generation Code by Templates ################################
 
     configName = Variables.get("__CONFIGURATION_NAME")
-    
-    # bspSourceFile = boardComponent.createFileSymbol("SHD_C", None)
-    # bspSourceFile.setSourcePath("boards/templates/bsp.c.ftl")
-    # bspSourceFile.setOutputName("bsp.c")
-    # bspSourceFile.setMarkup(True)
-    # bspSourceFile.setOverwrite(True)
-    # bspSourceFile.setDestPath("bsp/")
-    # bspSourceFile.setProjectPath("config/" + configName + "/bsp/")
-    # bspSourceFile.setType("SOURCE")
 
     bspJinjaSourceFile = boardComponent.createFileSymbol("SHD_JINJA_C", None)
     bspJinjaSourceFile.setSourcePath("boards/templates/bsp.c.j2")
@@ -63,15 +54,6 @@ def instantiateComponent(boardComponent):
     bspJinjaSourceFile.setProjectPath("config/" + configName + "/bsp/")
     bspJinjaSourceFile.setType("SOURCE")
     bspJinjaSourceFile.setOverwrite(False)
-
-    # bspHeaderFile = boardComponent.createFileSymbol("SHD_H", None)
-    # bspHeaderFile.setSourcePath("boards/templates/bsp.h.ftl")
-    # bspHeaderFile.setOutputName("bsp.h")
-    # bspHeaderFile.setMarkup(True)
-    # bspHeaderFile.setOverwrite(True)
-    # bspHeaderFile.setDestPath("bsp/")
-    # bspHeaderFile.setProjectPath("config/" + configName + "/bsp/")
-    # bspHeaderFile.setType("HEADER")
 
     bspJinjaHeaderFile = boardComponent.createFileSymbol("SHD_JINJA_H", None)
     bspJinjaHeaderFile.setSourcePath("boards/templates/bsp.h.j2")
@@ -85,25 +67,11 @@ def instantiateComponent(boardComponent):
     bspSystemInitFile.setType("STRING")
     bspSystemInitFile.setOutputName("core.LIST_SYSTEM_INIT_C_SYS_INITIALIZE_PERIPHERALS")
     bspSystemInitFile.setSourcePath("boards/templates/system_initialize.c")
-    # bspSystemInitFile.setMarkup(True)
 
     bspSystemDefFile = boardComponent.createFileSymbol("SHD_DEF", None)
     bspSystemDefFile.setType("STRING")
     bspSystemDefFile.setOutputName("core.LIST_SYSTEM_DEFINITIONS_H_INCLUDES")
     bspSystemDefFile.setSourcePath("boards/templates/system_definitions.h")
-    # bspSystemDefFile.setMarkup(True)
-
-    # bspSourceGPIOFile = boardComponent.createFileSymbol("SHD_GPIO_C", None)
-    # bspSourceGPIOFile.setType("STRING")
-    # bspSourceGPIOFile.setOutputName("core.LIST_BSP_INITIALIZATION")
-    # bspSourceGPIOFile.setSourcePath("boards/templates/bsp_pio_11264.c.ftl")
-    # bspSourceGPIOFile.setMarkup(True)
-
-    # bspHeaderGPIOFile = boardComponent.createFileSymbol("SHD_GPIO_H", None)
-    # bspHeaderGPIOFile.setType("STRING")
-    # bspHeaderGPIOFile.setOutputName("core.LIST_BSP_MACRO_INCLUDES")
-    # bspHeaderGPIOFile.setSourcePath("boards/templates/bsp_pio_11264.h.ftl")
-    # bspHeaderGPIOFile.setMarkup(True)
 
 def destroyComponent(boardComponent):
     global mainBoard

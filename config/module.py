@@ -17,23 +17,25 @@ def loadModule():
     
     import yaml
 
-    plugInMainBoardList = []
+    # plugInMainBoardList = []
     
     mainBoardCompatibleList = []
     mainBoardFileList = glob.glob(path.join(boardPath, '*.yml'))
     for mainBoardFile in mainBoardFileList:
         mainBoardYaml = yaml.safe_load(open(mainBoardFile, 'r'))
         if mainBoardYaml['processor']['name'] == processor:
-            connectorList = []
-            connectors = mainBoardYaml.get('connectors')
-            if connectors != None:
-                for connector in connectors:
-                    connectorList.append((connector.get('name'), connector.get('compatible')))
-            mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'), connectorList)) 
-            plugInMainBoardList.append(path.relpath(mainBoardFile, shdPath).replace("\\", "/"))
+            mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'))) 
+            # connectorList = []
+            # connectors = mainBoardYaml.get('connectors')
+            # if connectors != None:
+            #     for connector in connectors:
+            #         connectorList.append((connector.get('name'), connector.get('compatible')))
+            # mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'), connectorList)) 
+            # plugInMainBoardList.append(path.relpath(mainBoardFile, shdPath).replace("\\", "/"))
     
     for mainBoard in mainBoardCompatibleList:
-        boardName, config, connectorList = mainBoard
+        boardName, config = mainBoard
+        # boardName, config, connectorList = mainBoard
         if config != None:
             print("SHD loading main board " + boardName.upper())
             shdModule = Module.CreateComponent("mainBoard_" + config.split(".")[0].upper(),

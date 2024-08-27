@@ -62,6 +62,12 @@
 // *****************************************************************************
 // *****************************************************************************
 {% set board = namespace() %}
+{% set deviceFamily = values["core"]["DeviceFamily"] %}
+{% if variables["__TRUSTZONE_ENABLED"] is defined %}
+    {% set trustZone = variables["__TRUSTZONE_ENABLED"] %}
+{% else %}
+    {% set trustZone = 'false' %}
+{% endif %}
 {% for component in values %}
   {% if "mainBoard_" in component %}
     {% set board.name = values[component]["SHD_MAINBOARD_NAME"] %}
@@ -72,12 +78,24 @@
   {% from 'macros_port_u2210.j2' import generateOuputsHeaders, generateInputsHeaders %}
 {% elif board.ppio in ['PIO_11264'] %}
   {% from 'macros_pio_11264.j2' import generateOuputsHeaders, generateInputsHeaders %}
+{% elif board.ppio in ['PIO_11004'] %}
+  {% from 'macros_pio_11004.j2' import generateOuputsHeaders, generateInputsHeaders %}
+{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922']%}
+  {% from 'macros_gpio_02922.j2' import generateOuputsHeaders, generateInputsHeaders %}
+{% elif board.ppio in ['GPIO_02467'] %}
+  {% if deviceFamily in ['PIC32CX_BZ'] %}
+    {% from 'macros_gpio_02467_pic32c.j2' import generateOuputsHeaders, generateInputsHeaders %}
+  {% else %}
+    {% from 'macros_gpio_02467.j2' import generateOuputsHeaders, generateInputsHeaders %}
+  {% endif %}
+{% elif board.ppio in ['GPIO_26'] %}
+  {% from 'macros_gpio_26.j2' import generateOuputsHeaders, generateInputsHeaders %}
 {% endif %}
 #define {{ board.name|upper()|replace("-", "_") }}
 #define BOARD_NAME    "{{ board.name|upper() }}"
 {{ getMainBoardSettings(values) }}
-{{ generateOuputsHeaders(variables["__TRUSTZONE_ENABLED"], values.core) }}
-{{ generateInputsHeaders(variables["__TRUSTZONE_ENABLED"], values.core) }}
+{{ generateOuputsHeaders(trustZone, values.core) }}
+{{ generateInputsHeaders(trustZone, values.core) }}
 
 // *****************************************************************************
 // *****************************************************************************
@@ -122,7 +140,8 @@ void BSP_Initialize(void);
 /*******************************************************************************
  End of File
 */
-{# // Variables
+{# 
+// Variables
 {% for var in variables %}
 // {{ var }}: {{ variables[var] }}
 {% endfor %}
@@ -133,4 +152,5 @@ void BSP_Initialize(void);
   {% for symbol in values[value] %}
     // {{ symbol }}: {{ values[value][symbol] }}
   {% endfor %}
-{% endfor %} #}
+{% endfor %} 
+#}
