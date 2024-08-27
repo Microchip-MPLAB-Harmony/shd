@@ -32,7 +32,12 @@ def instantiateComponent(boardComponent):
     global mainBoard
 
     # Create new instance of the SHD mainBoard
-    mainBoard = MainBoard("same70_xplained_ultra.yml", Database, ATDF)
+    context = dict()
+    context["configuration"] = "same70_xplained_ultra.yml"
+    context["database"] = Database
+    context["atdf"] = ATDF
+    context["log"] = Log
+    mainBoard = MainBoard(context)
     boardName = mainBoard.getName()
     if mainBoard != None:
         Log.writeInfoMessage("Loading SHD Main Board: " + boardName.upper())

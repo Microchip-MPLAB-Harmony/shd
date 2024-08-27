@@ -57,6 +57,7 @@ interfaces:
     options:
       - name: AT25DF081A interface
         description: AT25DF081A Serial Flash memory (8Mbit)
+        dependencies: [["drv_at25df", "sercom5"]]
         pinctrl:
           cs:
             pinId: PA13

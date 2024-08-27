@@ -55,6 +55,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "device.h"
+#include "peripheral/pio/plib_pio.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -74,7 +75,7 @@
     {% set board.ppio = values[component]["SHD_MAINBOARD_PIO_PERIPH"] %}
   {% endif %}
 {% endfor %}
-{% if board.ppio in ['PORT_U2210'] %}
+{% if board.ppio in ['PORT_U2210'] or board.ppio in ['PORT_03720']%}
   {% from 'macros_port_u2210.j2' import generateOuputsHeaders, generateInputsHeaders %}
 {% elif board.ppio in ['PIO_11264'] %}
   {% from 'macros_pio_11264.j2' import generateOuputsHeaders, generateInputsHeaders %}

@@ -140,6 +140,7 @@ interfaces:
     options:
       - name: Ethernet RMII interface
         description: Ethernet GMAC configuration
+        dependencies: [[drvGmac, drvExtPhyLan8740]]
         pinctrl:
           gtxen:
             pinId: PD1
@@ -219,14 +220,14 @@ interfaces:
           gpio:
             pinId: PD28
             name: ETH_GPIO1
-            function: WKUP5
+            function: SUPC_WKUP5
       - name: GPIO2 Wake Up Pin
         description: Ethernet GPIO2 Wake Up Pin
         pinctrl:
           gpio:
             pinId: PA2
             name: ETH_GPIO2
-            function: WKUP2
+            function: SUPC_WKUP2
 
   - name: X32 Audio interface
     description: X32 Audio Signal configuration

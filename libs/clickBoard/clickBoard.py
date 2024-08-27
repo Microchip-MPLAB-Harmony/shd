@@ -29,8 +29,7 @@ class ClickBoard:
                 raise AttributeError("{} data content is not correct".format(boardYamlFile))
 
             self.__currentConfig = deepcopy(self.__defaultConfig)
-
-                    
+      
     def __str__(self):
         return "{}".format(self.__currentConfig)
 
@@ -100,65 +99,65 @@ class ClickBoard:
         if self.__currentConfig['compatible'] == 'xplainpro':
             self.__currentConfig = deepcopy(self.__defaultConfig)
 
-    def __useHwAdaptorBoard(self, symbol, event):
-        boardComponent = event['source']
-        useHwAdaptationBoard = event['value']
-        if useHwAdaptationBoard == True:
-            self.convertFromMikroBusToXplainProBoard()
-        else:
-            self.restoreFromXplainProToMikroBusBoard()
+    # def __useHwAdaptorBoard(self, symbol, event):
+    #     boardComponent = event['source']
+    #     useHwAdaptationBoard = event['value']
+    #     if useHwAdaptationBoard == True:
+    #         self.convertFromMikroBusToXplainProBoard()
+    #     else:
+    #         self.restoreFromXplainProToMikroBusBoard()
             
-        # Update Pin description in Configuration options
-        sourceComp = event['source']
-        pinDescriptionList = self.getPinDescriptionList()
-        for pinDesc in pinDescriptionList:
-            pinNumber, symbolName, symbolDescription = pinDesc
-            symbol = sourceComp.getSymbolByID(symbolName)
-            symbol.setLabel(symbolDescription)
+    #     # Update Pin description in Configuration options
+    #     sourceComp = event['source']
+    #     pinDescriptionList = self.getPinDescriptionList()
+    #     for pinDesc in pinDescriptionList:
+    #         pinNumber, symbolName, symbolDescription = pinDesc
+    #         symbol = sourceComp.getSymbolByID(symbolName)
+    #         symbol.setLabel(symbolDescription)
 
-        # Handle Component Dependency
-        if useHwAdaptationBoard:
-            # Show Xplain Pro dependency
-            boardComponent.setDependencyEnabled("xplainpro", True)
-            boardComponent.setDependencyEnabled("mikrobus", False)
-        else:
-            # Show mikroBUS dependency
-            boardComponent.setDependencyEnabled("xplainpro", False)
-            boardComponent.setDependencyEnabled("mikrobus", True)
+    #     # Handle Component Dependency
+    #     if useHwAdaptationBoard:
+    #         # Show Xplain Pro dependency
+    #         boardComponent.setDependencyEnabled("xplainpro", True)
+    #         boardComponent.setDependencyEnabled("mikrobus", False)
+    #     else:
+    #         # Show mikroBUS dependency
+    #         boardComponent.setDependencyEnabled("xplainpro", False)
+    #         boardComponent.setDependencyEnabled("mikrobus", True)
         
-    def createConfigurationSymbols(self, boardComponent):
-        if self.__defaultConfig['compatible'] == 'mikrobus':
-            shdClickBoardUseHWAdaptorSymbol = boardComponent.createBooleanSymbol("SHD_CLICK_USE_HW_ADAPTOR", None)
-            shdClickBoardUseHWAdaptorSymbol.setLabel("Use mikroBUS Xplained Pro adapter board")
-            shdClickBoardUseHWAdaptorSymbol.setDescription("https://www.microchip.com/en-us/development-tool/ATMBUSADAPTER-XPRO")
-            shdClickBoardUseHWAdaptorSymbol.setDefaultValue(False)
-            shdClickBoardUseHWAdaptorSymbol.setHelp(shdClickBoardHelp)
-            self.__hwAdaptatorComponent = shdClickBoardUseHWAdaptorSymbol
+    # def createConfigurationSymbols(self, boardComponent):
+    #     if self.__defaultConfig['compatible'] == 'mikrobus':
+    #         shdClickBoardUseHWAdaptorSymbol = boardComponent.createBooleanSymbol("SHD_CLICK_USE_HW_ADAPTOR", None)
+    #         shdClickBoardUseHWAdaptorSymbol.setLabel("Use mikroBUS Xplained Pro adapter board")
+    #         shdClickBoardUseHWAdaptorSymbol.setDescription("https://www.microchip.com/en-us/development-tool/ATMBUSADAPTER-XPRO")
+    #         shdClickBoardUseHWAdaptorSymbol.setDefaultValue(False)
+    #         shdClickBoardUseHWAdaptorSymbol.setHelp(shdClickBoardHelp)
+    #         self.__hwAdaptatorComponent = shdClickBoardUseHWAdaptorSymbol
 
-        shdClickBoardNameSymbol = boardComponent.createStringSymbol("SHD_CLICK_" + self.__currentConfig.get('name').upper(), None)
-        shdClickBoardNameSymbol.setLabel("Click Board Name")
-        shdClickBoardNameSymbol.setDefaultValue(self.__currentConfig.get('name'))
-        shdClickBoardNameSymbol.setReadOnly(True)
-        shdClickBoardNameSymbol.setHelp(shdClickBoardHelp)
-        shdClickBoardNameSymbol.setDependencies(self.__useHwAdaptorBoard, ["SHD_CLICK_USE_HW_ADAPTOR"])
+    #     shdClickBoardNameSymbol = boardComponent.createStringSymbol("SHD_CLICK_" + self.__currentConfig.get('name').upper(), None)
+    #     shdClickBoardNameSymbol.setLabel("Click Board Name")
+    #     shdClickBoardNameSymbol.setDefaultValue(self.__currentConfig.get('name'))
+    #     shdClickBoardNameSymbol.setReadOnly(True)
+    #     shdClickBoardNameSymbol.setHelp(shdClickBoardHelp)
+    #     shdClickBoardNameSymbol.setDependencies(self.__useHwAdaptorBoard, ["SHD_CLICK_USE_HW_ADAPTOR"])
 
-        shdClickBoardDocSymbol = boardComponent.createStringSymbol("SHD_CLICK_" + self.__currentConfig.get('name').upper() + "_DOC", None)
-        shdClickBoardDocSymbol.setLabel("Doc link")
-        shdClickBoardDocSymbol.setDefaultValue(self.getDocumentation())
-        shdClickBoardDocSymbol.setReadOnly(True)
-        shdClickBoardDocSymbol.setHelp(shdClickBoardHelp)
+    #     shdClickBoardDocSymbol = boardComponent.createStringSymbol("SHD_CLICK_" + self.__currentConfig.get('name').upper() + "_DOC", None)
+    #     shdClickBoardDocSymbol.setLabel("Doc link")
+    #     shdClickBoardDocSymbol.setDefaultValue(self.getDocumentation())
+    #     shdClickBoardDocSymbol.setReadOnly(True)
+    #     shdClickBoardDocSymbol.setHelp(shdClickBoardHelp)
 
-        pinDescriptionList = self.getPinDescriptionList()
-        for pinDesc in pinDescriptionList:
-            pinNumber, symbolName, symbolDescription = pinDesc
-            shdClickBoardSignalSymbol = boardComponent.createCommentSymbol(symbolName, None)
-            shdClickBoardSignalSymbol.setLabel(symbolDescription)
+    #     pinDescriptionList = self.getPinDescriptionList()
+    #     for pinDesc in pinDescriptionList:
+    #         pinNumber, symbolName, symbolDescription = pinDesc
+    #         shdClickBoardSignalSymbol = boardComponent.createCommentSymbol(symbolName, None)
+    #         shdClickBoardSignalSymbol.setLabel(symbolDescription)
 
-    def connect(self):
-        if (self.__hwAdaptatorComponent != None):
-            self.__hwAdaptatorComponent.setVisible(False)
+    # def connect(self):
+    #     if (self.__hwAdaptatorComponent != None):
+    #         self.__hwAdaptatorComponent.setVisible(False)
 
-    def disconnect(self):
-        if (self.__hwAdaptatorComponent != None):
-            self.__hwAdaptatorComponent.setVisible(True)
+    # def disconnect(self):
+    #     if (self.__hwAdaptatorComponent != None):
+    #         self.__hwAdaptatorComponent.setVisible(True)
             

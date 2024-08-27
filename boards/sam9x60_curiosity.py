@@ -32,7 +32,12 @@ def instantiateComponent(boardComponent):
     global mainBoard
 
     # Create new instance of the SHD mainBoard
-    mainBoard = MainBoard("sam9x60_curiosity.yml", Database, ATDF)
+    context = dict()
+    context["configuration"] = "sam9x60_curiosity.yml"
+    context["database"] = Database
+    context["atdf"] = ATDF
+    context["log"] = Log
+    mainBoard = MainBoard(context)
     boardName = mainBoard.getName()
     if mainBoard != None:
         Log.writeInfoMessage("Loading SHD Main Board: " + boardName.upper())

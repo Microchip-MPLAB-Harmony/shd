@@ -2,19 +2,20 @@ import sys
 from os import path
 import glob
 from copy import deepcopy
-from utils.connectorSpec import getConnectorPinNumberFromSignal, getAutoconnectTable, getDriverDependencyFromPinName, checkPlibFromSignalConnector
-from utils.deviceSpec import getDeviceFunctionListByPinId, getDevicePinMap, getDeviceGPIOPeripheral, getDevicePLIBConfigurationDBMessage, adaptDevicePeripheralDependencies, getDeviceDriverConfigurationDBMessage
+from utils.connectorSpec import getConnectorPinNumberFromSignal
+from utils.deviceSpec import getDeviceFunctionListByPinId, getDevicePinMap, getDeviceGPIOPeripheral, adaptDevicePeripheralDependencies
+from utils.dBMsgInterface import getDBMsgPLIBConfiguration, getDBMsgDriverConfiguration, getAutoconnectTable, getDriverDependencyFromPinName, checkPlibFromSignalConnector
 from clickBoard.clickBoard import ClickBoard
 
 shdMainBoardHelp = 'shdMainBoardHelpKeyword'
 shdMultiInstanceDrivers = ['drv_i2c', 'drv_spi', 'drv_usart', 'drv_sdmmc', 'a_drv_i2s', 'drv_sdspi', 'sys_console']
 
 class MainBoard:
-    def __init__(self, yamlFileName, Database, ATDF):
+    def __init__(self, context):
         self.__currentConfig = {}
         for item in sys.path:
             if "shd\\boards" in item:
-                boardYamlFile = path.join(item, yamlFileName)
+                boardYamlFile = path.join(item, context["configuration"])
                 
             if "shd\\clickBoards" in item:
                 clickBoardsPath = item
@@ -22,14 +23,15 @@ class MainBoard:
         if not path.isfile(boardYamlFile):
             return None
 
-        self.__db = Database
-        self.__atdf = ATDF
+        self.__db = context["database"]
+        self.__atdf = context["atdf"]
+        self.__log = context["log"]
         self.__pioPeripheralID = 0
         self.__symbolInterfaceByPin = {}
         self.__symbolNamesByConnector = {}
         self.__symbolPinByParent = {}
         self.__collisionsByPinID = {}
-        self.__devicePinMap = getDevicePinMap(self.__db, ATDF)
+        self.__devicePinMap = getDevicePinMap(self.__db, self.__atdf)
         self.__configuredPins = []
         self.__pinControlByPinId = {}
         self.__symbolInterfaces = {}
@@ -38,10 +40,12 @@ class MainBoard:
         self.__shdDependenciesPlibMultiInstance = {}
         self.__connections = {}
         self.__shdCheckCollisionSymbol = None
-        self.__architecture = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
-        self.__family = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
+        self.__architecture = self.__atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
+        self.__family = self.__atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
 
-        # print("CHRIS dbg >> __devicePinMap: {}".format(self.__devicePinMap))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __devicePinMap: {}".format(self.__devicePinMap))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __architecture: {}".format(self.__architecture))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __family: {}".format(self.__family))
         
         import yaml
         with open(boardYamlFile, 'r') as file:
@@ -59,9 +63,9 @@ class MainBoard:
                 self.__clickBoards.setdefault(boardName, interface)
             except:
                 continue
-                
+
     def __del__(self):
-        print("CHRIS dbg >> __del__ MainBoard")
+        # self.__log.writeDebugMessage("CHRIS dbg >> __del__ MainBoard")
         self.resetSignalConfiguration()
         
     def __str__(self):
@@ -71,34 +75,34 @@ class MainBoard:
         idActiveList = self.__db.getActiveComponentIDs()
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
             settings = (signalId, pinId, functionValue, nameValue, value)
-            print("CHRIS dbg >> __setPLIBSettings : {}".format(settings))
-            componentID, messageID, params = getDevicePLIBConfigurationDBMessage(self.__atdf, settings)
+            # self.__log.writeDebugMessage("CHRIS dbg >> __setPLIBSettings : {}".format(settings))
+            componentID, messageID, params = getDBMsgPLIBConfiguration(self.__atdf, settings)
             if messageID != None and componentID in idActiveList:
-                print("CHRIS dbg >> __setPLIBSettings: sending message to {} : {}. params: {}".format(componentID, messageID, params))
+                # self.__log.writeDebugMessage("CHRIS dbg >> __setPLIBSettings: sending message to {} : {}. params: {}".format(componentID, messageID, params))
                 res = self.__db.sendMessage(componentID, messageID, params)
                 if res != None and res.get("Result") != "Success":
-                    print("SHD mainBoard: Error in sending message to PLIB {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
+                    self.__log.writeDebugMessage("SHD mainBoard: Error in sending message to PLIB {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
             # else:
-            #     print("CHRIS dbg >> __setPLIBSettings skip {} messageID:{} idActiveList{}".format(componentID, messageID, idActiveList))
+            #     self.__log.writeDebugMessage("CHRIS dbg >> __setPLIBSettings skip {} messageID:{} idActiveList{}".format(componentID, messageID, idActiveList))
 
     def __setDriverSettings(self, pinDescr, value):
-        # print("CHRIS dbg >> __setDriverSettings pinDescr: {} - {}".format(pinId, pinDescr))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __setDriverSettings pinDescr: {}".format(pinDescr))
         # Find driver connection
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
             for plib, driver in self.__connections.items():
                 settings = (driver, signalId, pinId, functionValue, nameValue, value)
-                print("CHRIS dbg >> __setDriverSettings : {}".format(settings))
-                componentID, messageID, params = getDeviceDriverConfigurationDBMessage(settings)
+                # self.__log.writeDebugMessage("CHRIS dbg >> __setDriverSettings : {}".format(settings))
+                componentID, messageID, params = getDBMsgDriverConfiguration(settings)
                 if messageID != None:
-                    # print("CHRIS dbg >> __setDriverSettings: sending message - {} : {}. params: {}".format(componentID, messageID, params))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __setDriverSettings: sending message - {} : {}. params: {}".format(componentID, messageID, params))
                     res = self.__db.sendMessage(componentID, messageID, params)
                     if res != None and res.get("Result") != "Success":
-                        print("SHD mainBoard: skip sending message to DRV {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
+                        self.__log.writeDebugMessage("SHD mainBoard: skip sending message to DRV {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
                 # else:
-                #     print("CHRIS dbg >> __setDriverSettings ERROR : {} {} {}".format(componentID, messageID, params))
+                #     self.__log.writeDebugMessage("CHRIS dbg >> __setDriverSettings ERROR : {} {} {}".format(componentID, messageID, params))
 
     def __clearPinConfig(self, pinControl):
-        # print("CHRIS dbg >> __clearPinConfig pinControl: {}".format(pinControl))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __clearPinConfig pinControl: {}".format(pinControl))
         pinNumber = self.__devicePinMap.get(pinControl.get('pinId'))
 
         for key, value in pinControl.items():
@@ -108,14 +112,14 @@ class MainBoard:
             params = dict()
             params.setdefault('pinNumber', pinNumber)
             params.setdefault('setting', key)
-            # print("CHRIS dbg >> send Message PIN_CLEAR_CONFIG_VALUE : {}".format(params))
+            # self.__log.writeDebugMessage("CHRIS dbg >> send Message PIN_CLEAR_CONFIG_VALUE : {}".format(params))
             self.__db.sendMessage("core", "PIN_CLEAR_CONFIG_VALUE", params)
 
     def __handleFunctionPioManager(self, pinCtrlFunction, functionByPinId):
-        # print("CHRIS dbg: __handleFunctionPioManager {} : {}".format(pinCtrlFunction, functionByPinId))
+        # self.__log.writeDebugMessage("CHRIS dbg: __handleFunctionPioManager {} : {}".format(pinCtrlFunction, functionByPinId))
         if 'MCSPI' in pinCtrlFunction:
             functionValues = functionByPinId.split('/')
-            # print("CHRIS dbg: __handleFunctionPioManager {}".format(functionValues))
+            # self.__log.writeDebugMessage("CHRIS dbg: __handleFunctionPioManager {}".format(functionValues))
             for function in functionValues:
                 if pinCtrlFunction in function:
                     return function
@@ -130,7 +134,7 @@ class MainBoard:
         # Adapt function name for MIPS architecture
         if self.__architecture == "MIPS":
             pinCtrlFunction = pinCtrlFunction.split("_")[-1]
-            # print("CHRIS dbg: __handleFunctionPioManager MIPS: {}".format(pinCtrlFunction))
+            # self.__log.writeDebugMessage("CHRIS dbg: __handleFunctionPioManager MIPS: {}".format(pinCtrlFunction))
 
         if pinCtrlFunction in functionByPinId:
             return functionByPinId
@@ -138,13 +142,13 @@ class MainBoard:
         return None
 
     def __setPinConfig(self, pinControl):
-        # print("CHRIS dbg >> __setPinConfig pinControl: {}".format(pinControl))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __setPinConfig pinControl: {}".format(pinControl))
         pinId = pinControl.get('pinId')
         pinNumber = self.__devicePinMap.get(pinId)
 
         # Get function values list from the pinNumber
         functionList = getDeviceFunctionListByPinId(self.__db, self.__atdf, pinId)
-        print("CHRIS dbg: functionList {}".format(functionList))
+        # self.__log.writeDebugMessage("CHRIS dbg: functionList {}".format(functionList))
 
         # Sort dictionary by key to set function as first setting
         sortedKeys = sorted(pinControl.keys())
@@ -165,8 +169,8 @@ class MainBoard:
                         break
                     
                 if findFunction == False:
-                    print("SHD mainBoard: Error in function setting of pinId: {} - function: {}".format(pinId, value))
-                    print("SHD mainBoard: Match function setting with one of these values: {}".format(functionList))
+                    self.__log.writeDebugMessage("SHD mainBoard: Error in function setting of pinId: {} - function: {}".format(pinId, value))
+                    self.__log.writeDebugMessage("SHD mainBoard: Match function setting with one of these values: {}".format(functionList))
                     continue
                         
             if key in ['function', 'name', 'pinId']:
@@ -185,7 +189,7 @@ class MainBoard:
             params.setdefault('pinNumber', pinNumber)
             params.setdefault('setting', key)
             params.setdefault('value', value)
-            print("CHRIS dbg >> send Message PIN_SET_CONFIG_VALUE : {}".format(params))
+            # self.__log.writeDebugMessage("CHRIS dbg >> send Message PIN_SET_CONFIG_VALUE : {}".format(params))
             self.__db.sendMessage("core", "PIN_SET_CONFIG_VALUE", params)
 
     def __checkPinIsConfigured(self, pinId):
@@ -195,7 +199,7 @@ class MainBoard:
         params.setdefault('setting', 'function')
         retDict = self.__db.sendMessage("core", "PIN_GET_CONFIG_VALUE", params)
         functionValue = retDict.get('value')
-        # print("CHRIS dbg >> __checkPinIsConfigured {} : {}".format(pinId, functionValue))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __checkPinIsConfigured {} : {}".format(pinId, functionValue))
         if functionValue == "":
             return False
         else:
@@ -204,9 +208,9 @@ class MainBoard:
     def __showSymbol(self, symbol, event):
         eventSymbolID = event['id']
         eventValue = event['value']
-        # print("CHRIS dbg >> __showSymbol eventSymbolID: {} - {}".format(eventSymbolID, eventValue))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __showSymbol eventSymbolID: {} - {}".format(eventSymbolID, eventValue))
         if "CSASGPIO" in eventSymbolID:
-            # print("CHRIS dbg >> __showSymbol eventSymbolID: {}".format(eventSymbolID))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __showSymbol eventSymbolID: {}".format(eventSymbolID))
             global mainBoard
             connectorName = self.getConnectorNameFromSymbolName(eventSymbolID)
             newPinControl = {"spi":{"cs":{"function": "GPIO","direction": "out","latch": "high"}}}
@@ -242,15 +246,15 @@ class MainBoard:
             if pinId in symbol:
                 symbolInterface = board.getSymbolByID(symbol)
                 symbolInterface.setVisible(enable)
-                # print("CHRIS dbg >> __setVisibleSignals {} -> {}".format(symbol, enable))
+                # self.__log.writeDebugMessage("CHRIS dbg >> __setVisibleSignals {} -> {}".format(symbol, enable))
                 
     def __checkAllSignalsDisabled(self, symbol):
         symbolSignals = self.__symbolPinByParent.get(symbol)
-        # print("CHRIS dbg >> __checkAllSignalsDisabled {}: {}".format(symbol, symbolSignals))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __checkAllSignalsDisabled {}: {}".format(symbol, symbolSignals))
         for symbolId in symbolSignals:
             pinId = symbolId.split('_')[-1]
             if pinId in self.__configuredPins:
-                # print("CHRIS dbg >> __checkAllSignalsDisabled {} PinId: {} is configured".format(symbolId, pinId))
+                # self.__log.writeDebugMessage("CHRIS dbg >> __checkAllSignalsDisabled {} PinId: {} is configured".format(symbolId, pinId))
                 return False
             
         return True
@@ -267,7 +271,7 @@ class MainBoard:
                         symbolInterface = self.__symbolInterfaces.get(symbolId)
                         if symbolInterface != None:
                             if symbolInterface.getValue() == False:
-                                # print("CHRIS dbg >> __checkGlobalCollisions set Read Only - symbolId: {}".format(symbolId))
+                                # self.__log.writeDebugMessage("CHRIS dbg >> __checkGlobalCollisions set Read Only - symbolId: {}".format(symbolId))
                                 if symbolId.find('SPI') == -1:
                                     symbolInterface.setReadOnly(True)
                                 self.__setVisibleSignals(True, symbolId, pinId)
@@ -275,7 +279,7 @@ class MainBoard:
             # Pin Callback selects False. Clear Read Only values
             for pinId, symbolList in self.__collisionsByPinID.items():
                 if pinId in self.__configuredPins:
-                    # print("CHRIS dbg >> __checkGlobalCollisions pind is still configured: {}".format(pinId))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __checkGlobalCollisions pind is still configured: {}".format(pinId))
                     continue
                 
                 # If collision Pin has not been configured. Free Symbol if all subsignals are disabled.
@@ -284,7 +288,7 @@ class MainBoard:
                     if symbolInterface != None:
                         if symbolInterface.getReadOnly() == True:
                             if self.__checkAllSignalsDisabled(symbolId) == True:
-                                # print("CHRIS dbg >> __checkGlobalCollisions clear Read Only - symbolId: {}".format(symbolId))
+                                # self.__log.writeDebugMessage("CHRIS dbg >> __checkGlobalCollisions clear Read Only - symbolId: {}".format(symbolId))
                                 symbolInterface.setReadOnly(False)
                                 self.__setVisibleSignals(False, symbolId, pinId)
                         elif symbolId.find('SPI') != -1:
@@ -294,7 +298,7 @@ class MainBoard:
         depId, capId = connection
             
         connectTable = getAutoconnectTable(self.__family, depId, capId)
-        print("CHRIS dbg >> __connectComponentDependencies connectTable: {}".format(connectTable)) 
+        # self.__log.writeDebugMessage("CHRIS dbg >> __connectComponentDependencies connectTable: {}".format(connectTable)) 
 
         if len(connectTable) > 0:
             res = self.__db.connectDependencies(connectTable)
@@ -332,8 +336,6 @@ class MainBoard:
         else:                
             return int(str(idActiveList).count(driver + "_"))
 
-
-    
     def __overlapDependencies(self, dependencies, connectorName):
         newDeps = {}
 
@@ -344,12 +346,13 @@ class MainBoard:
 
             # Only for dependencies on Connectors (click Boards)
             bindings = self.__depBindings.get(connectorName)
-            print("CHRIS dbg >> __overlapDependencies ({},{}): {}".format(depId, capId, bindings))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __overlapDependencies ({},{}): {}".format(depId, capId, bindings))
             if bindings != None:
                 for binding in bindings:
                     driver, signal = binding
                     # Check if Plib supports the signal in bindings
                     if checkPlibFromSignalConnector(capId, signal) == True:
+                        # self.__log.writeDebugMessage("CHRIS dbg >> __overlapDependencies checkPlibFromSignalConnector:TRUE {} {}".format(capId, signal))
                         depId = driver
                         
             newDeps.setdefault(depId, capId)
@@ -359,13 +362,13 @@ class MainBoard:
     def __configureDriverSettings(self, enabledPinIdList, disabledPinIdList):
         for pinId, pinDescr in enabledPinIdList.items():
             # signal, (pinFunction, pinName) = enabledPinIdList[pinId]
-            # print("CHRIS dbg >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
             self.__setPLIBSettings(pinDescr, True)
             self.__setDriverSettings(pinDescr, True)
         
         for pinId, pinDescr  in disabledPinIdList.items():
             # signal, (pinFunction, pinName) = disabledPinIdList[pinId]
-            # print("CHRIS dbg >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
             self.__setPLIBSettings(pinDescr, False)
 
     def __getPinListByMultiPinDriver(self, dependency):
@@ -377,7 +380,7 @@ class MainBoard:
             params.setdefault('setting', 'function')
             ret = self.__db.sendMessage("core", "PIN_GET_CONFIG_VALUE", params)
             pinFunction = ret.get("value")
-            # print("CHRIS dbg >> __getPinListByMultiPinDriver {}: {} in {}".format(pinId, dependency, pinFunction))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __getPinListByMultiPinDriver {}: {} in {}".format(pinId, dependency, pinFunction))
             # Handle exceptions: MCPWM, ADCHS
             if dependency == 'mcpwm':
                 dependency = 'pwm'
@@ -389,11 +392,11 @@ class MainBoard:
         return pinIdList
 
     def __updateDriverConnections(self, addDependency, dependencyList, connectorName):
-        print("CHRIS dbg >> __updateDriverConnections[{}]: {}".format(addDependency, dependencyList))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections[{}]: {}".format(addDependency, dependencyList))
 
         # Check overlap bindings
         dependencyList = self.__overlapDependencies(dependencyList, connectorName)
-        print("CHRIS dbg >> __updateDriverConnections new dependencyList: {}".format(dependencyList))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections new dependencyList: {}".format(dependencyList))
         
         # Check if capability is already in use (this is needed because setReadOnly triggers callback)
         dependencyListFiltered = {}
@@ -405,9 +408,9 @@ class MainBoard:
                 
                 driverInstance = self.__shdDependenciesPlibMultiInstance.get(capId)
                 if driverInstance != None:
-                    # print("CHRIS dbg >> __updateDriverConnections checking {} in {}".format(depId, driverInstance))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections checking {} in {}".format(depId, driverInstance))
                     if depId in driverInstance: 
-                        # print("CHRIS dbg >> __updateDriverConnections already in use ({})".format(capId))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections already in use ({})".format(capId))
                         continue
 
                 dependencyListFiltered.setdefault(depId, capId)
@@ -416,14 +419,14 @@ class MainBoard:
 
         # Get Active components    
         idActiveList = self.__db.getActiveComponentIDs()
-        # print("CHRIS dbg >> __updateDriverConnections idActiveList: {}".format(idActiveList))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections idActiveList: {}".format(idActiveList))
 
         # Adapt Dependency List according to PIO peripheral ID 
         dependencyList = adaptDevicePeripheralDependencies(self.__atdf, dependencyListFiltered)
-        # print("CHRIS dbg >> __updateDriverConnections PIO adapted dependencyList: {}".format(dependencyList))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections PIO adapted dependencyList: {}".format(dependencyList))
 
         # if addDependency == True and self.__checkExistConnection(dependencyList):
-        #     print("CHRIS dbg >> __updateDriverConnections connections already created: {}".format(dependencyList))
+        #     self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections connections already created: {}".format(dependencyList))
         #     return
 
         newConnections = []
@@ -459,7 +462,7 @@ class MainBoard:
                 if capId in idActiveList:
                     # Check MultiPin drivers (driver that uses more than 1 pin)
                     pinList = self.__getPinListByMultiPinDriver(capId)
-                    # print("CHRIS dbg >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
                     if len(pinList) == 0:
                         removeComponents.append(capId)
 
@@ -472,7 +475,7 @@ class MainBoard:
                         # MultiInstance drivers are removed in removeComponents loop (Deactivate components)
                         # Check MultiPin drivers (driver that uses more than 1 pin)
                         pinList = self.__getPinListByMultiPinDriver(depId)
-                        # print("CHRIS dbg >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
                         if len(pinList) == 0:
                             removeComponents.append(depId)
                 
@@ -481,11 +484,11 @@ class MainBoard:
             self.__db.activateComponents(multiInstanceComponent)
             
         if len(newComponents) > 0:
-            print("CHRIS dbg >> __updateDriverConnections newComponents: {}".format(newComponents))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections newComponents: {}".format(newComponents))
             self.__db.activateComponents(newComponents)
 
         # Add new dependencies (Activate components)
-        print("CHRIS dbg >> __updateDriverConnections newConnections: {}".format(newConnections))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections newConnections: {}".format(newConnections))
         for connection in newConnections:
             self.__connectComponentDependencies(connection)
             # Update PLIB MultiInstance information
@@ -495,7 +498,7 @@ class MainBoard:
 
         # Remove Components (Deactivate components)
         for component in removeComponents:
-            print("CHRIS dbg >> __updateDriverConnections remove Components: {}".format(component))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections remove Components: {}".format(component))
             res = self.__db.deactivateComponents([component])
             if res == True and self.__connections.get(component) != None:
                 del self.__connections[component]
@@ -504,31 +507,30 @@ class MainBoard:
             if driver != None:
                 driverInstance = int(driver[-1])
                 instancesNumber = self.__getDriverMultiInstanceNumber(idActiveList, driver[0:-2])
-                print("CHRIS dbg >> __updateDriverConnections remove multiInstance: {} {} {}".format(driver, driverInstance, instancesNumber))
+                # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections remove multiInstance: {} {} {}".format(driver, driverInstance, instancesNumber))
                 if instancesNumber == 1:
-                    print("CHRIS dbg >> __updateDriverConnections deactivate component 1: {}".format(driver[0:-2]))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections deactivate component 1: {}".format(driver[0:-2]))
                     self.__db.deactivateComponents([driver[0:-2]])
                 elif driverInstance == (instancesNumber - 1):
-                    print("CHRIS dbg >> __updateDriverConnections deactivate component 2: {}".format(driver))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections deactivate component 2: {}".format(driver))
                     self.__db.deactivateComponents([driver])
 
                 del self.__shdDependenciesPlibMultiInstance[component]
                 
-        # print("CHRIS dbg >> __updateDriverConnections self.__shdDependenciesPlibMultiInstance: {}".format(self.__shdDependenciesPlibMultiInstance))
-        # print("CHRIS dbg >> __updateDriverConnections self.__connections: {}".format(self.__connections))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections self.__shdDependenciesPlibMultiInstance: {}".format(self.__shdDependenciesPlibMultiInstance))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __updateDriverConnections self.__connections: {}".format(self.__connections))
         
     def __signalEnableCallback(self, symbol, event):
         dependencies = {}
         enabledPinIdList = {}
         disabledPinIdList = {}
-        autodetectDeps = True
         if self.__signalCallbackBusy == False:
-            # print("CHRIS dbg >> __signalEnableCallback id: {} = {} ------------ ".format(event['id'], event['value']))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback id: {} = {} ------------ ".format(event['id'], event['value']))
             self.__signalCallbackBusy = True
 
             # Get Pin Control List
             srcSymbolSplit = event["id"].split('_')
-            # print("CHRIS dbg >> __signalEnableCallback srcSymbolSplit: {}".format(srcSymbolSplit))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback srcSymbolSplit: {}".format(srcSymbolSplit))
             if "INTERFACE" in event["id"]:
                 connectorName = None
                 if "_OPT_" in event["id"]:
@@ -537,13 +539,13 @@ class MainBoard:
                     pinControlList = self.getPinControlListByInterface(interfaceIndex, optionIndex)
                     # Extract dependencies from configuration file
                     newDepList = self.__currentConfig['interfaces'][interfaceIndex]['options'][optionIndex].get('dependencies')
-                    # print("CHRIS dbg >> __signalEnableCallback iface_{}: opt_{}".format(interfaceIndex, optionIndex))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback iface_{}: opt_{}".format(interfaceIndex, optionIndex))
                 else:
                     interfaceIndex = int(srcSymbolSplit[-1])
                     pinControlList = self.getPinControlListByInterface(interfaceIndex)
                     # Extract dependencies from configuration file
                     newDepList = self.__currentConfig['interfaces'][interfaceIndex].get('dependencies')
-                    # print("CHRIS dbg >> __signalEnableCallback iface_{}".format(interfaceIndex))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback iface_{}".format(interfaceIndex))
 
                 if newDepList != None:
                     for newDep in newDepList:
@@ -554,14 +556,13 @@ class MainBoard:
                             capId = ""
                         
                         dependencies.setdefault(depId, capId)
-                        autodetectDeps = False
             else:
                 connectorSignal = srcSymbolSplit[-1].lower()
                 connectorName = srcSymbolSplit[-2].replace("-"," ")
-                # print("CHRIS dbg >> __signalEnableCallback {}: {}".format(connectorName, connectorSignal))
+                # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback {}: {}".format(connectorName, connectorSignal))
                 pinControlList = self.getPinControlListByConnectorSignal(connectorName, connectorSignal)
 
-            # print("CHRIS dbg >> __signalEnableCallback pinControlList: {}".format(pinControlList))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback pinControlList: {}".format(pinControlList))
 
             for pinControl in pinControlList:
                 signalId, pinCtrl = pinControl
@@ -569,55 +570,58 @@ class MainBoard:
                 pinName = pinCtrl.get('name')
                 pinFunction = pinCtrl.get('function')
                 
-                # Adapt pinFunction for MIPS architecure adding Instance Name
-                # if self.__architecture == "MIPS":
-                #     if pinFunction != None and pinFunction != 'GPIO':
-                #         instanceName = getInstanceNameFromMIPS(self.__db, self.__atdf, capId)
-                #         pinFunction = "{}_{}".format(instanceName, pinFunction)
-                #         pinCtrl['function'] = pinFunction
-                #         print("CHRIS dbg >> __signalEnableCallback MIPS fn adapt: {}".format(pinFunction))
-
                 pinDescr = {}
                 pinDescr.setdefault(signalId, (pinId, pinFunction, pinName))
                 
                 # Autodetect dependencies if not found in configuration file
-                if autodetectDeps == True:
-                    depId = ""
-                    capId = ""
-                    # Extract DRIVER dependencies from Pin Name
-                    pinName = pinCtrl.get('name')
-                    if pinName != None:
-                        newDep = getDriverDependencyFromPinName(pinName);
-                        if (newDep != ""):
-                            depId = newDep
-                        
-                    # Extract PLIB capabilities from Pin Function
-                    if pinFunction != None and pinFunction != 'GPIO':
-                        newCap = pinFunction.upper().split('_')[0].lower()
-                        # Check exceptions
-                        if newCap not in ['gmac']:
-                            capId = newCap
+                autodetectDeps = True
+                depId = ""
+                capId = ""
+                # Extract DRIVER dependencies from Pin Name
+                pinName = pinCtrl.get('name')
+                if pinName != None:
+                    newDep = getDriverDependencyFromPinName(pinName);
+                    if (newDep != ""):
+                        depId = newDep
+                    
+                # Extract PLIB capabilities from Pin Function
+                if pinFunction != None and pinFunction != 'GPIO':
+                    newCap = pinFunction.upper().split('_')[0].lower()
+                    # Check exceptions
+                    if newCap not in ['gmac']:
+                        capId = newCap
 
-                    # Extract PLIB capabilities from Pin Name (I2C_BB)
-                    # if "i2c_bb" in pinName.lower():
-                    #     capId = "i2c_bb"
-                    if (pinFunction == 'GPIO') and (signalId in ['sda', 'scl']):
+                # GPIOs don't have dependencies, except I2C_BB
+                # Extract PLIB capabilities from Pin Name (I2C_BB)
+                if (pinFunction == 'GPIO'):
+                    if (signalId in ['sda', 'scl']):
                         capId = "i2c_bb"
-                        
-                    # print("CHRIS dbg >> __signalEnableCallback Autodetect dependency [{},{}]".format(depId, capId))
+                    else:
+                        autodetectDeps = False
+
+                if autodetectDeps == True:
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback Autodetect dependency [{},{}]".format(depId, capId))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback dependencies tmp: {}".format(dependencies))
                     if depId != "" or capId != "":
-                        if depId != "":
-                            capIdPrev = dependencies.get(depId)
-                            if capIdPrev == None or capIdPrev == "":
+                        addDependency = True
+                        for depIdItem, capIdItem in dependencies.items():
+                            if capIdItem == capId:
+                                addDependency = False
+                                break;
+
+                        if addDependency == True:
+                            if depId != "":
+                                capIdPrev = dependencies.get(depId)
+                                if capIdPrev == None or capIdPrev == "":
+                                    dependencies[depId] = capId
+                            else:
                                 dependencies[depId] = capId
-                        else:
-                            dependencies[depId] = capId
                             
                 # Set/Clear PIN configuration               
                 if event["value"] is True:
                     # Check if that pin is already added                    
                     if not pinId in self.__configuredPins:
-                        # print("CHRIS dbg >> __signalEnableCallback set Pin {}".format(pinId))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback set Pin {}".format(pinId))
                         self.__configuredPins.append(pinId)
                         self.__pinControlByPinId.setdefault(pinId, pinCtrl)
                         self.__setPinConfig(pinCtrl)
@@ -625,13 +629,13 @@ class MainBoard:
                 else:
                     # Check if that pin has to be removed
                     if pinId in self.__configuredPins:
-                        # print("CHRIS dbg >> __signalEnableCallback clear Pin {}".format(pinId))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback clear Pin {}".format(pinId))
                         self.__configuredPins.remove(pinId)
                         del self.__pinControlByPinId[pinId]
                         self.__clearPinConfig(pinCtrl)
                         disabledPinIdList.setdefault(pinId, pinDescr)
 
-            print("CHRIS dbg >> __signalEnableCallback dependencies: {}".format(dependencies))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback dependencies: {}".format(dependencies))
 
             # Activate/Deactivate components and create connections
             self.__updateDriverConnections(event["value"], dependencies, connectorName)
@@ -643,7 +647,7 @@ class MainBoard:
             self.__shdCheckCollisionSymbol.setValue(event["value"])
 
             self.__signalCallbackBusy = False
-            # print("CHRIS dbg >> __signalEnableCallback __configuredPins: {}".format(self.__configuredPins))
+            # self.__log.writeDebugMessage("CHRIS dbg >> __signalEnableCallback __configuredPins: {}".format(self.__configuredPins))
 
     def __getSymbolLabel(self, name, function, subSignal, pinNumber, pinId):
         if subSignal is None:
@@ -661,23 +665,51 @@ class MainBoard:
         id = symbol.getID()
         connectorSymbolName = id.replace("_DUMMY", "")
         connectorName = self.getConnectorNameFromSymbolName(connectorSymbolName)
-        # print("CHRIS dbg >> __connectClickBoard: {} - {}".format(id, clickBoardSelection))
+        # self.__log.writeDebugMessage("CHRIS dbg >> __connectClickBoard: {} - {}".format(id, clickBoardSelection))
 
         self.resetConnectorConfig(connectorName)
 
         if clickBoardSelection == "Select click board":
-            # print("CHRIS dbg >> __connectClickBoard: resetConnectorConfig - {}".format(connectorName))
             if self.__depBindings.get(connectorName) != None:
                 del self.__depBindings[connectorName]
+            # self.__log.writeDebugMessage("CHRIS dbg >> __connectClickBoard: resetConnectorConfig - {} self.__depBindings:{}".format(connectorName, self.__depBindings))
         else:
             clickBoardInterface = self.__clickBoards.get(clickBoardSelection)
-            pinControl = clickBoardInterface.getConnections()
-            # print("CHRIS dbg >> __connectClickBoard: pinControl - {}".format(pinControl))
-            bindings = clickBoardInterface.getDependencies()
-            if bindings != None:
-                self.__depBindings.setdefault(connectorName, bindings)
-                print("CHRIS dbg >> __connectClickBoard: __setAdditionalDependencies: {}".format(self.__depBindings))
-            self.setConnectorConfig(connectorName, pinControl)
+            pinControlClickBoard = clickBoardInterface.getConnections()
+            # self.__log.writeDebugMessage("CHRIS dbg >> __connectClickBoard: pinControlClickBoard - {}".format(pinControlClickBoard))
+            
+            bindingList = clickBoardInterface.getDependencies()
+            # self.__log.writeDebugMessage("CHRIS dbg >> __connectClickBoard: bindingList - {}".format(bindingList))
+            index = 0
+            for depIdCon, signalCon in bindingList:
+                pinControlConnector = self.getPinControlByConnectorName(connectorName)
+                pinControlSignal = pinControlConnector.get(signalCon)
+                if pinControlSignal != None:
+                    pinFunction = pinControlSignal.get("function")
+                    if pinFunction == None: # this is a bus signals (usart, i2c, spi)
+                        if signalCon == 'spi':
+                            pinFunction = pinControlSignal.get("mosi").get("function")
+                        elif signalCon == 'uart':
+                            pinFunction = pinControlSignal.get("tx").get("function")
+                        elif signalCon == 'i2c':
+                            pinFunction = pinControlSignal.get("sda").get("function")
+
+                    if pinFunction != None:
+                        pinFunction = pinFunction.upper()
+                        if pinFunction != 'GPIO':
+                            plib = pinFunction.split("_")
+                            if len(plib) > 1:
+                                plib = plib[0]
+                            # Overwrite the current element of the bindingList
+                            bindingList[index] = [depIdCon, plib.lower()]
+                            # self.__log.writeDebugMessage("CHRIS dbg >> __connectClickBoard added bindingList[{}]: {}".format(index, bindingList[index]))
+
+                index = index + 1
+                            
+                self.__depBindings.setdefault(connectorName, bindingList)
+                # self.__log.writeDebugMessage("CHRIS dbg >> __connectClickBoard: __setAdditionalDependencies: {}".format(self.__depBindings))
+                
+            self.setConnectorConfig(connectorName, pinControlClickBoard)
          
     def getName(self):
         return self.__currentConfig.get('name')
@@ -823,7 +855,7 @@ class MainBoard:
     def getPinControlListByConnectorSignal(self, connectorName, connectorSignal):
         pinControlList = []
         for connector in self.__currentConfig['connectors']:
-            # print("CHRIS dbg >> getPinControlListByConnectorSignal: {} - {}".format(connector['name'], connectorName))
+            # self.__log.writeDebugMessage("CHRIS dbg >> getPinControlListByConnectorSignal: {} - {}".format(connector['name'], connectorName))
             if connector['name'] == connectorName:
                 signalControl = connector['pinctrl'].get(connectorSignal)
                 if signalControl != None:
@@ -840,12 +872,12 @@ class MainBoard:
 
     def updatePinControlByConnector(self, connectorName, newPinControl):
         for connector in self.__currentConfig['connectors']:
-            # print("SHD updatePinControlByConnector {} == {}".format(connector['name'], connectorName))
+            # self.__log.writeDebugMessage("SHD updatePinControlByConnector {} == {}".format(connector['name'], connectorName))
             if connector['name'] == connectorName:
                 pinControlCurrent = connector['pinctrl']
                 break
 
-        # print("SHD updatePinControlByConnector pinControlCurrent 1: {}".format(pinControlCurrent))
+        # self.__log.writeDebugMessage("SHD updatePinControlByConnector pinControlCurrent 1: {}".format(pinControlCurrent))
         for signal, newConfig in newPinControl.items():
             if newConfig.get('name') != None:
                 # Single Pin
@@ -861,19 +893,19 @@ class MainBoard:
                     for key in newSubConfig:
                         pinControlCurrent[signal][subSignal][key] = newSubConfig[key]   
 
-        # print("SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
+        # self.__log.writeDebugMessage("SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
 
     def restorePinControlByConnector(self, connectorName):
         connectorIndex = 0
         for connector in self.__currentConfig['connectors']:
-            # print("CHRIS dbg >> restorePinControlByConnector: {} - {}".format(connector['name'], connectorName))
+            # self.__log.writeDebugMessage("CHRIS dbg >> restorePinControlByConnector: {} - {}".format(connector['name'], connectorName))
             if connector['name'] == connectorName:
                 pinControlCurrent = connector['pinctrl']
                 break
             else:
                 connectorIndex = connectorIndex + 1
 
-        # print("CHRIS dbg >> restorePinControlByConnector: connectorIndex: {}".format(connectorIndex))
+        # self.__log.writeDebugMessage("CHRIS dbg >> restorePinControlByConnector: connectorIndex: {}".format(connectorIndex))
         pinControlDefault = self.__defaultConfig['connectors'][connectorIndex]['pinctrl']
         
         for signal in pinControlCurrent:
@@ -896,7 +928,7 @@ class MainBoard:
         return "{}_{}".format(connectorSignalName, pinId.upper())
 
     def setConnectorConfig(self, connectorName, pinCtrl):
-        # print("SHD setConnectorConfig connectorName: {}, pinCtrl: {}".format(connectorName, pinCtrl))
+        # self.__log.writeDebugMessage("SHD setConnectorConfig connectorName: {}, pinCtrl: {}".format(connectorName, pinCtrl))
         board = self.__db.getComponentByID(self.__interfaceID)
         
         # Update Pin Control of the Main Board by Connector
@@ -905,17 +937,17 @@ class MainBoard:
         # Update Configuration Options by Connector
         signalList = self.getSignalListByConnectorName(connectorName)
         signalList.sort(reverse=True)
-        # print("CHRIS dbg: setConnectorConfig signalList: {}".format(signalList))
+        # self.__log.writeDebugMessage("CHRIS dbg: setConnectorConfig signalList: {}".format(signalList))
         for signal in signalList:
             # Enable/Disable signals
             connectorSignalName = self.getConnectorSignalSymbolName(connectorName, signal)
             signalSymbol = board.getSymbolByID(connectorSignalName)
             if pinCtrl.get(signal) != None:
-                # print("CHRIS dbg: setConnectorConfig Enable symbol: {}".format(connectorSignalName))
+                # self.__log.writeDebugMessage("CHRIS dbg: setConnectorConfig Enable symbol: {}".format(connectorSignalName))
                 signalSymbol.setValue(True)
                 
                 pinDescriptionList = self.getDescriptionListByConnectorSignal(connectorName, signal)
-                # print("CHRIS dbg: setConnectorConfig pinDescriptionList: {}".format(pinDescriptionList))
+                # self.__log.writeDebugMessage("CHRIS dbg: setConnectorConfig pinDescriptionList: {}".format(pinDescriptionList))
                 # Update Symbol label
                 for pinDescription in pinDescriptionList:
                     if len(pinDescription) == 4:
@@ -926,10 +958,10 @@ class MainBoard:
                         label = self.__getSymbolLabel(name, function, subSignal, pinNumber, pinId)
                         # Handle SPI CS exception (configuration option is not allowed)
                         if subSignal.lower() == 'cs' and function != "GPIO":
-                            # print("CHRIS dbg >> Handle SPI CS exception - subSignal: {}".format(subSignal.lower())) 
+                            # self.__log.writeDebugMessage("CHRIS dbg >> Handle SPI CS exception - subSignal: {}".format(subSignal.lower())) 
                             symbolName = self.__symbolNamesByConnector[connectorName][pinId]
                             shdSpiCSConfigSymbolName = "{}_{}".format(symbolName, "CSASGPIO")
-                            # print("CHRIS dbg >> CS set Visible: {}".format(shdSpiCSConfigSymbolName))
+                            # self.__log.writeDebugMessage("CHRIS dbg >> CS set Visible: {}".format(shdSpiCSConfigSymbolName))
                             signalSpiCsPinSymbol = board.getSymbolByID(shdSpiCSConfigSymbolName)
                             signalSpiCsPinSymbol.setVisible(True)
 
@@ -937,14 +969,14 @@ class MainBoard:
                     signalPinSymbol.setLabel(label)
 
             # else:
-            #     # print("CHRIS dbg: Disable symbol: {}".format(connectorSignalName))
+            #     # self.__log.writeDebugMessage("CHRIS dbg: Disable symbol: {}".format(connectorSignalName))
             #     signalSymbol.setValue(False)
             #     signalSymbol.setVisible(False)
 
             # signalSymbol.setReadOnly(True)
             
     def resetConnectorConfig(self, connectorName):
-        # print("SHD restoreConnections connectorName: {}".format(connectorName))
+        # self.__log.writeDebugMessage("SHD restoreConnections connectorName: {}".format(connectorName))
         board = self.__db.getComponentByID(self.__interfaceID)
         
         # Restore Pin Control by default of the Main Board by Connector
@@ -980,7 +1012,7 @@ class MainBoard:
 
     def handleMessage(self, id, args):
         retDict = {}
-        # print("mainBoard handleMessage: {} args: {}".format(id, args))
+        # self.__log.writeDebugMessage("mainBoard handleMessage: {} args: {}".format(id, args))
         if (id == "CONNECTOR_SET_CONFIGURATION"):
             for connectorName, pinCtrl in args.items():
                 self.setConnectorConfig(connectorName, pinCtrl)
@@ -1106,6 +1138,7 @@ class MainBoard:
 
         # INTERFACE DEFINITIONS -----------------------------------------------
         boardInterfaces = self.__currentConfig.get('interfaces')
+        # self.__log.writeDebugMessage("CHRIS dbg >> boardInterfaces: {}".format(boardInterfaces))
         if boardInterfaces != None:
             shdInterfaceList = boardInterface.createMenuSymbol("SHD_MAINBOARD_INTERFACES", None)
             shdInterfaceList.setLabel("Interfaces")
@@ -1117,6 +1150,7 @@ class MainBoard:
             interfaceList = self.getInterfaceList()
             interfaceIndex = 0
             for interface in self.__currentConfig.get('interfaces'):
+                # self.__log.writeDebugMessage("CHRIS dbg >> boardInterfaces interface: {}".format(interface))
                 hasOptions = interface.get('options') != None
                 if hasOptions:
                     interfaceName = "SHD_MAINBOARD_INTERFACE_{}".format(interfaceIndex)
@@ -1136,9 +1170,9 @@ class MainBoard:
                         self.__symbolInterfaces.setdefault(optionSymbolName, symbol)
 
                         pinControlList = self.getDescriptionListByInterface(interfaceIndex, optionIndex)
-                        # print("CHRIS dbg >> option pinControlList: {}".format(pinControlList))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> option pinControlList: {}".format(pinControlList))
                         for pinControl in pinControlList:
-                            # print("CHRIS dbg >> option pinControl: {}".format(pinControl))
+                            # self.__log.writeDebugMessage("CHRIS dbg >> option pinControl: {}".format(pinControl))
                             pinControlIndex, function, pinId = pinControl
                             symbolName = "{}_{}_{}".format(optionSymbolName, pinControlIndex, pinId)
                             shdConfigComment = boardInterface.createCommentSymbol(symbolName, symbol)
@@ -1170,9 +1204,9 @@ class MainBoard:
                     self.__symbolInterfaces.setdefault(interfaceSymbolName, symbol)
 
                     pinControlList = self.getDescriptionListByInterface(interfaceIndex)
-                    # print("CHRIS dbg >> pinControlList: {}".format(pinControlList))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> pinControlList: {}".format(pinControlList))
                     for pinControl in pinControlList:
-                        # print("CHRIS dbg >> pinControl: {}".format(pinControl))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> pinControl: {}".format(pinControl))
                         pinControlIndex, function, pinId = pinControl
                         symbolName = "{}_{}_{}".format(interfaceSymbolName, pinControlIndex, pinId)
                         shdConfigComment = boardInterface.createCommentSymbol(symbolName, symbol)
@@ -1195,7 +1229,7 @@ class MainBoard:
                 interfaceIndex = interfaceIndex + 1
                 
             shdInterfaceList.setDependencies(self.__signalEnableCallback, interfaceDependencies)
-            # print("CHRIS dbg >> interfaceDependencies: {}".format(interfaceDependencies))
+            # self.__log.writeDebugMessage("CHRIS dbg >> interfaceDependencies: {}".format(interfaceDependencies))
             
             # Add collision data
             self.__collisionsByPinID = deepcopy(self.__symbolInterfaceByPin)
@@ -1203,7 +1237,7 @@ class MainBoard:
         # EXTERNAL CONNECTORS DEFINITIONS -------------------------------------
         boardConnectors = self.__currentConfig.get('connectors')
         if boardConnectors != None:
-            # print("CHRIS dbg >> createMenuSymbol: SHD_MAINBOARD_CONNECTORS")
+            # self.__log.writeDebugMessage("CHRIS dbg >> createMenuSymbol: SHD_MAINBOARD_CONNECTORS")
             shdConnectorList = boardInterface.createMenuSymbol("SHD_MAINBOARD_CONNECTORS", None)
             shdConnectorList.setLabel("External Connectors")
             shdConnectorList.setDescription("List of external connectors")
@@ -1226,7 +1260,7 @@ class MainBoard:
                     clickBoardSelection = ['No click board available']
                 
                 connectorSymbolName = self.getConnectorSymbolName(conName)
-                # print("CHRIS dbg >> createMenuSymbol: {}".format(connectorSymbolName))
+                # self.__log.writeDebugMessage("CHRIS dbg >> createMenuSymbol: {}".format(connectorSymbolName))
                 shdConnectorSymbol = boardInterface.createComboSymbol(connectorSymbolName, shdConnectorList, clickBoardSelection)
                 shdConnectorSymbol.setLabel(conName)            
                 shdConnectorSymbol.setDefaultValue(clickBoardSelection[0])
@@ -1244,7 +1278,7 @@ class MainBoard:
                 signalList = self.getSignalListByConnector(conIndex)
                 for signal in signalList:
                     connectorSignalName = self.getConnectorSignalSymbolName(conName, signal)
-                    # print("CHRIS dbg >> createBooleanSymbol: {}".format(connectorSignalName))
+                    # self.__log.writeDebugMessage("CHRIS dbg >> createBooleanSymbol: {}".format(connectorSignalName))
                     shdConSignalSymbol = boardInterface.createBooleanSymbol(connectorSignalName, shdConnectorSymbol)
                     shdConSignalSymbol.setLabel(signal.upper())
                     shdConSignalSymbol.setDescription("Enable {} : {}".format(conName, signal.upper()))
@@ -1254,7 +1288,7 @@ class MainBoard:
                     
                     pinDescriptionList = self.getDescriptionListByConnectorSignal(conName, signal)
                     for pinDescription in pinDescriptionList:
-                        # print("CHRIS dbg >> pinDescription: {}".format(pinDescription))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> pinDescription: {}".format(pinDescription))
                         spiCSdetected = False
                         # Check if single signal or signal group
                         if len(pinDescription) == 4:
@@ -1265,17 +1299,17 @@ class MainBoard:
                             label = self.__getSymbolLabel(name, function, subSignal, pinNumber, pinId)
                             if subSignal.lower() == 'cs' and function != "GPIO":
                                 # Defined as peripheral CS, but it can be configured as GPIO.
-                                # print("CHRIS dbg >> Handle SPI CS exception: {} {} {} {} {}".format(name, function, subSignal, pinNumber, pinId))
+                                # self.__log.writeDebugMessage("CHRIS dbg >> Handle SPI CS exception: {} {} {} {} {}".format(name, function, subSignal, pinNumber, pinId))
                                 # Handle SPI CS exception
                                 spiCSdetected = True
                             
                         shdConPinControlSymbolName = self.getConnectorSignalPinSymbolName(conName, signal, pinId)
                         # Store the Symbol name to be used in click Boards connection events
                         symbolNamesByPinId.setdefault(pinId, shdConPinControlSymbolName)
-                        # print("CHRIS dbg >> symbolNamesByPinId: {}".format(symbolNamesByPinId))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> symbolNamesByPinId: {}".format(symbolNamesByPinId))
 
-                        # print("CHRIS dbg >> conPinControlName: ", conPinControlName)
-                        # print("CHRIS dbg >> createCommentSymbol: {}".format(shdConPinControlSymbolName))
+                        # self.__log.writeDebugMessage("CHRIS dbg >> conPinControlName: ", conPinControlName)
+                        # self.__log.writeDebugMessage("CHRIS dbg >> createCommentSymbol: {}".format(shdConPinControlSymbolName))
                         shdConPinControlSymbol = boardInterface.createCommentSymbol(shdConPinControlSymbolName, shdConSignalSymbol)
                         shdConPinControlSymbol.setLabel(label)
                         shdConPinControlSymbol.setVisible(False)
@@ -1296,7 +1330,7 @@ class MainBoard:
                         # Check SPI CS exception. It could be handled as GPIO. Add configuration option.
                         if spiCSdetected == True:
                             shdSpiCSConfigSymbolName = "{}_{}".format(shdConPinControlSymbolName, "CSASGPIO")
-                            # print("CHRIS dbg >> createBooleanSymbol: {}".format(shdSpiCSConfigSymbolName))
+                            # self.__log.writeDebugMessage("CHRIS dbg >> createBooleanSymbol: {}".format(shdSpiCSConfigSymbolName))
                             shdSpiCSConfigSymbol = boardInterface.createBooleanSymbol(shdSpiCSConfigSymbolName, shdConPinControlSymbol)
                             shdSpiCSConfigSymbol.setLabel("Drive CS signal as GPIO")
                             shdSpiCSConfigSymbol.setDescription("Drive CS signal as GPIO")
@@ -1304,7 +1338,7 @@ class MainBoard:
                             shdSpiCSConfigSymbol.setHelp(shdMainBoardHelp)
                             self.__symbolInterfaces.setdefault(shdSpiCSConfigSymbolName, shdSpiCSConfigSymbol)
 
-                            # print("CHRIS dbg >> spiCSdetected connectorSignalName: {} shdSpiCSConfigSymbolName: {}".format(connectorSignalName, shdSpiCSConfigSymbolName))
+                            # self.__log.writeDebugMessage("CHRIS dbg >> spiCSdetected connectorSignalName: {} shdSpiCSConfigSymbolName: {}".format(connectorSignalName, shdSpiCSConfigSymbolName))
                             shdConPinControlSymbol.setDependencies(self.__showSymbol, [connectorSignalName, shdSpiCSConfigSymbolName])
 
                         else:
@@ -1314,7 +1348,7 @@ class MainBoard:
                     
                 self.__symbolNamesByConnector.setdefault(conName, symbolNamesByPinId)
                 shdConnectorSymbol.setDependencies(self.__signalEnableCallback, connectorDependencies)
-                # print("CHRIS dbg >> connectorDependencies: {}".format(connectorDependencies))
+                # self.__log.writeDebugMessage("CHRIS dbg >> connectorDependencies: {}".format(connectorDependencies))
 
         # remove no collision data
         for key, value in self.__collisionsByPinID.items():
@@ -1322,19 +1356,19 @@ class MainBoard:
                 self.__collisionsByPinID.pop(key, value)
 
         # for key, symbolList in self.__symbolInterfaceByPin.items():
-        #     print("CHRIS dbg >> self.__symbolInterfaceByPin: {}: {}".format(key, symbolList))
+        #     self.__log.writeDebugMessage("CHRIS dbg >> self.__symbolInterfaceByPin: {}: {}".format(key, symbolList))
 
         # for key, value in self.__symbolNamesByConnector.items():
-        #     print("CHRIS dbg >> self.__symbolNamesByConnector: {}: {}".format(key, value))
+        #     self.__log.writeDebugMessage("CHRIS dbg >> self.__symbolNamesByConnector: {}: {}".format(key, value))
 
         # for key, value in self.__collisionsByPinID.items():
-        #     print("CHRIS dbg >> self.__collisionsByPinID: {}: {}".format(key, value))
+        #     self.__log.writeDebugMessage("CHRIS dbg >> self.__collisionsByPinID: {}: {}".format(key, value))
 
         # for key, value in self.__symbolPinByParent.items():
-        #     print("CHRIS dbg >> self.__symbolPinByParent: {}: {}".format(key, value))
+        #     self.__log.writeDebugMessage("CHRIS dbg >> self.__symbolPinByParent: {}: {}".format(key, value))
 
     def resetSignalConfiguration(self):
-        print("CHRIS dbg >> resetSignalConfiguration: {}".format(self.__configuredPins))
+        # self.__log.writeDebugMessage("CHRIS dbg >> resetSignalConfiguration: {}".format(self.__configuredPins))
         for pinId in self.__configuredPins:
             pinControl = self.__pinControlByPinId.get(pinId)
             if pinControl != None:

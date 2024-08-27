@@ -7,45 +7,6 @@ processor:
   family: SAME
   series: SAME54
 
-settings:
-  - name: Audio Clock Selection
-    description: Use the Jumper 401 to select Master Mode (PA08-MCLK) or Slave Mode (MCLK-PA17)
-    type: pinSelect
-    pinValues:
-      - name: disabled
-        description: Disabled
-      - name: master
-        description: Master mode
-        pinctrl:
-          pinId: PA08
-          name: X32_I2C_MCK
-          function: I2S_MCK0
-      - name: slave
-        description: Slave mode
-        pinctrl:
-          pinId: PA17
-          name: X32_SLAVE_GCLK
-          function: GCLK_IO3
-
-  - name: Key Value Selection
-    description: This is a test of Key Value Setting
-    type: keyValue
-    keyValues:
-      - key: KEY_VALUE_0
-        description: Key Value 0 Mode
-      - key: KEY_VALUE_1
-        description: Key Value 1 mode
-
-  - name: Integer Value Setting
-    description: This is a test of Integer Value Setting
-    type: integer
-    value: 120
-
-  - name: String Value Setting
-    description: This is a test of String Value Setting
-    type: string
-    value: "STRING_VALUE_TEST"
-
 interfaces:
   - name: Digital interface
     description: Button and Led configurations
@@ -185,6 +146,7 @@ interfaces:
     options:
       - name: Ethernet RMII interface
         description: Ethernet GMAC configuration
+        dependencies: [[drvGmac, drvExtPhyKsz8091]]
         pinctrl:
           gtxen:
             pinId: PA17

@@ -21,16 +21,6 @@
 * ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
 * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *****************************************************************************"""
-# from db_event import Event
-# from harmony_sdk.typedefs.atdf import typeAsATDF
-# from harmony_sdk.typedefs.component.component_at_init import ComponentAtInit
-# from harmony_sdk.typedefs.database import typeAsDatabase
-# from harmony_sdk.typedefs.log import typeAsLog
-# from harmony_sdk.typedefs.module import typeAsModule
-# from harmony_sdk.typedefs.symbol.keyvalueset_symbol import KeyValueSetSymbol
-# from harmony_sdk.typedefs.symbol.string_symbol import StringSymbol
-# from harmony_sdk.typedefs.variables import typeAsVariables
-
 
 from mainBoard.mainBoard import MainBoard
 
@@ -44,7 +34,12 @@ def instantiateComponent(boardComponent):
     global mainBoard
 
     # Create new instance of the SHD mainBoard
-    mainBoard = MainBoard("sam_c21_pim_mc_mclv2.yml", Database, ATDF)
+    context = dict()
+    context["configuration"] = "sam_c21_pim_mc_mclv2.yml"
+    context["database"] = Database
+    context["atdf"] = ATDF
+    context["log"] = Log
+    mainBoard = MainBoard(context)
     boardName = mainBoard.getName()
 
     if mainBoard != None:
