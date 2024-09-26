@@ -1,5 +1,4 @@
 name: EEPROM 10 click
-config: eeprom_10_click.py
 description:  >
   EEPROM 10 click features the N24C32, 
   a 32Kb I2C CMOS Serial EEPROM from 

@@ -594,7 +594,8 @@ class MainBoard:
                 # GPIOs don't have dependencies, except I2C_BB
                 # Extract PLIB capabilities from Pin Name (I2C_BB)
                 if (pinFunction == 'GPIO'):
-                    if (signalId in ['sda', 'scl']):
+                    pinNameLower = pinName.lower()
+                    if "i2c_bb" in pinNameLower or "_scl" in pinNameLower or "_sda" in pinNameLower:
                         capId = "i2c_bb"
                     else:
                         autodetectDeps = False

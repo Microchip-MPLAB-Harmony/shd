@@ -1,5 +1,4 @@
 name: EEPROM 3 click
-config: eeprom_3_click.py
 description: >
   The EEPROM module used on the EEPROM 3 click is the AT24CM02, 
   an I2C serial EEPROM from Microchip, with the memory cell 

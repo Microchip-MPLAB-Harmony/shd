@@ -1,5 +1,4 @@
 name: I/O1 Xplained Pro
-config: io1_xplained_pro.py
 description: >
   I/O1 Xplained Pro provides a light sensor, temperature sensor, and microSD card. 
   It connects to the extension headers of any Xplained Pro Evaluation Kit.

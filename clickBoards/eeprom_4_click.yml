@@ -1,5 +1,4 @@
 name: EEPROM 4 click
-config: eeprom_4_click.py
 description: >
   The EEPROM module used on the EEPROM 4 click is the AT25M02, 
   an SPI serial EEPROM from Microchip, with the memory cell 

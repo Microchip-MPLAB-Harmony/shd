@@ -13,6 +13,7 @@ __drvDependencies = {
     'a_drv_i2s': 'I2S',
     'drv_sdspi': 'SPI',
     'drvPlcPhy': 'SPI',
+    'drvG3MacRt': 'SPI',
     'stdio': 'UART',
     'sys_console': 'UART',
     'X2CScope': 'UART',
@@ -642,14 +643,14 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
 
     return (componentID, msgID, params)
 
-def __getConfigDatabaseDrvPlcPhy(settings):
+def __getConfigDatabaseDrvPlc(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
 
     configDB = dict()
 
     if (functionValue.lower() == "gpio") or (signalId in ["cs", "int", "irq"]):
         if "PL360" in nameValue.upper() or "PL460" in nameValue.upper():
-            configDB.setdefault('msgID', 'DRVPLCPHY_CONFIG_HW_IO')
+            configDB.setdefault('msgID', 'DRVPLC_CONFIG_HW_IO')
             configDB.setdefault('config', (signalId, pinId, functionValue, nameValue, enable))
     
     return configDB
@@ -730,8 +731,8 @@ def getDBMsgDriverConfiguration(settings):
     configDB = dict()
     params = dict()
 
-    if driver == 'drvPlcPhy':
-        configDB = __getConfigDatabaseDrvPlcPhy(settings)
+    if driver == 'drvPlcPhy' or driver == 'drvG3MacRt':
+        configDB = __getConfigDatabaseDrvPlc(settings)
     elif driver == 'X2CScope':
         configDB = __getConfigDatabaseDrvX2CScope(settings)
     elif driver == 'pmsm_foc':
@@ -758,96 +759,99 @@ def getDBMsgDriverConfiguration(settings):
 def getAutoconnectTable(family, idDependency, idCapability):
     connectionTable = []
     # print("CHRIS dbg >> getAutoconnectTable dep:{} cap:{}".format(idDependency, idCapability)) 
-    for depId, capId in __drvDependencies.items():
-        exception = False
-        depToCheck = idDependency
-        
-        # Remove instance number if needed from dep to check
-        idDepSplit = idDependency.split("_")
-        if idDepSplit[-1].isdigit():
-            depToCheck = "_".join(idDepSplit[:-1])
-            
-        if depId == depToCheck:
-            connection = []
-            # Add dependency
-            connection.append(idDependency)
-            # handle name exceptions
-            if 'a_drv_i2s' == depId:
-                depType = depId.replace('a_', '')
-            elif 'audio_codec_ak495' in idDependency:
-                depType = idCapability # could be I2C or I2S
-            elif 'stdio' == depId:
-                exception = True
-                depType = "UART"
-            elif 'X2CScope' == depId:
-                exception = True
-                depType = "x2cScopeUartDependency"
-            elif 'pmsm_foc' == depId:
-                exception = True
-                plib = "".join(filter(lambda x: x.isalpha(), idCapability.lower()))
-                if plib == 'adc' or plib == 'afec' or plib == 'adchs':
-                    depType = "pmsmfoc_ADC"
-                elif plib == 'tcc' or plib == "pwm" or plib == "mcpwm":
-                    depType = "pmsmfoc_PWM"
-                    capId = "PWM"
-                elif plib == 'dsci':
-                    depType = "pmsmfoc_X2CSCOPE"
-                else:
-                    # print("CHRIS dbg >> getAutoconnectTable skip pmsm_foc: plib:{}".format(plib)) 
-                    continue
-                
-                # print("CHRIS dbg >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType)) 
-            elif 'drvGmac' == depId:
-                exception = True
-                # print("CHRIS dbg >> getAutoconnectTable drvGmac: family:{} - depId:{}".format(family, depId)) 
-                if family == "SAMA":
-                    instance = "".join(filter(lambda x: x.isdigit(), idDependency))
-                    depType = "GMAC{}_PHY_Dependency".format(instance)
-                if family == "SAME":
-                    depType = "GMAC_PHY_Dependency"
-                else:
-                    depType = "ETH_PHY_Dependency"
-            elif 'le_gfx_lcdc' == depId:
-                exception = True
-                depType = "LCDC"
-            elif 'drvEmac' == depId:
-                exception = True
-                # get Instance number
-                instance = "".join(filter(lambda x: x.isdigit(), idDependency))
-                depType = "MAC_PHY_Dependency{}".format(instance)
-            else:
-                depType = depId
 
-            if exception == True:
-                connection.append("{}".format(depType))
-            else:
-                connection.append("{}_{}_dependency".format(depType, capId))
-            
-            # Add capability
-            # handle name exceptions
+    if idDependency != "":
+        for depId, capId in __drvDependencies.items():
             exception = False
-            connection.append(idCapability)
-            if idCapability == "i2c_bb":
-                idCapability = "I2C"
-                exception = True
-            elif family == "PIC32MX":
-                if "a_i2s" in capId[:5]:
-                    instance = idCapability[-1]
-                    idCapability = "I2S{}_I2S".format(instance)
-                    exception = True
-            else:
-                if idCapability[:2] == 'a_':
-                    idCapability = idCapability.replace("a_", "")
-                elif 'drvExtPhy' in idCapability:
-                    exception = True
-                    idCapability = "lib{}".format(idCapability)
-
-            if exception == True:
-                connection.append("{}".format(idCapability))
-            else:
-                connection.append("{}_{}".format(idCapability.upper(), capId))
+            depToCheck = idDependency
             
-            connectionTable.append(connection)
+            # Remove instance number if needed from dep to check
+            idDepSplit = idDependency.split("_")
+            if idDepSplit[-1].isdigit():
+                depToCheck = "_".join(idDepSplit[:-1])
+
+            # print("CHRIS dbg >> getAutoconnectTable depId:{} depToCheck:{}".format(depId, depToCheck)) 
+            if depId == depToCheck:
+                connection = []
+                # Add dependency
+                connection.append(idDependency)
+                # handle name exceptions
+                if 'a_drv_i2s' == depId:
+                    depType = depId.replace('a_', '')
+                elif 'audio_codec_ak495' in idDependency:
+                    depType = idCapability # could be I2C or I2S
+                elif 'stdio' == depId:
+                    exception = True
+                    depType = "UART"
+                elif 'X2CScope' == depId:
+                    exception = True
+                    depType = "x2cScopeUartDependency"
+                elif 'pmsm_foc' == depId:
+                    exception = True
+                    plib = "".join(filter(lambda x: x.isalpha(), idCapability.lower()))
+                    if plib == 'adc' or plib == 'afec' or plib == 'adchs':
+                        depType = "pmsmfoc_ADC"
+                    elif plib == 'tcc' or plib == "pwm" or plib == "mcpwm":
+                        depType = "pmsmfoc_PWM"
+                        capId = "PWM"
+                    elif plib == 'dsci':
+                        depType = "pmsmfoc_X2CSCOPE"
+                    else:
+                        # print("CHRIS dbg >> getAutoconnectTable skip pmsm_foc: plib:{}".format(plib)) 
+                        continue
+                    
+                    # print("CHRIS dbg >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType)) 
+                elif 'drvGmac' == depId:
+                    exception = True
+                    # print("CHRIS dbg >> getAutoconnectTable drvGmac: family:{} - depId:{}".format(family, depId)) 
+                    if family == "SAMA":
+                        instance = "".join(filter(lambda x: x.isdigit(), idDependency))
+                        depType = "GMAC{}_PHY_Dependency".format(instance)
+                    if family == "SAME":
+                        depType = "GMAC_PHY_Dependency"
+                    else:
+                        depType = "ETH_PHY_Dependency"
+                elif 'le_gfx_lcdc' == depId:
+                    exception = True
+                    depType = "LCDC"
+                elif 'drvEmac' == depId:
+                    exception = True
+                    # get Instance number
+                    instance = "".join(filter(lambda x: x.isdigit(), idDependency))
+                    depType = "MAC_PHY_Dependency{}".format(instance)
+                else:
+                    depType = depId
+
+                if exception == True:
+                    connection.append("{}".format(depType))
+                else:
+                    connection.append("{}_{}_dependency".format(depType, capId))
+                
+                # Add capability
+                # handle name exceptions
+                exception = False
+                connection.append(idCapability)
+                if idCapability == "i2c_bb":
+                    idCapability = "I2C"
+                    exception = True
+                elif family == "PIC32MX":
+                    if "a_i2s" in capId[:5]:
+                        instance = idCapability[-1]
+                        idCapability = "I2S{}_I2S".format(instance)
+                        exception = True
+                else:
+                    if idCapability[:2] == 'a_':
+                        idCapability = idCapability.replace("a_", "")
+                    elif 'drvExtPhy' in idCapability:
+                        exception = True
+                        idCapability = "lib{}".format(idCapability)
+
+                if exception == True:
+                    connection.append("{}".format(idCapability))
+                else:
+                    connection.append("{}_{}".format(idCapability.upper(), capId))
+                
+                connectionTable.append(connection)
 
     # print("CHRIS dbg >> getAutoconnectTable connectionTable:{}".format(connectionTable)) 
     return connectionTable
