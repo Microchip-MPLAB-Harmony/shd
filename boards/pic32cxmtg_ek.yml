@@ -240,7 +240,7 @@ connectors:
         name: Xplained_Pro_IRQ
         function: GPIO
         direction: in
-        latch: low
+        pull down: True
         interrupt: falling edge
       gpio ss:
         pinId: PB15
