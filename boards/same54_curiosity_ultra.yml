@@ -16,7 +16,7 @@ interfaces:
         pinctrl:
           gpio:
             pinId: PC21
-            name: LED0
+            name: LED1
             function: GPIO
             direction: out
             latch: high
@@ -95,7 +95,6 @@ interfaces:
           quio3:
             pinId: PA11
             function: QSPI_DATA3
-            pull up: True
       - name: AT24MAC402 interface
         description: Serial EEPROM with EIA-48 MAC address
         dependencies: [[drv_at24, sercom6]]
@@ -544,14 +543,14 @@ interfaces:
           adc:
             pinId: PB00
             name: GFX_ADC6
-            function: ADC1_AIN12
+            function: ADC0_AIN12
       - name: ADC7
         description: GFX ADC Interface (PB01)
         pinctrl:
           adc:
             pinId: PB01
             name: GFX_ADC7
-            function: ADC1_AIN13
+            function: ADC0_AIN13
 
   - name: USB debugger interface
     description: On-Board Debugger (EDBG)
@@ -769,11 +768,11 @@ connectors:
           function: SERCOM6_PAD1
       uart:
         tx:
-          pinId: PB30
+          pinId: PB31
           name: EXT2_USART_TX
           function: SERCOM5_PAD0
         rx:
-          pinId: PB31
+          pinId: PB30
           name: EXT2_USART_RX
           function: SERCOM5_PAD1
       spi:
