@@ -82,7 +82,7 @@
   {% from 'macros_pio_11264.j2' import generateLedsInitialization %}
 {% elif board.ppio in ['PIO_11004'] %}
   {% from 'macros_pio_11004.j2' import generateLedsInitialization %}
-{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922']%}
+{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922'] or board.ppio in ['GPIO_01618']%}
   {% from 'macros_gpio_02922.j2' import generateLedsInitialization %}
 {% elif board.ppio in ['GPIO_02467'] %}
   {% if deviceFamily in ['PIC32CX_BZ'] %}

@@ -49,19 +49,6 @@
 // Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include "device.h"
-#include "peripheral/pio/plib_pio.h"
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: BSP Macros
-// *****************************************************************************
-// *****************************************************************************
 {% set board = namespace() %}
 {% set deviceFamily = values["core"]["DeviceFamily"] %}
 {% if variables["__TRUSTZONE_ENABLED"] is defined %}
@@ -75,13 +62,32 @@
     {% set board.ppio = values[component]["SHD_MAINBOARD_PIO_PERIPH"] %}
   {% endif %}
 {% endfor %}
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "device.h"
+{% if board.ppio in ['PORT_U2210'] or board.ppio in ['PORT_03720']%}
+#include "peripheral/port/plib_port.h"
+{% elif board.ppio in ['PIO_11264'] or board.ppio in ['PIO_11004']%}
+#include "peripheral/pio/plib_pio.h"
+{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922'] or board.ppio in ['GPIO_01618'] or board.ppio in ['GPIO_02467'] or board.ppio in ['GPIO_26']%}
+#include "peripheral/gpio/plib_gpio.h"
+{% endif %}
+
+// *****************************************************************************
+// *****************************************************************************
+// Section: BSP Macros
+// *****************************************************************************
+// *****************************************************************************
 {% if board.ppio in ['PORT_U2210'] or board.ppio in ['PORT_03720']%}
   {% from 'macros_port_u2210.j2' import generateOuputsHeaders, generateInputsHeaders %}
 {% elif board.ppio in ['PIO_11264'] %}
   {% from 'macros_pio_11264.j2' import generateOuputsHeaders, generateInputsHeaders %}
 {% elif board.ppio in ['PIO_11004'] %}
   {% from 'macros_pio_11004.j2' import generateOuputsHeaders, generateInputsHeaders %}
-{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922']%}
+{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922'] or board.ppio in ['GPIO_01618']%}
   {% from 'macros_gpio_02922.j2' import generateOuputsHeaders, generateInputsHeaders %}
 {% elif board.ppio in ['GPIO_02467'] %}
   {% if deviceFamily in ['PIC32CX_BZ'] %}

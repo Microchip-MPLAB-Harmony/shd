@@ -74,6 +74,9 @@ class MainBoard:
     def __setPLIBSettings(self, pinDescr, value):
         idActiveList = self.__db.getActiveComponentIDs()
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
+            functionValue = functionValue.replace(" (in)", "")
+            functionValue = functionValue.replace(" (out)", "")
+            functionValue = functionValue.replace(" (in/out)", "")
             settings = (signalId, pinId, functionValue, nameValue, value)
             # self.__log.writeDebugMessage("SHD >> __setPLIBSettings : {}".format(settings))
             componentID, messageID, params = getDBMsgPLIBConfiguration(self.__atdf, settings)
@@ -173,7 +176,11 @@ class MainBoard:
                     self.__log.writeDebugMessage("SHD mainBoard: Match function setting with one of these values: {}".format(functionList))
                     continue
                         
-            if key in ['function', 'name', 'pinId']:
+            if key in ['function']:
+                value = value.upper()
+                value = value.replace("(IN)", "(in)")
+                value = value.replace("(OUT)", "(out)")
+            elif key in ['name', 'pinId']:
                 value = value.upper()
             elif type(value).__name__ == 'bool':
                 if key in ['pull up', 'pull down', 'open drain', 'change notification']:

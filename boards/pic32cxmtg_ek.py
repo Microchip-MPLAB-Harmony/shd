@@ -57,6 +57,7 @@ def instantiateComponent(boardComponent):
     bspJinjaSourceFile.setDestPath("bsp/")
     bspJinjaSourceFile.setProjectPath("config/" + configName + "/bsp/")
     bspJinjaSourceFile.setType("SOURCE")
+    bspJinjaSourceFile.setOverwrite(False)
 
     bspJinjaHeaderFile = boardComponent.createFileSymbol("SHD_JINJA_H", None)
     bspJinjaHeaderFile.setSourcePath("boards/templates/bsp.h.j2")
@@ -64,6 +65,7 @@ def instantiateComponent(boardComponent):
     bspJinjaHeaderFile.setDestPath("bsp/")
     bspJinjaHeaderFile.setProjectPath("config/" + configName + "/bsp/")
     bspJinjaHeaderFile.setType("HEADER")
+    bspJinjaHeaderFile.setOverwrite(False)
 
     bspSystemInitFile = boardComponent.createFileSymbol("SHD_INIT", None)
     bspSystemInitFile.setType("STRING")
