@@ -184,7 +184,8 @@ interfaces:
             pinId: PC18
             name: ETH_NRESET
             function: GPIO
-            direction: in
+            direction: out
+            latch: high
           cs:
             pinId: PA27
             name: ETH_SPI_CS
@@ -659,12 +660,12 @@ connectors:
         pinId: PD10
         name: EXT1_GPIO1
         function: GPIO
-        direction: in
+        direction: in/out
       gpio2:
         pinId: PD11
         name: EXT1_GPIO2
         function: GPIO
-        direction: in
+        direction: in/out
       pwm plus:
         pinId: PB14
         name: EXT1_PWM_PLUS
@@ -681,7 +682,7 @@ connectors:
         pinId: PB29
         name: EXT1_GPIO_SS
         function: GPIO
-        direction: in
+        direction: in/out
       i2c:
         sda:
           pinId: PD09
@@ -734,12 +735,12 @@ connectors:
         pinId: PD10
         name: EXT2_GPIO1
         function: GPIO
-        direction: in
+        direction: in/out
       gpio2:
         pinId: PD12
         name: EXT2_GPIO2
         function: GPIO
-        direction: in
+        direction: in/out
       pwm plus:
         pinId: PB14
         name: EXT2_PWM_PLUS
@@ -756,7 +757,7 @@ connectors:
         pinId: PB28
         name: EXT2_GPIO_SS
         function: GPIO
-        direction: in
+        direction: in/out
       i2c:
         sda:
           pinId: PD09
@@ -778,19 +779,19 @@ connectors:
       spi:
         cs:
           pinId: PC24
-          name: EXT1_SPI_CS
+          name: EXT2_SPI_CS
           function: SERCOM0_PAD2
         sck:
           pinId: PB25
-          name: EXT1_SPI_SCK
+          name: EXT2_SPI_SCK
           function: SERCOM0_PAD1
         miso:
           pinId: PC25
-          name: EXT1_SPI_MISO
+          name: EXT2_SPI_MISO
           function: SERCOM0_PAD3
         mosi:
           pinId: PB24
-          name: EXT1_SPI_MOSI
+          name: EXT2_SPI_MOSI
           function: SERCOM0_PAD0
 
   - compatible: mikrobus
@@ -922,47 +923,39 @@ connectors:
         pinId: PD10
         name: Arduino_D2
         function: GPIO
-        direction: out
-        latch: low
+        direction: in/out
       d3:
         pinId: PD11
         name: Arduino_D3
         function: GPIO
-        direction: out
-        latch: low
+        direction: in/out
       d4:
         pinId: PD12
         name: Arduino_D4
         function: GPIO
-        direction: out
-        latch: low
+        direction: in/out
       d5:
         pinId: PB14
         name: Arduino_D5
         function: GPIO
-        direction: out
-        latch: low
+        direction: in/out
       d6:
         pinId: PB15
         name: Arduino_D6
         function: GPIO
-        direction: out
-        latch: low
+        direction: in/out
       d7:
         pinId: PC10
         name: Arduino_D7
         function: GPIO
-        direction: out
-        latch: low
+        direction: in/out
       d8:
         pinId: PD21
         name: Arduino_D8
         function: GPIO
-        direction: out
-        latch: low
+        direction: in/out
       d9:
         pinId: PB16
         name: Arduino_D9
         function: GPIO
-        direction: out
-        latch: low
+        direction: in/out
