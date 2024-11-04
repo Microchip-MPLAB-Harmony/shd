@@ -82,11 +82,11 @@ connectors:
       adc plus:
         pinId: PB3
         name: EXT1_ADC_PLUS
-        function: ADC0_AIN15
+        function: ADC0_AIN15/X21/Y21
       adc minus:
         pinId: PB8
         name: EXT1_ADC_MINUS
-        function: ADC0_AIN2
+        function: ADC0_AIN2/X1/Y1
       gpio1:
         pinId: PA6
         name: EXT1_GPIO1
@@ -128,11 +128,11 @@ connectors:
           function: SERCOM2_PAD1
       uart:
         tx:
-          pinId: PA9
+          pinId: PA8
           name: EXT1_USART_TX
           function: SERCOM0_PAD0
         rx:
-          pinId: PA8
+          pinId: PA9
           name: EXT1_USART_RX
           function: SERCOM0_PAD1
       spi:
@@ -220,7 +220,7 @@ connectors:
       an:
         pinId: PB3
         name: MikroBUS2_AN
-        function: ADC0_AIN15
+        function: ADC0_AIN15/X21/Y21
       rst:
         pinId: PA6
         name: MikroBUS2_RST
@@ -280,7 +280,7 @@ connectors:
       an:
         pinId: PB08
         name: MikroBUS3_AN
-        function: ADC0_AIN2
+        function: ADC0_AIN2/X1/Y1
       rst:
         pinId: PB6
         name: MikroBUS3_RST
@@ -318,11 +318,11 @@ connectors:
         tx:
           pinId: PB12
           name: MikroBUS3_UART_TX
-          function: SERCOM0_PAD0
+          function: SERCOM4_PAD0
         rx:
           pinId: PB13
           name: MikroBUS3_UART_RX
-          function: SERCOM0_PAD1
+          function: SERCOM4_PAD1
       i2c:
         sda:
           pinId: PA12
