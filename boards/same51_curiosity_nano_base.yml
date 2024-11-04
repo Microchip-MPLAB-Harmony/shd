@@ -80,20 +80,20 @@ connectors:
     description: Curiosity Nano Base Xplained Pro Extension Header 1
     pinctrl:
       adc plus:
-        pinId: PB3
+        pinId: PB03
         name: EXT1_ADC_PLUS
         function: ADC0_AIN15/X21/Y21
       adc minus:
-        pinId: PB8
+        pinId: PB08
         name: EXT1_ADC_MINUS
         function: ADC0_AIN2/X1/Y1
       gpio1:
-        pinId: PA6
+        pinId: PA06
         name: EXT1_GPIO1
         function: GPIO
         direction: in/out
       gpio2:
-        pinId: PB6
+        pinId: PB06
         name: EXT1_GPIO2
         function: GPIO
         direction: in/out
@@ -102,7 +102,7 @@ connectors:
         name: EXT1_PWM_PLUS
         function: TC1_WO1
       pwm minus:
-        pinId: PB9
+        pinId: PB09
         name: EXT1_PWM_MINUS
         function: TC4_WO1
       irq:
@@ -112,7 +112,7 @@ connectors:
         direction: in
         pull up: True
       gpio ss:
-        pinId: PB4
+        pinId: PB04
         name: EXT1_GPIO_SS
         function: GPIO
         direction: out
@@ -128,16 +128,16 @@ connectors:
           function: SERCOM2_PAD1
       uart:
         tx:
-          pinId: PA8
+          pinId: PA08
           name: EXT1_USART_TX
           function: SERCOM0_PAD0
         rx:
-          pinId: PA9
+          pinId: PA09
           name: EXT1_USART_RX
           function: SERCOM0_PAD1
       spi:
         cs:
-          pinId: PB5
+          pinId: PB05
           name: EXT1_SPI_CS
           function: GPIO
           direction: out
@@ -160,11 +160,11 @@ connectors:
     description: Curiosity Nano Base MikroBUS Standard Extension Header 1
     pinctrl:
       an:
-        pinId: PA2
+        pinId: PA02
         name: MikroBUS1_AN
         function: ADC0_AIN0
       rst:
-        pinId: PA7
+        pinId: PA07
         name: MikroBUS1_RST
         function: GPIO
         direction: out
@@ -191,7 +191,7 @@ connectors:
         name: MikroBUS1_PWM
         function: TC1_WO0
       int:
-        pinId: PA4
+        pinId: PA04
         name: MikroBUS1_INT
         function: EIC_EXTINT14
       uart:
@@ -218,18 +218,18 @@ connectors:
     description: Curiosity Nano Base MikroBUS Standard Extension Header 2
     pinctrl:
       an:
-        pinId: PB3
+        pinId: PB03
         name: MikroBUS2_AN
         function: ADC0_AIN15/X21/Y21
       rst:
-        pinId: PA6
+        pinId: PA06
         name: MikroBUS2_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
-          pinId: PB5
+          pinId: PB05
           name: MikroBUS2_SPI_CS
           function: GPIO
           direction: out
@@ -256,11 +256,11 @@ connectors:
         function: EIC_EXTINT14
       uart:
         tx:
-          pinId: PA8
+          pinId: PA08
           name: MikroBUS2_UART_TX
           function: SERCOM0_PAD0
         rx:
-          pinId: PA9
+          pinId: PA09
           name: MikroBUS2_UART_RX
           function: SERCOM0_PAD1
       i2c:
@@ -282,14 +282,14 @@ connectors:
         name: MikroBUS3_AN
         function: ADC0_AIN2/X1/Y1
       rst:
-        pinId: PB6
+        pinId: PB06
         name: MikroBUS3_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
-          pinId: PB4
+          pinId: PB04
           name: MikroBUS3_SPI_CS
           function: GPIO
           direction: out
@@ -307,11 +307,11 @@ connectors:
           name: MikroBUS3_SPI_MOSI
           function: SERCOM1_PAD0
       pwm:
-        pinId: PB9
+        pinId: PB09
         name: MikroBUS3_PWM
         function: TC4_WO1
       int:
-        pinId: PB7
+        pinId: PB07
         name: MikroBUS3_INT
         function: EIC_EXTINT7
       uart:
