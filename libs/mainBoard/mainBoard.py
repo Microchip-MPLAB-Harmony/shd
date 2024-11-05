@@ -176,7 +176,7 @@ class MainBoard:
                     self.__log.writeDebugMessage("SHD mainBoard: Match function setting with one of these values: {}".format(functionList))
                     continue
                         
-            if key in ['function']:
+            if key == 'function':
                 value = value.upper()
                 value = value.replace("(IN)", "(in)")
                 value = value.replace("(OUT)", "(out)")

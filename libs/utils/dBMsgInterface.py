@@ -20,7 +20,8 @@ __drvDependencies = {
     'pmsm_foc': 'ADC',
     'drvGmac': 'PHY',
     'le_gfx_lcdc': 'LCDC',
-    'drvEmac': 'PHY'
+    'drvEmac': 'PHY',
+    'ptc': 'ADC'
 }
 
 def __checkSubstringList(substringList, string):
@@ -56,7 +57,22 @@ def __getConfigDatabaseADC(periphID, settings):
     configDB.setdefault('msgID', 'ADC_CONFIG_HW_IO')
 
     periphID = periphID.upper()
-    if periphID == 'ADC_U2500' or periphID == 'ADC_U2204' or periphID == 'ADC_U2247':
+    if periphID == 'ADC_U2500':
+        if pinNameValue.split('_')[-1] == 'MINUS':
+            muxInput = 'MUXNEG'
+        else:
+            muxInput = 'MUXPOS'
+            
+        # get ADC channel from setting
+        if setting[0] == "x":
+            # PTC connection
+            channel = "PTC"
+        else:
+            channel = int("".join(filter(lambda x: x.isdigit(), setting)))
+
+        configDB.setdefault('config', (channel, muxInput, enable))
+        
+    elif periphID == 'ADC_U2204' or periphID == 'ADC_U2247':
         if pinNameValue.split('_')[-1] == 'MINUS':
             muxInput = 'MUXNEG'
         else:
@@ -819,6 +835,9 @@ def getAutoconnectTable(family, idDependency, idCapability):
                     # get Instance number
                     instance = "".join(filter(lambda x: x.isdigit(), idDependency))
                     depType = "MAC_PHY_Dependency{}".format(instance)
+                elif 'ptc' == depId:
+                    exception = True
+                    depType = "lib_acquire"
                 else:
                     depType = depId
 
