@@ -74,15 +74,17 @@ def __getConfigDatabaseADC(periphID, settings):
         configDB.setdefault('config', (channel, muxInput, enable))
         
     elif periphID == 'ADC_U2204' or periphID == 'ADC_U2247':
+        if "VREF" in pinNameValue:
+            setting = fnValue.split('_')[-1]
+        else:
+            setting = fnValue.split('_')[-1].split('/')[0]
+            
         if pinNameValue.split('_')[-1] == 'MINUS':
             muxInput = 'MUXNEG'
         else:
             muxInput = 'MUXPOS'
             
-        # get ADC channel from setting
-        channel = int("".join(filter(lambda x: x.isdigit(), setting)))
-
-        configDB.setdefault('config', (channel, muxInput, enable))
+        configDB.setdefault('config', (setting, muxInput, enable))
 
     elif periphID == 'ADC_44134':
         # get ADC channel from setting
@@ -181,16 +183,17 @@ def __getConfigDatabaseDAC(periphID, settings):
     signalId, pinId, fnValue, pinNameValue, enable = settings
     componentID = fnValue.split('_')[0].lower()
     setting = fnValue.split('_')[-1].split('/')[0].lower()
-    channel = int("".join(filter(lambda x: x.isdigit(), setting)))
 
     configDB = dict()
     configDB.setdefault('msgID', 'DAC_CONFIG_HW_IO')
 
     periphID = periphID.upper()
-    if periphID == 'DAC_U2502' or periphID == 'DAC_U2244' or periphID == 'DACC_11246' or periphID == 'DACC_6461':
+    if periphID == 'DACC_11246' or periphID == 'DACC_6461':
+        channel = int("".join(filter(lambda x: x.isdigit(), setting)))
         configDB.setdefault('config', channel)
+    elif periphID == 'DAC_U2502' or periphID == 'DAC_U2244' or periphID == 'DAC_U2214':
+        configDB.setdefault('config', setting)
 
-    # elif periphID == 'DAC_U2214': # No need to send any config messages.
     # elif periphID == 'DAC_CTRL_05063':
     # else:
     #     print("CHRIS dbg >> getConfigDatabaseDAC {} NOT FOUND!!!".format(periphID))
@@ -561,6 +564,24 @@ def __getConfigDatabaseI2S(periphID, settings):
 
     return componentID, configDB
 
+def __getConfigDatabaseSDADC(periphID, settings):
+    # fnValue format -> '{}_{}'.format(componentID, setting)
+    signalId, pinId, fnValue, pinNameValue, enable = settings
+    componentID = fnValue.split('_')[0].lower()
+    setting = fnValue.split('_')[-1].split('/')[0].lower()
+
+    configDB = dict()
+    configDB.setdefault('msgID', 'SDADC_CONFIG_HW_IO')
+    
+    periphID = periphID.upper()
+    
+    if periphID == 'SDADC_U2260':
+        configDB.setdefault('config', (setting.upper(), pinId, enable))
+    # else:
+    #     print("CHRIS dbg >> __getConfigDatabaseSDADC {} - NOT FOUND!!!".format(periphID))
+
+    return configDB
+
 def getDBMsgPLIBConfiguration(ATDF, settings):
     periphList = __getDevicePeripheralList(ATDF)
     msgID = None
@@ -648,6 +669,9 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
 
         elif plib == 'i2s':
             componentID, configDB = __getConfigDatabaseI2S(periphID, settings)
+
+        elif plib == 'sdadc':
+            configDB = __getConfigDatabaseSDADC(periphID, settings)
         
         # else:
         #     print("CHRIS dbg >> getDevicePLIBConfigurationDBMessage {} NOT FOUND!!! - {}".format(plib, periphID))
@@ -888,7 +912,10 @@ def getDriverDependencyFromPinName(pinName):
     if __checkSubstringList(['MCSPI'], string) == True:
         dep = ""
     elif __checkSubstringList(['I2C', 'TWI', 'SDA', 'SCL', 'TWD', 'TWCK'], string) == True:
-        dep = "drv_i2c"
+        if __checkSubstringList(['SDADC'], string) == True:
+            dep = ""
+        else:
+            dep = "drv_i2c"
     elif __checkSubstringList(['SPI', 'MISO', 'MOSI', 'CS', 'SCK'], string) == True:
         if __checkSubstringList(['LIN' ,'GFX_DISP'], string) == True:
             dep = ""

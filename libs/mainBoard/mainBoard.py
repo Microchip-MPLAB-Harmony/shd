@@ -677,7 +677,7 @@ class MainBoard:
 
         self.resetConnectorConfig(connectorName)
 
-        if clickBoardSelection == "Select click board":
+        if clickBoardSelection == "Select extension board":
             if self.__depBindings.get(connectorName) != None:
                 del self.__depBindings[connectorName]
             # self.__log.writeDebugMessage("SHD >> __connectClickBoard: resetConnectorConfig - {} self.__depBindings:{}".format(connectorName, self.__depBindings))
@@ -1068,6 +1068,7 @@ class MainBoard:
         symbol.setLabel("Board Name")
         symbol.setDefaultValue(self.__currentConfig.get('name'))
         symbol.setReadOnly(True)
+        symbol.setVisible(False)
         symbol.setHelp(shdMainBoardHelp)
 
         self.__pioPeripheralID = getDeviceGPIOPeripheral(self.__atdf)
@@ -1075,6 +1076,7 @@ class MainBoard:
         symbol.setLabel("PIO Peripheral")
         symbol.setDefaultValue(self.__pioPeripheralID)
         symbol.setReadOnly(True)
+        symbol.setVisible(False)
         symbol.setHelp(shdMainBoardHelp)
         
         # SETTING DEFINITIONS -------------------------------------------------
@@ -1268,13 +1270,13 @@ class MainBoard:
                 conIndex, conName, conDescription = connector
 
                 # Filter clickBoard list by compatible data
-                clickBoardSelection = ['Select click board']
+                clickBoardSelection = ['Select extension board']
                 for name, interface in self.__clickBoards.items():
                     if boardConnectors[conIndex].get('compatible') == interface.getConnectorCompatible():
                         clickBoardSelection.append(name)
                 
                 if len(clickBoardSelection) == 1:
-                    clickBoardSelection = ['No click board available']
+                    clickBoardSelection = ['No extension board available']
                 
                 connectorSymbolName = self.getConnectorSymbolName(conName)
                 # self.__log.writeDebugMessage("SHD >> createMenuSymbol: {}".format(connectorSymbolName))
