@@ -60,7 +60,7 @@ interfaces:
         pinctrl:
           gpio:
             pinId: PA30
-            name: DGI_GPIO0
+            name: DGI_GPIO1
             function: GPIO
             direction: in
             pull up: True
@@ -70,7 +70,7 @@ interfaces:
         pinctrl:
           gpio:
             pinId: PB30
-            name: DGI_GPIO0
+            name: DGI_GPIO2
             function: GPIO
             direction: in
 
