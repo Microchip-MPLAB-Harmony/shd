@@ -21,6 +21,7 @@ __drvDependencies = {
     'drvGmac': 'PHY',
     'le_gfx_lcdc': 'LCDC',
     'drvEmac': 'PHY',
+    'le_gfx_slcdc': 'SLCDC',
     'ptc': 'ADC'
 }
 
@@ -830,6 +831,9 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 elif 'le_gfx_lcdc' == depId:
                     exception = True
                     depType = "LCDC"
+                elif 'le_gfx_slcdc' == depId:
+                    exception = True
+                    depType = "Segmented Display"
                 elif 'drvEmac' == depId:
                     exception = True
                     # get Instance number
@@ -852,6 +856,9 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 connection.append(idCapability)
                 if idCapability == "i2c_bb":
                     idCapability = "I2C"
+                    exception = True
+                if idCapability == "gfx_disp_slcd1-PIC32CXMT":
+                    idCapability = "slcd_display"
                     exception = True
                 elif family == "PIC32MX":
                     if "a_i2s" in capId[:5]:
