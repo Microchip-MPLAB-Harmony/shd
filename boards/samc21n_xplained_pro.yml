@@ -164,26 +164,26 @@ interfaces:
   - name: DAC output interface
     description: DAC OUT interface configuration - J700
     pinctrl:
-        pinId: PA02
-        name: DAC_OUT0
-        function: DAC_VOUT
-        mode: analog
+      pinId: PA02
+      name: DAC_OUT0
+      function: DAC_VOUT
 
-  - name: DAC VREF interface
-    description: DAC VREF interface configuration - J701
-    pinctrl:
-        pinId: PA03
-        name: DAC_VREFP
-        function: DAC_VREFP
-        mode: analog
+  - name: VREF interface
+    description: VREF interface configuration
+    options:
+      - name: DAC VREF interface
+        description: DAC VREF interface configuration - J701
+        pinctrl:
+            pinId: PA03
+            name: DAC_VREFP
+            function: DAC_VREFP
 
-  - name: SDADC VREF interface
-    description: SDADC VREF interface configuration - J701
-    pinctrl:
-        pinId: PA04
-        name: SDADC_VREFP
-        function: SDADC_VREFP
-        mode: analog
+      - name: SDADC VREF interface
+        description: SDADC VREF interface configuration - J701
+        pinctrl:
+            pinId: PA04
+            name: SDADC_VREFP
+            function: SDADC_VREFP
 
   - name: QTouch interface
     description: QTouch Button
@@ -193,9 +193,9 @@ interfaces:
         pinId: PA05
         name: QTOUCH_BUTTON
         function: PTC_Y3
-        mode: analog
 
 connectors:
+
   - compatible: xplainpro
     name: Extension Header EXT1
     description: Xplained Pro Standard Extension Header 1 - J200
