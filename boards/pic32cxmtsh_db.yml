@@ -313,11 +313,11 @@ connectors:
       pwm plus:
         pinId: PD3
         name: EXT_PWM_PLUS
-        function: TC3_TCLK9
+        function: PWM_PWMH0
       pwm minus:
         pinId: PD16
         name: EXT_PWM_MINUS
-        function: TC3_TCLK10
+        function: PWM_PWMH2
       irq:
         pinId: PA3
         name: EXT_IRQ
