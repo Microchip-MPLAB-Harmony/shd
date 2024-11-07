@@ -19,7 +19,7 @@ interfaces:
             name: LED0
             function: GPIO
             direction: out
-            latch: low
+            latch: high
       - name: User Button 0
         description: User Button 0 (PB19)
         pinctrl:
@@ -28,6 +28,7 @@ interfaces:
             name: USER_BUTTON0
             function: GPIO
             direction: in
+            interrupt: raising edge
             pull up: True
 
   - name: USB debugger interface
@@ -45,27 +46,26 @@ interfaces:
             pinId: PB11
             name: VIRTUAL_COM_RX
             function: SERCOM4_PAD3
+
       - name: Data Gateway SPI interface
         description: Data Gateway SPI interface
         pinctrl:
           cs:
             pinId: PC09
             name: DGI_SPI_CS
-            function: GPIO
-            direction: out
-            latch: low
+            function: SERCOM7_PAD1
           sck:
-            pinId: PB01
+            pinId: PC11
             name: DGI_SPI_SCK
-            function: SERCOM5_PAD3
+            function: SERCOM7_PAD3
           miso:
-            pinId: PB02
+            pinId: PC12
             name: DGI_SPI_MISO
-            function: SERCOM5_PAD0
+            function: SERCOM7_PAD0
           mosi:
-            pinId: PB00
+            pinId: PC14
             name: DGI_SPI_MOSI
-            function: SERCOM5_PAD2
+            function: SERCOM7_PAD2
 
       - name: Data Gateway I2C interface
         description: Data Gateway I2C interface
@@ -119,58 +119,86 @@ interfaces:
             direction: out
             latch: low
 
+  - name: CAN0 interface
+    description: Control Area Network (CAN0) - J500
+    pinctrl:
+      tx:
+        pinId: PA24
+        name: CAN0_TX
+        function: CAN0_TX
+      rx:
+        pinId: PA25
+        name: CAN0_RX
+        function: CAN0_RX
+
+  - name: CAN1 interface
+    description: Control Area Network (CAN1) - J505
+    pinctrl:
+      tx:
+        pinId: PB14
+        name: CAN1_TX
+        function: CAN1_TX
+      rx:
+        pinId: PB15
+        name: CAN1_RX
+        function: CAN1_RX
+
+  - name: LIN interface
+    description: Local Interconnect Network (LIN) - J503
+    pinctrl:
+      tx:
+        pinId: PA06
+        name: LIN_TX
+        function: SERCOM0_PAD2
+      rx:
+        pinId: PA07
+        name: LIN_RX
+        function: SERCOM0_PAD3
+      enable:
+        pinId: PC15
+        name: LIN_ENABLE
+        function: GPIO
+        direction: out
+        latch: high
+
   - name: DAC output interface
-    description: DAC OUT interface configuration
-    options:
-      - name: DAC OUT 0
-        description: DAC OUT 0
-        pinctrl:
-          dac:
-            pinId: PA02
-            name: DAC_OUT0
-            function: DAC_VOUT
-            mode: analog
+    description: DAC OUT interface configuration - J700
+    pinctrl:
+        pinId: PA02
+        name: DAC_OUT0
+        function: DAC_VOUT
+        mode: analog
 
   - name: DAC VREF interface
-    description: DAC VREF interface configuration
-    options:
-      - name: DAC VREFP
-        description: DAC OUT 0
-        pinctrl:
-          dac:
-            pinId: PA03
-            name: DAC_VREFP
-            function: DAC_VREFP
-            mode: analog
+    description: DAC VREF interface configuration - J701
+    pinctrl:
+        pinId: PA03
+        name: DAC_VREFP
+        function: DAC_VREFP
+        mode: analog
 
   - name: SDADC VREF interface
-    description: ADC VREF interface configuration
-    options:
-      - name: SDADC VREFP
-        description: SDADC VREFP
-        pinctrl:
-          dac:
-            pinId: PA04
-            name: SDADC_VREFP
-            function: SDADC_VREFP
-            mode: analog
+    description: SDADC VREF interface configuration - J701
+    pinctrl:
+        pinId: PA04
+        name: SDADC_VREFP
+        function: SDADC_VREFP
+        mode: analog
 
   - name: QTouch interface
     description: QTouch Button
-    options:
-      - name: QTouch Button
-        description: QTouch Button
-        dependencies: [[ptc]]
-        pinctrl:
-          gpio:
-            pinId: PA05
-            name: QTOUCH_BUTTON
-            function: PTC_Y3
-            mode: analog
+    dependencies: [[ptc]]
+    pinctrl:
+      gpio:
+        pinId: PA05
+        name: QTOUCH_BUTTON
+        function: PTC_Y3
+        mode: analog
+
 connectors:
   - compatible: xplainpro
     name: Extension Header EXT1
-    description: Xplained Pro Standard Extension Header 1
+    description: Xplained Pro Standard Extension Header 1 - J200
     pinctrl:
       adc plus:
         pinId: PB09
@@ -193,11 +221,11 @@ connectors:
       pwm plus:
         pinId: PB12
         name: EXT1_PWM_PLUS
-        function: TC4_WO1
+        function: TC4_WO0
       pwm minus:
         pinId: PB13
         name: EXT1_PWM_MINUS
-        function: TC0_WO1
+        function: TC4_WO1
       irq:
         pinId: PA22
         name: EXT1_IRQ
@@ -232,21 +260,21 @@ connectors:
           name: EXT1_SPI_CS
           function: SERCOM1_PAD1
         sck:
-          pinId: PA18
+          pinId: PA19
           name: EXT1_SPI_SCK
-          function: SERCOM1_PAD2
+          function: SERCOM1_PAD3
         miso:
           pinId: PC27
           name: EXT1_SPI_MISO
           function: SERCOM1_PAD0
         mosi:
-          pinId: PA19
+          pinId: PA18
           name: EXT1_SPI_MOSI
-          function: SERCOM1_PAD3
+          function: SERCOM1_PAD2
 
   - compatible: xplainpro
     name: Extension Header EXT2
-    description: Xplained Pro Standard Extension Header 2
+    description: Xplained Pro Standard Extension Header 2 - J201
     pinctrl:
       adc plus:
         pinId: PA08
@@ -269,11 +297,11 @@ connectors:
       pwm plus:
         pinId: PB30
         name: EXT2_PWM_PLUS
-        function: TCC0_WO0
+        function: TC0_WO0
       pwm minus:
         pinId: PB31
         name: EXT2_PWM_MINUS
-        function: TCC0_WO1
+        function: TC0_WO1
       irq:
         pinId: PC24
         name: EXT2_IRQ
@@ -322,7 +350,7 @@ connectors:
 
   - compatible: xplainpro
     name: Extension Header EXT3
-    description: Xplained Pro Standard Extension Header 3
+    description: Xplained Pro Standard Extension Header 3 - J202
     pinctrl:
       adc plus:
         pinId: PB07
@@ -345,11 +373,11 @@ connectors:
       pwm plus:
         pinId: PB22
         name: EXT3_PWM_PLUS
-        function: TC7_WO0
+        function: TCC1_WO2
       pwm minus:
         pinId: PB23
         name: EXT3_PWM_MINUS
-        function: TC7_WO1
+        function: TCC1_WO3
       irq:
         pinId: PA28
         name: EXT3_IRQ
@@ -410,19 +438,19 @@ connectors:
       adc2:
         pinId: PC00
         name: Arduino_ADC2
-        function: ADC1_AIN10
+        function: ADC0_AIN8
       adc3:
         pinId: PC01
         name: Arduino_ADC3
-        function: ADC1_AIN11
+        function: ADC0_AIN9
       adc4:
         pinId: PC02
         name: Arduino_ADC4
-        function: ADC1_AIN9
+        function: ADC0_AIN10
       adc5:
         pinId: PC03
         name: Arduino_ADC5
-        function: ADC1_AIN8
+        function: ADC0_AIN11
       uart:
         tx:
           pinId: PB24
