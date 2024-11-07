@@ -1,0 +1,447 @@
+name: pic32cxmtc-db
+config: pic32cxmtc_db.py
+documentation: https://www.microchip.com/en-us/development-tool/EV58E84A
+processor:
+  name: PIC32CX2051MTC128
+  architecture: CORTEX-M4
+  family: PIC32CXMT
+  series: PIC32CXMTC
+
+interfaces:
+  - name: Digital interface
+    description: Button and LED configurations
+    options:
+      - name: Scroll Up Button
+        description: Scroll Up Button (PA14) - raising edge
+        pinctrl:
+          gpio:
+            pinId: PC4
+            name: SCROLL_UP_BUTTON
+            function: GPIO
+            direction: in
+            interrupt: raising edge
+            pull up: True
+      - name: Scroll Down Button
+        description: Scroll Down Button (PA15) - raising edge
+        pinctrl:
+          gpio:
+            pinId: PC22
+            name: SCROLL_DOWN_BUTTON
+            function: GPIO
+            direction: in
+            interrupt: raising edge
+            pull up: True
+      - name: Red LED - PD17
+        description: LED visible - PD17
+        pinctrl:
+          gpio:
+            pinId: PD17
+            name: RED_LED_PD17
+            function: GPIO
+            direction: out
+            latch: low
+      - name: Red LED - PD18
+        description: LED visible - PD18
+        pinctrl:
+          gpio:
+            pinId: PD18
+            name: RED_LED_PD18
+            function: GPIO
+            direction: out
+            latch: low
+      - name: Red LED - PD19
+        description: LED visible - PD19
+        pinctrl:
+          gpio:
+            pinId: PD19
+            name: RED_LED_PD19
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B QSPI flash memory (16Mbit)
+        dependencies: [[drv_sst26, qspi]]
+        pinctrl:
+          qsck:
+            pinId: PC15
+            function: QSPI_QSCK
+          qcs:
+            pinId: PC14
+            function: QSPI_QCS
+          quio0:
+            pinId: PC13
+            function: QSPI_QIO0
+          quio1:
+            pinId: PC12
+            function: QSPI_QIO1
+          quio2:
+            pinId: PC11
+            function: QSPI_QIO2
+          quio3:
+            pinId: PC10
+            function: QSPI_QIO3
+            pull up: true
+
+  - name: Debug UART interface
+    description: Debugging Isolated UART interface
+    pinctrl:
+      tx:
+        pinId: PA4
+        name: DBG_UART_TX
+        function: FLEXCOM0_IO0
+      rx:
+        pinId: PA5
+        name: DBG_UART_RX
+        function: FLEXCOM0_IO1
+
+  - name: UART Opto-Port interface
+    description: UART Optical Port interface
+    pinctrl:
+      tx:
+        pinId: PD2
+        name: OPTO_UART_TX
+        function: UART_UTXD
+      rx:
+        pinId: PD1
+        name: OPTO_UART_RX
+        function: UART_URXD
+
+  - name: Metrology Pulses interface (PWM)
+    description: Optical & Isolated Port interface for Pulses Outputs
+    options:
+      - name: Red LED - PD17
+        description: LED visible - PD17
+        pinctrl:
+          gpio:
+            pinId: PD17
+            name: RED_LED_PD17
+            function: PWM_PWML0
+      - name: Red LED - PD18
+        description: LED visible - PD18
+        pinctrl:
+          gpio:
+            pinId: PD18
+            name: RED_LED_PD18
+            function: PWM_PWML1
+      - name: Red LED - PD19
+        description: LED visible - PD19
+        pinctrl:
+          gpio:
+            pinId: PD19
+            name: RED_LED_PD19
+            function: PWM_PWML2
+      - name: Infrared LED - PD17
+        description: Infrared LED - PD17
+        pinctrl:
+          gpio:
+            pinId: PD17
+            name: IR_LED_PD17
+            function: PWM_PWML0
+      - name: Infrared LED - PD18
+        description: Infrared visible - PD18
+        pinctrl:
+          gpio:
+            pinId: PD18
+            name: IR_LED_PD18
+            function: PWM_PWML1
+      - name: Infrared LED - PD19
+        description: Infrared visible - PD19
+        pinctrl:
+          gpio:
+            pinId: PD19
+            name: IR_LED_PD19
+            function: PWM_PWML2
+      - name: Isolated Pulses - PD17
+        description: Isolated Pulses - PD17
+        pinctrl:
+          gpio:
+            pinId: PD17
+            name: ISO_PULSE_PD17
+            function: PWM_PWML0
+      - name: Isolated Pulses - PD18
+        description: Isolated Pulses - PD18
+        pinctrl:
+          gpio:
+            pinId: PD18
+            name: ISO_PULSE_PD18
+            function: PWM_PWML1
+
+  - name: AFE interface
+    description: Energy Measurement Device
+    pinctrl:
+      cs:
+        pinId: PD8
+        name: AFE_MCSPI_CS
+        function: MCSPI_NPCS0
+      sck:
+        pinId: PD5
+        name: AFE_MCSPI_SCK
+        function: MCSPI_SPCK
+      miso:
+        pinId: PD6
+        name: AFE_MCSPI_MISO
+        function: MCSPI_MISO
+      mosi:
+        pinId: PD7
+        name: AFE_MCSPI_MOSI
+        function: MCSPI_MOSI0
+
+  - name: Display LCD interface
+    description: Segment LCD Controller - DS1
+    dependencies: [[le_gfx_slcdc, gfx_disp_slcd1-PIC32CXMT]]
+    pinctrl:
+      COM1:
+        pinId: PA21
+        name: LCD_COM1
+        function: SLCDC_COM0
+      COM2:
+        pinId: PA22
+        name: LCD_COM2
+        function: SLCDC_COM1
+      COM3:
+        pinId: PA23
+        name: LCD_COM3
+        function: SLCDC_COM2
+      COM4:
+        pinId: PA24
+        name: LCD_COM4
+        function: SLCDC_COM3
+      COM5:
+        pinId: PA25
+        name: LCD_COM5
+        function: SLCDC_COM4
+      COM6:
+        pinId: PA26
+        name: LCD_COM6
+        function: SLCDC_COM5
+      COM7:
+        pinId: PA27
+        name: LCD_COM7
+        function: SLCDC_COM6
+      COM8:
+        pinId: PA28
+        name: LCD_COM8
+        function: SLCDC_COM7
+      SEG0:
+        pinId: PB26
+        name: LCD_SEG0
+        function: SLCDC_SEG29
+      SEG1:
+        pinId: PB24
+        name: LCD_SEG1
+        function: SLCDC_SEG27
+      SEG2:
+        pinId: PB22
+        name: LCD_SEG2
+        function: SLCDC_SEG25
+      SEG3:
+        pinId: PB20
+        name: LCD_SEG3
+        function: SLCDC_SEG23
+      SEG4:
+        pinId: PB18
+        name: LCD_SEG4
+        function: SLCDC_SEG21
+      SEG5:
+        pinId: PB14
+        name: LCD_SEG5
+        function: SLCDC_SEG17
+      SEG6:
+        pinId: PB11
+        name: LCD_SEG6
+        function: SLCDC_SEG14
+      SEG7:
+        pinId: PB8
+        name: LCD_SEG7
+        function: SLCDC_SEG11
+      SEG8:
+        pinId: PB4
+        name: LCD_SEG8
+        function: SLCDC_SEG7
+      SEG9:
+        pinId: PB3
+        name: LCD_SEG9
+        function: SLCDC_SEG6
+      SEG10:
+        pinId: PB9
+        name: LCD_SEG10
+        function: SLCDC_SEG12
+      SEG11:
+        pinId: PB13
+        name: LCD_SEG11
+        function: SLCDC_SEG16
+      SEG12:
+        pinId: PB0
+        name: LCD_SEG12
+        function: SLCDC_SEG3
+      SEG13:
+        pinId: PA29
+        name: LCD_SEG13
+        function: SLCDC_SEG0
+      SEG14:
+        pinId: PB7
+        name: LCD_SEG14
+        function: SLCDC_SEG10
+      SEG15:
+        pinId: PB12
+        name: LCD_SEG15
+        function: SLCDC_SEG15
+      SEG16:
+        pinId: PB17
+        name: LCD_SEG16
+        function: SLCDC_SEG20
+      SEG17:
+        pinId: PB19
+        name: LCD_SEG17
+        function: SLCDC_SEG22
+      SEG18:
+        pinId: PB21
+        name: LCD_SEG18
+        function: SLCDC_SEG24
+      SEG19:
+        pinId: PB23
+        name: LCD_SEG19
+        function: SLCDC_SEG26
+
+connectors:
+  - compatible: xplainpro
+    name: Xplained Pro
+    description: Xplained Pro Standard Extension Header J23
+    pinctrl:
+      adc plus:
+        pinId: PA30
+        name: EXT_ADC_PLUS
+        function: ADC_AD1/ACC_INP1
+      adc minus:
+        pinId: PB1
+        name: EXT_ADC_MINUS
+        function: ADC_AD4/ACC_INN1
+      gpio1:
+        pinId: PA20
+        name: EXT_GPIO1
+        function: GPIO
+        direction: in/out
+      gpio2:
+        pinId: PA3
+        name: EXT_GPIO2
+        function: GPIO
+        direction: in/out
+      pwm plus:
+        pinId: PD15
+        name: EXT_PWM_PLUS
+        function: PWM_PWMH1
+      pwm minus:
+        pinId: PD3
+        name: EXT_PWM_MINUS
+        function: PWM_PWMH0
+      irq:
+        pinId: PB25
+        name: EXT_IRQ
+        function: GPIO
+        direction: out
+        latch: high
+      gpio ss:
+        pinId: PB15
+        name: EXT_GPIO_SS
+        function: GPIO
+        direction: out
+        latch: high
+      i2c:
+        sda:
+          pinId: PC21
+          name: EXT_I2C_SDA
+          function: FLEXCOM7_IO0
+        scl:
+          pinId: PC20
+          name: EXT_I2C_SCL
+          function: FLEXCOM7_IO1
+      uart:
+        tx:
+          pinId: PA16
+          name: EXT_USART_TX
+          function: FLEXCOM3_IO0
+        rx:
+          pinId: PA17
+          name: EXT_USART_RX
+          function: FLEXCOM3_IO1
+      spi:
+        cs:
+          pinId: PC6
+          name: EXT_SPI_CS
+          function: FLEXCOM5_IO3
+        sck:
+          pinId: PC7
+          name: EXT_SPI_SCK
+          function: FLEXCOM5_IO2
+        miso:
+          pinId: PC8
+          name: EXT_SPI_MISO
+          function: FLEXCOM5_IO1
+        mosi:
+          pinId: PC9
+          name: EXT_SPI_MOSI
+          function: FLEXCOM5_IO0
+
+  - compatible: mikrobus
+    name: MikroBUS
+    description: MikroBUS Standard Extension Header J28
+    pinctrl:
+      an:
+        pinId: PA31
+        name: MikroBUS_AN
+        function: ADC_AD2/ACC_INP2
+      rst:
+        pinId: PC1
+        name: MikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PA15
+          name: MikroBUS_SPI_CS
+          function: FLEXCOM2_IO3
+        sck:
+          pinId: PA14
+          name: MikroBUS_SPI_SCK
+          function: FLEXCOM2_IO2
+        miso:
+          pinId: PA13
+          name: MikroBUS_SPI_MISO
+          function: FLEXCOM2_IO1
+        mosi:
+          pinId: PA12
+          name: MikroBUS_SPI_MOSI
+          function: FLEXCOM2_IO0
+      pwm:
+        pinId: PD16
+        name: MikroBUS_PWM
+        function: PWM_PWMH2
+      int:
+        pinId: PA2
+        name: MikroBUS_INT
+        function: GPIO
+        direction: out
+        latch: high
+      uart:
+        tx:
+          pinId: PA8
+          name: MikroBUS_UART_TX
+          function: FLEXCOM1_IO0
+        rx:
+          pinId: PA9
+          name: MikroBUS_UART_RX
+          function: FLEXCOM1_IO1
+      i2c:
+        sda:
+          pinId: PB5
+          name: MikroBUS_I2C_SDA
+          function: FLEXCOM4_IO0
+        scl:
+          pinId: PB6
+          name: MikroBUS_I2C_SCL
+          function: FLEXCOM4_IO1
