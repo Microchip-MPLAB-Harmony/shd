@@ -1,0 +1,197 @@
+name: pic32mz-ef-starter-kit
+config: pic32mz_ef_starter_kit.py
+documentation: https://www.microchip.com/en-us/development-tool/DM320007
+processor:
+  name: PIC32MZ2048EFH144
+  architecture: MIPS
+  family: PIC32MZEF
+  series: PIC32MZ
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led 1
+        description: Red Led (RH0) - active high
+        pinctrl:
+          gpio:
+            pinId: RH0
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 2
+        description: Yellow Led (RH1) - active high
+        pinctrl:
+          gpio:
+            pinId: RH1
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 3
+        description: Green Led (RH2) - active high
+        pinctrl:
+          gpio:
+            pinId: RH2
+            name: LED3
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Button 1
+        description: User Button 1 (RB12)
+        pinctrl:
+          gpio:
+            pinId: RB12
+            name: SW1
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+      - name: User Button 2
+        description: User Button 2 (RB13)
+        pinctrl:
+          gpio:
+            pinId: RB13
+            name: SW2
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+      - name: User Button 3
+        description: User Button 3 (RB14)
+        pinctrl:
+          gpio:
+            pinId: RB14
+            name: SW3
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+
+  - name: Communication interfaces
+    description: Communication Ports options
+    options:
+      - name: USB to UART
+        description: App UART configuration
+        pinctrl:
+          tx:
+            pinId: RB14
+            name: UART_TX
+            function: UART2_U2TX
+          rx:
+            pinId: RG6
+            name: UART_RX
+            function: UART2_U2RX
+      - name: USB to UART (HID)
+        description: App UART configuration
+        pinctrl:
+          sda:
+            pinId: RG7
+            name: I2C_SDA
+            function: I2C4_SDA4
+          scl:
+            pinId: RG8
+            name: I2C_SCL
+            function: I2C4_SCL4
+      - name: USB Debug
+        description: Target USB configuration
+        pinctrl:
+          gpio0:
+            pinId: RF3
+            name: USBID
+            function: USBID
+          gpio1:
+            pinId: RB5
+            name: USB_GPIO1
+            function: GPIO
+            direction: out
+            latch: low
+          gpio2:
+            pinId: RB2
+            name: USB_GPIO2
+            function: GPIO
+            direction: out
+            latch: high
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF032B interface
+        description: SST26VF032B SQI flash memory
+        dependencies: [[drv_sst26, sqi1]]
+        pinctrl:
+          sqiClk:
+            pinId: RA6
+            function: SQI1_SQICLK
+          qcs:
+            pinId: RD5
+            function: SQI1_SQICS1
+          sqid0:
+            pinId: RG13
+            function: SQI1_SQID0
+          sqid1:
+            pinId: RG12
+            function: SQI1_SQID1
+          qsqid2:
+            pinId: RG14
+            function: SQI1_SQID2
+          sqid3:
+            pinId: RA7
+            function: SQI1_SQID3
+
+  - name: Ethernet interface
+    description: Modular Ethernet PHY system
+    options:
+      - name: Ethernet RMII interface
+        description: LAN8740A PHY Daugther board
+        dependencies: [[drvPic32mEthmac, drvExtPhyLan8740]]
+        pinctrl:
+          etxen:
+            pinId: RD6
+            function: EETHMAC_ETXEN
+          erefclk:
+            pinId: RJ11
+            function: EETHMAC_EREF_CLK
+          etxd0:
+            pinId: RJ8
+            function: EETHMAC_ETXD0
+          etxd1:
+            pinId: RJ9
+            function: EEETHMAC_TXD1
+          erxerr:
+            pinId: RH4
+            function: EETHMAC_ERXERR
+          erxd0:
+            pinId: RH8
+            function: EETHMAC_ERXD0
+          erxd1:
+            pinId: RH5
+            function: EETHMAC_ERXD1
+          ecrsdv:
+            pinId: RH13
+            function: EETHMAC_ECRSDV
+          emdc:
+            pinId: RD11
+            function: EETHMAC_EMDC
+          emdio:
+            pinId: RJ1
+            function: EETHMAC_EMDIO
+      - name: Ethernet nIRQ interface
+        description: Ethernet nIRQ interface
+        pinctrl:
+          nirq:
+            pinId: RC13
+            name: ETH_nIRQ
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Ethernet nRST interface
+        description: Ethernet nRST configuration
+        pinctrl:
+          nreset:
+            pinId: RH11
+            name: ETH_nRESET
+            function: GPIO
+            direction: out
+            latch: high
