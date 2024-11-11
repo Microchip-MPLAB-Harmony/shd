@@ -54,7 +54,7 @@ interfaces:
             name: DGI_SPI_CS
             function: GPIO
             direction: out
-            latch: low
+            latch: high
           sck:
             pinId: PB01
             name: DGI_SPI_SCK
@@ -230,7 +230,9 @@ connectors:
         cs:
           pinId: PA17
           name: EXT1_SPI_CS
-          function: SERCOM1_PAD1
+          function: GPIO
+          direction: out
+          latch: high
         sck:
           pinId: PA19
           name: EXT1_SPI_SCK
@@ -306,7 +308,9 @@ connectors:
         cs:
           pinId: PB03
           name: EXT2_SPI_CS
-          function: SERCOM5_PAD1
+          function: GPIO
+          direction: out
+          latch: high
         sck:
           pinId: PB01
           name: EXT2_SPI_SCK
@@ -384,7 +388,7 @@ connectors:
           name: EXT3_SPI_CS
           function: GPIO
           direction: out
-          latch: low
+          latch: high
         sck:
           pinId: PB01
           name: EXT3_SPI_SCK
@@ -489,7 +493,7 @@ connectors:
           name: Arduino_D10_SPI_CS
           function: GPIO
           direction: out
-          latch: low
+          latch: high
         sck:
           pinId: PB01
           name: Arduino_D13_SPI_SCK
