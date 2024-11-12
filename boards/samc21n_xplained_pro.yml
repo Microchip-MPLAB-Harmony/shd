@@ -53,7 +53,9 @@ interfaces:
           cs:
             pinId: PC09
             name: DGI_SPI_CS
-            function: SERCOM7_PAD1
+            function: GPIO
+            direction: out
+            latch: high
           sck:
             pinId: PC11
             name: DGI_SPI_SCK
@@ -119,29 +121,32 @@ interfaces:
             direction: out
             latch: low
 
-  - name: CAN0 interface
-    description: Control Area Network (CAN0) - J500
-    pinctrl:
-      tx:
-        pinId: PA24
-        name: CAN0_TX
-        function: CAN0_TX
-      rx:
-        pinId: PA25
-        name: CAN0_RX
-        function: CAN0_RX
+  - name: CAN interfaces
+    description: Control Area Network interfaces
+    options:
+      - name: CAN0 interface
+        description: Control Area Network (CAN0) - J500
+        pinctrl:
+          tx:
+            pinId: PA24
+            name: CAN0_TX
+            function: CAN0_TX
+          rx:
+            pinId: PA25
+            name: CAN0_RX
+            function: CAN0_RX
 
-  - name: CAN1 interface
-    description: Control Area Network (CAN1) - J505
-    pinctrl:
-      tx:
-        pinId: PB14
-        name: CAN1_TX
-        function: CAN1_TX
-      rx:
-        pinId: PB15
-        name: CAN1_RX
-        function: CAN1_RX
+      - name: CAN1 interface
+        description: Control Area Network (CAN1) - J505
+        pinctrl:
+          tx:
+            pinId: PB14
+            name: CAN1_TX
+            function: CAN1_TX
+          rx:
+            pinId: PB15
+            name: CAN1_RX
+            function: CAN1_RX
 
   - name: LIN interface
     description: Local Interconnect Network (LIN) - J503
@@ -514,7 +519,7 @@ connectors:
           name: Arduino_D10_SPI_CS
           function: GPIO
           direction: out
-          latch: low
+          latch: high
         sck:
           pinId: PC11
           name: Arduino_D13_SPI_SCK
