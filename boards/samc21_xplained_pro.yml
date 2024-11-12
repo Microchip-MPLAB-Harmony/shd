@@ -19,7 +19,7 @@ interfaces:
             name: LED0
             function: GPIO
             direction: out
-            latch: low
+            latch: high
       - name: User Button 0
         description: User Button 0 (PA28)
         pinctrl:
@@ -230,9 +230,7 @@ connectors:
         cs:
           pinId: PA17
           name: EXT1_SPI_CS
-          function: GPIO
-          direction: out
-          latch: high
+          function: SERCOM1_PAD1
         sck:
           pinId: PA19
           name: EXT1_SPI_SCK
@@ -308,9 +306,7 @@ connectors:
         cs:
           pinId: PB03
           name: EXT2_SPI_CS
-          function: GPIO
-          direction: out
-          latch: high
+          function: SERCOM5_PAD1
         sck:
           pinId: PB01
           name: EXT2_SPI_SCK
