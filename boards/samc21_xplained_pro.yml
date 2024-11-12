@@ -122,62 +122,56 @@ interfaces:
 
   - name: DAC interface
     description: DAC OUT interface configuration
-    options:
-      - name: DAC OUT 0
-        description: DAC OUT 0
-        pinctrl:
-          dac:
-            pinId: PA02
-            name: DAC_OUT0
-            function: DAC_VOUT
+    pinctrl:
+      dac:
+        pinId: PA02
+        name: DAC_OUT0
+        function: DAC_VOUT
 
   - name: VREF interface
-    description: VREF interface configuration
+    description: VREF interface configuration - J701
     options:
       - name: SDADC VREFP
         description: SDADC VREFP
         pinctrl:
           vref:
             pinId: PA04
-            name: SDADC VREFP
+            name: SDADC_VREFP
             function: SDADC_VREFP
       - name: ADC VREFP
         description: ADC VREFP
         pinctrl:
           vref:
             pinId: PA03
-            name: ADC VREFP
+            name: ADC_VREFP
             function: ADC0_AIN1/VREFP
       - name: DAC VREFP
         description: DAC VREFP
         pinctrl:
           vref:
             pinId: PA03
-            name: DAC VREFP
+            name: DAC_VREFP
             function: DAC_VREFP
 
   - name: QTouch interface
     description: QTouch Button
-    options:
-      - name: QTouch Button
-        description: QTouch Button
-        pinctrl:
-          gpio:
-            pinId: PA05
-            name: QTOUCH_BUTTON
-            function: PTC_Y3
+    pinctrl:
+      gpio:
+        pinId: PA05
+        name: QTOUCH_BUTTON
+        function: PTC_Y3
 
   - name: CAN interface
     description: Control Area Network (CAN) - J500
     pinctrl:
-    tx:
-      pinId: PA24
-      name: CAN0_TX
-      function: CAN0_TX
-    rx:
-      pinId: PA25
-      name: CAN0_RX
-      function: CAN0_RX
+      tx:
+        pinId: PA24
+        name: CAN0_TX
+        function: CAN0_TX
+      rx:
+        pinId: PA25
+        name: CAN0_RX
+        function: CAN0_RX
 
   - name: LIN interface
     description: Local Interconnect Network (LIN) - J503
