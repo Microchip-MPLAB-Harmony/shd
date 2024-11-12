@@ -167,7 +167,38 @@ interfaces:
             name: QTOUCH_BUTTON
             function: PTC_Y3
 
+  - name: CAN interface
+    description: Control Area Network (CAN) - J500
+    pinctrl:
+    tx:
+      pinId: PA24
+      name: CAN0_TX
+      function: CAN0_TX
+    rx:
+      pinId: PA25
+      name: CAN0_RX
+      function: CAN0_RX
+
+  - name: LIN interface
+    description: Local Interconnect Network (LIN) - J503
+    pinctrl:
+      tx:
+        pinId: PA06
+        name: LIN_TX
+        function: SERCOM0_PAD2
+      rx:
+        pinId: PA07
+        name: LIN_RX
+        function: SERCOM0_PAD3
+      enable:
+        pinId: PB22
+        name: LIN_ENABLE
+        function: GPIO
+        direction: out
+        latch: high
+
 connectors:
+
   - compatible: xplainpro
     name: Extension Header EXT1
     description: Xplained Pro Standard Extension Header 1
