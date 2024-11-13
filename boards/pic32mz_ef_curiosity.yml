@@ -1,0 +1,1048 @@
+name: pic32mz-ef-curiosity
+config: pic32mz_ef_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/DM320209
+processor:
+  name: PIC32MZ2048EFM144
+  architecture: MIPS
+  family: PIC32MZEF
+  series: PIC32MZ
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led 1
+        description: Red Led (RH0) - active low
+        pinctrl:
+          gpio:
+            pinId: RJ7
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Led 2
+        description: Green Led (RH1) - active low
+        pinctrl:
+          gpio:
+            pinId: RK7
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Led 3
+        description: Yellow Led (RH2) - active low
+        pinctrl:
+          gpio:
+            pinId: RJ3
+            name: LED3
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Cree Red Led
+        description: Cree Red Led
+        pinctrl:
+          gpio:
+            pinId: RB7
+            name: CREE_RED_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Cree Green Led
+        description: Cree Green Led
+        pinctrl:
+          gpio:
+            pinId: RB8
+            name: CREE_GREEN_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Cree Blue Led
+        description: Cree Blue Led
+        pinctrl:
+          gpio:
+            pinId: RB9
+            name: CREE_BLUE_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Button 1
+        description: User Button 1 (RJ4)
+        pinctrl:
+          gpio:
+            pinId: RJ4
+            name: SW1
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+      - name: User Button 2
+        description: User Button 2 (RJ5)
+        pinctrl:
+          gpio:
+            pinId: RJ5
+            name: SW2
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+      - name: User Button 3
+        description: User Button 3 (RJ6)
+        pinctrl:
+          gpio:
+            pinId: RJ6
+            name: SW3
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+      - name: User Button 4
+        description: User Button 4 (RC15)
+        pinctrl:
+          gpio:
+            pinId: RC15
+            name: SW4
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B SQI flash memory
+        dependencies: [[drv_sst26, sqi1]]
+        pinctrl:
+          sqiClk:
+            pinId: RA6
+            function: SQI1_SQICLK
+          qcs:
+            pinId: RD4
+            function: SQI1_SQICS0
+          sqid0:
+            pinId: RG13
+            function: SQI1_SQID0
+          sqid1:
+            pinId: RG12
+            function: SQI1_SQID1
+          qsqid2:
+            pinId: RG14
+            function: SQI1_SQID2
+          sqid3:
+            pinId: RA7
+            function: SQI1_SQID3
+
+  - name: CAN interface
+    description: Control Area Network - CAN
+    pinctrl:
+      tx:
+        pinId: RD5
+        name: CAN_TX
+        function: CAN2_C2TX
+      rx:
+        pinId: RF8
+        name: CAN_RX
+        function: CAN2_C2RX
+
+  - name: Target USB
+    description: Target USB configuration
+    options:
+      - name: VBUS Enable Pin
+        description: USB VBUS Enable Pin
+        pinctrl:
+          gpio:
+            pinId: RJ13
+            name: VBUS_ENABLE
+            function: GPIO
+            direction: out
+            latch: low
+      - name: USB ID
+        description: USB ID
+        pinctrl:
+          gpio:
+            pinId: RF3
+            name: USB_ID
+            function: USBID
+
+  - name: Ethernet interface
+    description: Modular Ethernet PHY system
+    options:
+      - name: Ethernet RMII interface
+        description: LAN8740A PHY Daugther board
+        dependencies: [[drvPic32mEthmac, drvExtPhyLan8740]]
+        pinctrl:
+          etxen:
+            pinId: RD6
+            function: EETHMAC_ETXEN
+          erefclk:
+            pinId: RJ11
+            function: EETHMAC_EREF_CLK
+          etxd0:
+            pinId: RJ8
+            function: EETHMAC_ETXD0
+          etxd1:
+            pinId: RJ9
+            function: EEETHMAC_TXD1
+          erxerr:
+            pinId: RH4
+            function: EETHMAC_ERXERR
+          erxd0:
+            pinId: RH8
+            function: EETHMAC_ERXD0
+          erxd1:
+            pinId: RH5
+            function: EETHMAC_ERXD1
+          ecrsdv:
+            pinId: RH13
+            function: EETHMAC_ECRSDV
+          emdc:
+            pinId: RD11
+            function: EETHMAC_EMDC
+          emdio:
+            pinId: RJ1
+            function: EETHMAC_EMDIO
+      - name: Ethernet SPI interface
+        description: Ethernet SPI1 configuration
+        pinctrl:
+          cs:
+            pinId: RD9
+            name: ETH_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: RD1
+            name: ETH_SPI_SCK
+            function: SPI1_SCK1
+          miso:
+            pinId: RD14
+            name: ETH_SPI_MISO
+            function: SPI1_SDI1
+          mosi:
+            pinId: RD7
+            name: ETH_SPI_MOSI
+            function: SPI1_SDO1
+      - name: Ethernet nIRQ interface
+        description: Ethernet nIRQ interface
+        pinctrl:
+          nirq:
+            pinId: RJ2
+            name: ETH_nIRQ
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Ethernet nRST interface
+        description: Ethernet nRST configuration
+        pinctrl:
+          nreset:
+            pinId: RJ0
+            name: ETH_nRESET
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Ethernet GPIO0 interface
+        description: Ethernet GPIO0 interface
+        pinctrl:
+          nirq:
+            pinId: RH12
+            name: ETH_GPIO0
+            function: GPIO
+            direction: in/out
+      - name: Ethernet GPIO1 interface
+        description: Ethernet GPIO1 interface
+        pinctrl:
+          nirq:
+            pinId: RH14
+            name: ETH_GPIO1
+            function: GPIO
+            direction: in/out
+      - name: Ethernet GPIO2 interface
+        description: Ethernet GPIO2 interface
+        pinctrl:
+          nirq:
+            pinId: RH15
+            name: ETH_GPIO2
+            function: GPIO
+            direction: in/out
+
+  - name: X32 Audio interface 1
+    description: X32 Audio Signal configuration
+    options:
+      - name: USART interface
+        description: Audio USART interface
+        pinctrl:
+          tx:
+            pinId: RC4
+            name: X32-1_USART_TX
+            function: UART1_U1TX
+          rx:
+            pinId: RC1
+            name: X32-1_USART_RX
+            function: UART1_U1RX
+          rts:
+            pinId: RE8
+            name: X32-1_USART_RTS
+            function: UART1_U1RTS
+          cts:
+            pinId: RF12
+            name: X32-1_USART_CTS
+            function: UART1_U1CTS
+      - name: I2C interface
+        description: Audio I2C interface
+        pinctrl:
+          sda:
+            pinId: RA15
+            name: X32-1_I2C_SDA
+            function: I2C1_SDA1
+          scl:
+            pinId: RA14
+            name: X32-1_I2C_SCL
+            function: I2C1_SCL1
+      - name: SPI interface
+        description: Audio SPI interface 1
+        pinctrl:
+          cs:
+            pinId: RD9
+            name: X32-1_SPI1_CS
+            function: SPI1_SS1 (out)
+          sck:
+            pinId: RD1
+            name: X32-1_SPI1_SCK
+            function: SPI1_SCK1
+          miso:
+            pinId: RD14
+            name: X32-1_SPI1_MISO
+            function: SPI1_SDI1
+          mosi:
+            pinId: RD7
+            name: X32-1_SPI1_MOSI
+            function: SPI1_SDO1
+      - name: SPI interface
+        description: Audio SPI interface 2
+        pinctrl:
+          cs:
+            pinId: RC2
+            name: X32-1_SPI2_CS
+            function: SPI2_SS2 (out)
+          sck:
+            pinId: RG6
+            name: X32-1_SPI2_SCK
+            function: SPI2_SCK2
+          miso:
+            pinId: RG7
+            name: X32-1_SPI2_MISO
+            function: SPI2_SDI2
+          mosi:
+            pinId: RG8
+            name: X32-1_SPI2_MOSI
+            function: SPI2_SDO2
+      - name: X32 StandBy / Reset
+        description: StandBy / Reset control signal
+        pinctrl:
+          stbyrst:
+            pinId: RJ12
+            name: X32-1_STBYRST
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Clock Reference
+        description: Clock Reference
+        pinctrl:
+          gpio:
+            pinId: RD15
+            name: X32-1_REFCLK
+            function: REFCLKO1
+
+  - name: X32 Audio interface 2
+    description: X32 Audio Signal configuration
+    options:
+      - name: USART interface
+        description: Audio USART interface
+        pinctrl:
+          tx:
+            pinId: RG9
+            name: X32-2_USART_TX
+            function: UART2_U2TX
+          rx:
+            pinId: RE9
+            name: X32-2_USART_RX
+            function: UART2_U2RX
+          rts:
+            pinId: RF5
+            name: X32-2_USART_RTS
+            function: UART2_U2RTS
+          cts:
+            pinId: RD10
+            name: X32-2_USART_CTS
+            function: UART2_U2CTS
+      - name: I2C interface
+        description: Audio I2C interface
+        pinctrl:
+          sda:
+            pinId: RA15
+            name: X32-2_I2C_SDA
+            function: I2C1_SDA1
+          scl:
+            pinId: RA14
+            name: X32-2_I2C_SCL
+            function: I2C1_SCL1
+      - name: SPI interface
+        description: Audio SPI interface 1
+        pinctrl:
+          cs:
+            pinId: RC2
+            name: X32-2_SPI1_CS
+            function: SPI2_SS2 (out)
+          sck:
+            pinId: RG6
+            name: X32-2_SPI1_SCK
+            function: SPI2_SCK2
+          miso:
+            pinId: RG7
+            name: X32-2_SPI1_MISO
+            function: SPI2_SDI2
+          mosi:
+            pinId: RG8
+            name: X32-2_SPI1_MOSI
+            function: SPI2_SDO2
+      - name: SPI interface
+        description: Audio SPI interface 2
+        pinctrl:
+          cs:
+            pinId: RD9
+            name: X32-2_SPI2_CS
+            function: SPI1_SS1 (out)
+          sck:
+            pinId: RD1
+            name: X32-2_SPI2_SCK
+            function: SPI1_SCK1
+          miso:
+            pinId: RD14
+            name: X32-2_SPI2_MISO
+            function: SPI1_SDI1
+          mosi:
+            pinId: RD7
+            name: X32-2_SPI2_MOSI
+            function: SPI1_SDO1
+      - name: X32 StandBy / Reset
+        description: StandBy / Reset control signal
+        pinctrl:
+          stbyrst:
+            pinId: RJ10
+            name: X32-2_STBYRST
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Clock Reference
+        description: Clock Reference
+        pinctrl:
+          gpio:
+            pinId: RD15
+            name: X32-2_REFCLK
+            function: REFCLKO1
+
+  - name: Graphics interface
+    description: Graphics Data and Control configuration
+    options:
+      - name: Parallel Data Interface
+        description: GFX Parallel data interface
+        pinctrl:
+          lcden:
+            pinId: RK3
+            name: GFX_DISP_INTF_PIN_RD
+            function: GPIO
+            direction: out
+            latch: high
+          lcdhsync:
+            pinId: RK1
+            name: GFX_DISP_INTF_PIN_RSDC
+            function: GPIO
+            direction: out
+            latch: high
+          lcdvsync:
+            pinId: RK2
+            name: GFX_DISP_INTF_PIN_CS
+            function: GPIO
+            direction: out
+            latch: high
+          lcdpclk:
+            pinId: RC3
+            name: GFX_DISP_INTF_PIN_WR
+            function: GPIO
+            direction: out
+            latch: high
+          lcdd0:
+            pinId: RE0
+            name: GFX_DISP_INTF_PIN_D0
+            function: EBI_EBID0
+          lcdd1:
+            pinId: RE1
+            name: GFX_DISP_INTF_PIN_D1
+            function: EBI_EBID1
+          lcdd2:
+            pinId: RE2
+            name: GFX_DISP_INTF_PIN_D2
+            function: EBI_EBID2
+          lcdd3:
+            pinId: RE3
+            name: GFX_DISP_INTF_PIN_D3
+            function: EBI_EBID3
+          lcdd4:
+            pinId: RE4
+            name: GFX_DISP_INTF_PIN_D4
+            function: EBI_EBID4
+          lcdd5:
+            pinId: RE5
+            name: GFX_DISP_INTF_PIN_D5
+            function: EBI_EBID5
+          lcdd6:
+            pinId: RE6
+            name: GFX_DISP_INTF_PIN_D6
+            function: EBI_EBID6
+          lcdd7:
+            pinId: RE7
+            name: GFX_DISP_INTF_PIN_D7
+            function: EBI_EBID7
+          lcdd8:
+            pinId: RG0
+            name: GFX_DISP_INTF_PIN_D8
+            function: EBI_EBID8
+          lcdd9:
+            pinId: RG1
+            name: GFX_DISP_INTF_PIN_D9
+            function: EBI_EBID9
+          lcdd10:
+            pinId: RF1
+            name: GFX_DISP_INTF_PIN_D10
+            function: EBI_EBID10
+          lcdd11:
+            pinId: RF0
+            name: GFX_DISP_INTF_PIN_D11
+            function: EBI_EBID11
+          lcdd12:
+            pinId: RD12
+            name: GFX_DISP_INTF_PIN_D12
+            function: EBI_EBID12
+          lcdd13:
+            pinId: RD13
+            name: GFX_DISP_INTF_PIN_D13
+            function: EBI_EBID13
+          lcdd14:
+            pinId: RD2
+            name: GFX_DISP_INTF_PIN_D14
+            function: EBI_EBID14
+          lcdd15:
+            pinId: RD3
+            name: GFX_DISP_INTF_PIN_D15
+            function: EBI_EBID15
+      - name: LCD Touch Control
+        description: GFX LCD Touch Control
+        pinctrl:
+          irq1:
+            pinId: RD0
+            name: GFX_TOUCH_CTRL
+            function: GPIO
+            direction: in
+      - name: Q Touch Control
+        description: GFX Q Touch Control
+        pinctrl:
+          irq1:
+            pinId: RH9
+            name: GFX_Q_TOUCH_CTRL
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: Display Control
+        description: GFX Display Control
+        pinctrl:
+          irq1:
+            pinId: RH10
+            name: GFX_DISPLAY_CTRL
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: R Touch Control
+        description: GFX R Touch Control
+        pinctrl:
+          irq1:
+            pinId: RH11
+            name: GFX_R_TOUCH_CTRL
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: Touch I2C interface
+        description: GFX Touch I2C interface
+        pinctrl:
+          sda:
+            pinId: RA3
+            name: GFX_TOUCH_I2C_SDA
+            function: I2C2_SDA2
+          scl:
+            pinId: RA2
+            name: GFX_TOUCH_I2C_SCL
+            function: I2C2_SCL2
+      - name: SPI interface
+        description: GFX SPI interface
+        pinctrl:
+          cs:
+            pinId: RH2
+            name: GFX_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: RB14
+            name: GFX_SPI_SCK
+            function: SPI3_SCK3
+          miso:
+            pinId: RB5
+            name: GFX_SPI_MISO
+            function: SPI3_SDI3
+          mosi:
+            pinId: RB3
+            name: GFX_SPI_MOSI
+            function: SPI3_SDO3
+      - name: LCD Backlight Control
+        description: GFX LCD backlight control
+        pinctrl:
+          pwm:
+            pinId: RB6
+            name: GFX_DISP_BACKLIGHT
+            function: OC1
+      - name: LCD PWM Control
+        description: GFX LCD PWM control
+        pinctrl:
+          pwm:
+            pinId: RD15
+            name: GFX_DISP_PWM
+            function: REFCLKO1
+      - name: GPIO 1
+        description: GFX GPIO 1 control
+        pinctrl:
+          gpio:
+            pinId: RK4
+            name: GFX_GPIO1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: GPIO 2
+        description: GFX GPIO 2 control
+        pinctrl:
+          gpio:
+            pinId: RK5
+            name: GFX_GPIO2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: LCDDISP
+        description: GFX LCD DISP control
+        pinctrl:
+          gpio:
+            pinId: RA4
+            name: GFX_DISP
+            function: GPIO
+            direction: out
+            latch: low
+      - name: STBYRST
+        description: GFX STBY/RST control
+        pinctrl:
+          reset:
+            pinId: RJ14
+            name: GFX_STBY_RST
+            function: GPIO
+            direction: out
+            latch: high
+      - name: STBYRST2
+        description: GFX STBY2/RST2 control
+        pinctrl:
+          reset:
+            pinId: RJ15
+            name: GFX_STBY2_RST2
+            function: GPIO
+            direction: out
+            latch: high
+      - name: ADC0
+        description: GFX ADC0 Interface
+        pinctrl:
+          adc:
+            pinId: RG15
+            name: GFX_ADC0
+            function: ADC7_AN23
+      - name: ADC1
+        description: GFX ADC1 Interface
+        pinctrl:
+          adc:
+            pinId: RA0
+            name: GFX_ADC1
+            function: ADC7_AN24
+      - name: ADC2
+        description: GFX ADC2 Interface
+        pinctrl:
+          adc:
+            pinId: RA9
+            name: GFX_ADC2
+            function: ADC7_AN27
+      - name: ADC3
+        description: GFX ADC3 Interface
+        pinctrl:
+          adc:
+            pinId: RA10
+            name: GFX_ADC3
+            function: ADC7_AN28
+      - name: ADC4
+        description: GFX ADC3 Interface
+        pinctrl:
+          adc:
+            pinId: RA5
+            name: GFX_ADC4
+            function: ADC7_AN34
+
+  - name: USB debugger interface
+    description: On-Board Debugger (PKOB4)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        pinctrl:
+          tx:
+            pinId: RF2
+            name: VIRTUAL_COM_TX
+            function: UART6_U6TX
+          rx:
+            pinId: RF13
+            name: VIRTUAL_COM_RX
+            function: UART6_U6RX
+      - name: Data Gateway SPI interface
+        description: Data Gateway SPI interface
+        pinctrl:
+          cs:
+            pinId: RH7
+            name: DGI_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: RB14
+            name: DGI_SPI_SCK
+            function: SPI3_SCK3
+          miso:
+            pinId: RB5
+            name: DGI_SPI_MISO
+            function: SPI3_SDI3
+          mosi:
+            pinId: RB3
+            name: DGI_SPI_MOSI
+            function: SPI3_SDO3
+      - name: Data Gateway I2C interface
+        description: Data Gateway I2C interface 1
+        pinctrl:
+          sda:
+            pinId: RA3
+            name: DGI_I2C-1_SDA
+            function: I2C2_SDA2
+          scl:
+            pinId: RA2
+            name: DGI_I2C-1_SCL
+            function: I2C2_SCL2
+      - name: Data Gateway I2C interface
+        description: Data Gateway I2C interface 2
+        pinctrl:
+          sda:
+            pinId: RA15
+            name: DGI_I2C-2_SDA
+            function: I2C1_SDA1
+          scl:
+            pinId: RA14
+            name: DGI_I2C-2_SCL
+            function: I2C1_SCL1
+
+connectors:
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header
+    pinctrl:
+      adc plus:
+        pinId: RB2
+        name: EXT1_ADC_PLUS
+        function: ADC1_AN2
+      adc minus:
+        pinId: RB12
+        name: EXT1_ADC_MINUS
+        function: ADC1_AN7
+      gpio1:
+        pinId: RK4
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: in/out
+      gpio2:
+        pinId: RK5
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: in/out
+      irq:
+        pinId: RK0
+        name: EXT1_IRQ
+        function: EIC_EXTINT6
+      gpio ss:
+        pinId: RK6
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: in/out
+      i2c:
+        sda:
+          pinId: RA15
+          name: EXT1_I2C_SDA
+          function: I2C1_SDA1
+        scl:
+          pinId: RA14
+          name: EXT1_I2C_SCL
+          function: I2C1_SCL1
+      uart:
+        tx:
+          pinId: RF4
+          name: EXT1_USART_TX
+          function: UART3_U3TX
+        rx:
+          pinId: RD15
+          name: EXT1_USART_RX
+          function: UART3_U3RX
+      spi:
+        cs:
+          pinId: RB15
+          name: EXT1_SPI_CS
+          function: SPI3_SS3 (out)
+        sck:
+          pinId: RB14
+          name: EXT1_SPI_SCK
+          function: SPI3_SCK3
+        miso:
+          pinId: RB5
+          name: EXT1_SPI_MISO
+          function: SPI3_SDI3
+        mosi:
+          pinId: RB3
+          name: EXT1_SPI_MOSI
+          function: SPI3_SDO3
+
+  - compatible: mikrobus
+    name: MikroBUS Header 1
+    description: MikroBUS Standard Extension Header 1
+    pinctrl:
+      an:
+        pinId: RB10
+        name: MikroBUS1_AN
+        function: ADC7_AN5
+      rst:
+        pinId: RJ12
+        name: MikroBUS1_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RD9
+          name: MikroBUS1_SPI_CS
+          function: SPI1_SS1 (out)
+        sck:
+          pinId: RD1
+          name: MikroBUS1_SPI_SCK
+          function: SPI1_SCK1
+        miso:
+          pinId: RD14
+          name: MikroBUS1_SPI_MISO
+          function: SPI1_SDI1
+        mosi:
+          pinId: RD7
+          name: MikroBUS1_SPI_MOSI
+          function: SPI1_SDO1
+      pwm:
+        pinId: RD15
+        name: MikroBUS1_PWM
+        function: REFCLKO1
+      int:
+        pinId: RF12
+        name: MikroBUS1_INT
+        function: GPIO
+        direction: out
+        latch: high
+      uart:
+        tx:
+          pinId: RC4
+          name: MikroBUS1_UART_TX
+          function: UART1_U1TX
+        rx:
+          pinId: RC1
+          name: MikroBUS1_UART_RX
+          function: UART1_U1RX
+      i2c:
+        sda:
+          pinId: RA15
+          name: MikroBUS1_I2C_SDA
+          function: I2C1_SDA1
+        scl:
+          pinId: RA14
+          name: MikroBUS1_I2C_SCL
+          function: I2C1_SCL1
+
+  - compatible: mikrobus
+    name: MikroBUS Header 2
+    description: MikroBUS Standard Extension Header 2
+    pinctrl:
+      an:
+        pinId: RB11
+        name: MikroBUS2_AN
+        function: ADC7_AN6
+      rst:
+        pinId: RJ10
+        name: MikroBUS2_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RC2
+          name: MikroBUS2_SPI_CS
+          function: SPI2_SS2 (out)
+        sck:
+          pinId: RG6
+          name: MikroBUS2_SPI_SCK
+          function: SPI2_SCK2
+        miso:
+          pinId: RG7
+          name: MikroBUS2_SPI_MISO
+          function: SPI2_SDI2
+        mosi:
+          pinId: RG8
+          name: MikroBUS2_SPI_MOSI
+          function: SPI2_SDO2
+      pwm:
+        pinId: RD15
+        name: MikroBUS1_PWM
+        function: REFCLKO1
+      int:
+        pinId: RD10
+        name: MikroBUS2_INT
+        function: GPIO
+        direction: out
+        latch: high
+      uart:
+        tx:
+          pinId: RG9
+          name: MikroBUS2_UART_TX
+          function: UART2_U2TX
+        rx:
+          pinId: RE9
+          name: MikroBUS2_UART_RX
+          function: UART2_U2RX
+      i2c:
+        sda:
+          pinId: RA15
+          name: MikroBUS2_I2C_SDA
+          function: I2C1_SDA1
+        scl:
+          pinId: RA14
+          name: MikroBUS2_I2C_SCL
+          function: I2C1_SCL1
+
+  - compatible: arduino
+    name: Arduino Uno Header
+    description: Arduino Uno compatible header
+    pinctrl:
+      adc0:
+        pinId: RB4
+        name: Arduino_ADC0
+        function: ADC4_AN4
+      adc1:
+        pinId: RA1
+        name: Arduino_ADC1
+        function: ADC7_AN29
+      adc2:
+        pinId: RB13
+        name: Arduino_ADC2
+        function: ADC7_AN8
+      adc3:
+        pinId: RH0
+        name: Arduino_ADC3
+        function: ADC7_AN38
+      adc4:
+        pinId: RH1
+        name: Arduino_ADC4
+        function: ADC7_AN39
+      adc5:
+        pinId: RH6
+        name: Arduino_ADC5
+        function: ADC7_AN42
+      i2c:
+        sda:
+          pinId: RA15
+          name: Arduino_D14_I2C_SDA
+          function: I2C1_SDA1
+        scl:
+          pinId: RA14
+          name: Arduino_D15_I2C_SCL
+          function: I2C1_SCL1
+      uart:
+        tx:
+          pinId: RC4
+          name: Arduino_D1_UART_TX
+          function: UART1_U1TX
+        rx:
+          pinId: RC1
+          name: Arduino_D0_UART_RX
+          function: UART1_U1RX
+      spi:
+        cs:
+          pinId: RD9
+          name: Arduino_D10_SPI_CS
+          function: SPI1_SS1 (out)
+        sck:
+          pinId: RD1
+          name: Arduino_D13_SPI_SCK
+          function: SPI1_SCK1
+        miso:
+          pinId: RD14
+          name: Arduino_D12_SPI_MISO
+          function: SPI1_SDI1
+        mosi:
+          pinId: RD7
+          name: Arduino_D11_SPI_MOSI
+          function: SPI1_SDO1
+      d2:
+        pinId: RE8
+        name: Arduino_D2
+        function: GPIO
+        direction: in/out
+      d3:
+        pinId: RF12
+        name: Arduino_D3
+        function: GPIO
+        direction: in/out
+      d4:
+        pinId: RJ12
+        name: Arduino_D4
+        function: GPIO
+        direction: in/out
+      d5:
+        pinId: RK4
+        name: Arduino_D5
+        function: GPIO
+        direction: in/out
+      d6:
+        pinId: RK5
+        name: Arduino_D6
+        function: GPIO
+        direction: in/out
+      d7:
+        pinId: RH12
+        name: Arduino_D7
+        function: GPIO
+        direction: in/out
+      d8:
+        pinId: RH14
+        name: Arduino_D8
+        function: GPIO
+        direction: in/out
+      d9:
+        pinId: RH15
+        name: Arduino_D9
+        function: GPIO
+        direction: in/out
