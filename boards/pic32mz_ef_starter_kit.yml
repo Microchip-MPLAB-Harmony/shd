@@ -103,16 +103,16 @@ interfaces:
             function: USBID
           gpio1:
             pinId: RB5
-            name: USB_GPIO1
-            function: GPIO
-            direction: out
-            latch: low
-          gpio2:
-            pinId: RB2
-            name: USB_GPIO2
+            name: USB_PGOOD
             function: GPIO
             direction: out
             latch: high
+          gpio2:
+            pinId: RB2
+            name: USB_VBUSON
+            function: GPIO
+            direction: in
+            pull down: True
 
   - name: Storage interface
     description: Storage on-board components configurations
