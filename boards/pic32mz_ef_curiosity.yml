@@ -702,6 +702,7 @@ interfaces:
     options:
       - name: Virtual COM Port interface
         description: Serial Debug Console
+        dependencies: [[sys_console, uart6]]
         pinctrl:
           tx:
             pinId: RF2
