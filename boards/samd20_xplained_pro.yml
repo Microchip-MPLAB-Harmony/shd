@@ -36,7 +36,7 @@ interfaces:
     options:
       - name: Virtual COM Port interface
         description: Serial Debug Console
-        dependencies: [[sys_console, sercom4]]
+        dependencies: [[sys_console, sercom3]]
         pinctrl:
           tx:
             pinId: PA24
@@ -53,7 +53,9 @@ interfaces:
           cs:
             pinId: PB31
             name: DGI_SPI_CS
-            function: SERCOM5_PAD1
+            function: GPIO
+            direction: out
+            latch: high
           sck:
             pinId: PB23
             name: DGI_SPI_SCK
@@ -73,11 +75,11 @@ interfaces:
           sda:
             pinId: PA08
             name: DGI_I2C_SDA
-            function: SERCOM0_PAD0
+            function: SERCOM2_PAD0
           scl:
             pinId: PA09
             name: DGI_I2C_SCL
-            function: SERCOM0_PAD1
+            function: SERCOM2_PAD1
 
       - name: Data Gateway GPIO 0
         description: Data Gateway GPIO interface
