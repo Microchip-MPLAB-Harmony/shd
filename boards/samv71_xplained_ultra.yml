@@ -1,0 +1,1057 @@
+name: samv71-xplained-ultra
+config: samv71_xplained_ultra.py
+documentation: https://www.microchip.com/en-us/development-tool/atsamv71-xult
+processor:
+  name: ATSAMV71Q21B
+  architecture: CORTEX-M7
+  family: SAMV
+  series: SAMV71
+
+interfaces:
+  - name: Digital interface
+    description: Button and LED configurations
+    options:
+      - name: User LED 0
+        description: Yellow LED (PA23)
+        pinctrl:
+          gpio:
+            pinId: PA23
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User LED 1
+        description: Yellow LED (PC9)
+        pinctrl:
+          gpio:
+            pinId: PC9
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Button 0
+        description: User Button 0 (PA9)
+        pinctrl:
+          gpio:
+            pinId: PA9
+            name: USER_BUTTON0
+            function: GPIO
+            direction: in
+            interrupt: rising edge
+            pull up: True
+      - name: User Button 1
+        description: User Button 1 (PB12)
+        pinctrl:
+          gpio:
+            pinId: PB12
+            name: USER_BUTTON1
+            function: GPIO
+            direction: in
+            interrupt: rising edge
+            pull up: True
+
+  - name: USB debugger interface
+    description: On-Board Debugger (EDBG)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[sys_console, usart1]]
+        pinctrl:
+          tx:
+            pinId: PB4
+            name: VIRTUAL_COM_TX
+            function: USART1_TXD1
+          rx:
+            pinId: PA21
+            name: VIRTUAL_COM_RX
+            function: USART1_RXD1
+
+      - name: Data Gateway SPI interface
+        description: Data Gateway SPI interface
+        pinctrl:
+          cs:
+            pinId: PD12
+            name: DGI_SPI_CS
+            function: SPI0_NPCS2
+          sck:
+            pinId: PD22
+            name: DGI_SPI_SCK
+            function: SPI0_SPCK
+          miso:
+            pinId: PD20
+            name: DGI_SPI_MISO
+            function: SPI0_MISO
+          mosi:
+            pinId: PD21
+            name: DGI_SPI_MOSI
+            function: SPI0_MOSI
+
+      - name: Data Gateway I2C interface
+        description: Data Gateway I2C interface
+        pinctrl:
+          sda:
+            pinId: PA3
+            name: DGI_I2C_SDA
+            function: TWIHS0_TWD0
+          scl:
+            pinId: PA4
+            name: DGI_I2C_SCL
+            function: TWIHS0_TWCK0
+
+      - name: Data Gateway GPIO 0
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA9
+            name: DGI_GPIO0
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 1
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA23
+            name: DGI_GPIO1
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 2
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PD28
+            name: DGI_GPIO2
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 3
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA2
+            name: DGI_GPIO3
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: USB interface
+    description: USB configuration
+    options:
+      - name: VBUS Sense Pin
+        description: USB VBUS Sense Pin
+        dependencies: [[drv_usbhs_v1]]
+        pinctrl:
+          gpio:
+            pinId: PC9
+            name: USB_VBUS_SENSE
+            function: GPIO
+            direction: in
+      - name: VBUS Host Enable
+        description: USB VBUS host enable configuration
+        dependencies: [[drv_usbhs_v1]]
+        pinctrl:
+          gpio:
+            pinId: PC16
+            name: USB_VBUS_ENABLE
+            function: GPIO
+            direction: out
+            latch: high
+
+  - name: Storage interface
+    description: Storage on-board components configuration
+    options:
+      - name: S25FL116K interface
+        description: S25FL116K QSPI flash memory
+        dependencies: [[qspi]]
+        pinctrl:
+          qsck:
+            pinId: PA14
+            function: QSPI_QSCK
+          qcs:
+            pinId: PA11
+            function: QSPI_QCS
+          quio0:
+            pinId: PA13
+            function: QSPI_QIO0
+          quio1:
+            pinId: PA12
+            function: QSPI_QIO1
+          quio2:
+            pinId: PA17
+            function: QSPI_QIO2
+          quio3:
+            pinId: PD31
+            function: QSPI_QIO3
+            pull up: True
+      - name: AT24MAC402 interface
+        description: Serial EEPROM with EIA-48 MAC address
+        dependencies: [[drv_at24, twihs0]]
+        pinctrl:
+          sda:
+            pinId: PA3
+            name: AT24MAC402_I2C_SDA
+            function: TWIHS0_TWD0
+          scl:
+            pinId: PA4
+            name: AT24MAC402_I2C_SCL
+            function: TWIHS0_TWCK0
+      - name: SDCARD interface
+        description: SD/MMC Host Controller - SDHCx - J600
+        dependencies: [[drv_sdmmc, hsmci]]
+        pinctrl:
+          cd:
+            pinId: PD18
+            name: SDCARD_CD
+            function: GPIO
+            direction: in
+            pull up: True
+          cmd:
+            pinId: PA28
+            name: SDCARD_CMD
+            function: HSMCI_MCCDA
+          ck:
+            pinId: PA25
+            name: SDCARD_CK
+            function: HSMCI_MCCK
+          dat0:
+            pinId: PA30
+            name: SDCARD_DAT0
+            function: HSMCI_MCDA0
+          dat1:
+            pinId: PA31
+            name: SDCARD_DAT1
+            function: HSMCI_MCDA1
+          dat2:
+            pinId: PA26
+            name: SDCARD_DAT2
+            function: HSMCI_MCDA2
+          dat3:
+            pinId: PA27
+            name: SDCARD_DAT3
+            function: HSMCI_MCDA3
+
+  - name: Ethernet interface
+    description: Ethernet configuration (PHY - KSZ8061RNBW)
+    options:
+      - name: Ethernet RMII interface
+        description: Ethernet GMAC configuration
+        dependencies: [[drvGmac, drvExtPhyLan8061]]
+        pinctrl:
+          gtxen:
+            pinId: PD1
+            function: GMAC_GTXEN
+          gtxck:
+            pinId: PD0
+            function: GMAC_GTXCK
+          gtx0:
+            pinId: PD2
+            function: GMAC_GTX0
+          gtx1:
+            pinId: PD3
+            function: GMAC_GTX1
+          grxer:
+            pinId: PD7
+            function: GMAC_GRXER
+          grx0:
+            pinId: PD5
+            function: GMAC_GRX0
+          grx1:
+            pinId: PD6
+            function: GMAC_GRX1
+          grxdv:
+            pinId: PD4
+            function: GMAC_GRXDV
+          gmdc:
+            pinId: PD8
+            function: GMAC_GMDC
+          gmdio:
+            pinId: PD9
+            function: GMAC_GMDIO
+      - name: Signal Detection Pin
+        description: Ethernet signal detection pin
+        pinctrl:
+          gpio:
+            pinId: PA29
+            name: ETH_SIGDET
+            function: GPIO
+            direction: in
+      - name: Ethernet Interrupt
+        description: Ethernet interrupt
+        pinctrl:
+          gpio:
+            pinId: PA19
+            name: ETH_INTRP
+            function: GPIO
+            direction: in
+            interrupt: falling edge
+      - name: Ethernet Reset
+        description: Ethernet reset
+        pinctrl:
+          gpio:
+            pinId: PC10
+            name: ETH_RESET
+            function: GPIO
+            direction: out
+            latch: high
+
+  - name: Audio Codec interface
+    description: Audio Codec interface configuration (WM8904)
+    options:
+      - name: I2C interface
+        description: Audio I2C interface
+        pinctrl:
+          sda:
+            pinId: PA3
+            name: AUDIO_I2C_SDA
+            function: TWIHS0_TWD0
+          scl:
+            pinId: PA4
+            name: AUDIO_I2C_SCL
+            function: TWIHS0_TWCK0
+      - name: Host clock reference
+        description: Host clock reference
+        pinctrl:
+          mck:
+            pinId: PA18
+            name: AUDIO_MCK
+            function: PMC_PCK2
+      - name: SSC interface
+        description: Audio SSC configuration
+        dependencies: [[a_drv_i2s, a_ssc]]
+        pinctrl:
+          rd:
+            pinId: PA10
+            name: AUDIO_SSC_RD
+            function: SSC_RD
+          td:
+            pinId: PD26
+            name: AUDIO_SSC_TD
+            function: SSC_TD
+          rf:
+            pinId: PD24
+            name: AUDIO_SSC_RF
+            function: SSC_RF
+          tf:
+            pinId: PB0
+            name: AUDIO_SSC_TF
+            function: SSC_TF
+          tk:
+            pinId: PB1
+            name: AUDIO_SSC_TK
+            function: SSC_TK
+
+      - name: Codec GPIO1/Interrupt
+        description: Codec GPIO1/Interrupt configuration
+        pinctrl:
+          stbyrst:
+            pinId: PD11
+            name: AUDIO_GPIO1_IRQ
+            function: GPIO
+            direction: in
+            interrupt: rising edge
+      - name: PLL Clock Reference
+        description: PLL programmeble clock reference configuration
+        pinctrl:
+          gpio:
+            pinId: PD21
+            name: AUDIO_REFCLK
+            function: TC3_TIOA11
+      - name: SSC Receive Clock
+        description: SSC receive clock configuration
+        pinctrl:
+          rk:
+            pinId: PA22
+            name: AUDIO_SSC_RK
+            function: SSC_RK
+
+  - name: CAN interface
+    description: Control Area Network (CAN0) - J1000
+    pinctrl:
+      tx:
+        pinId: PC14
+        name: CAN1_TX
+        function: MCAN1_CANTX1
+      rx:
+        pinId: PC12
+        name: CAN1_RX
+        function: MCAN1_CANRX1
+
+  - name: EBI interface
+    description: External Bus Interface (EBI) configuration
+    options:
+      - name: EBI-GFX
+        description: External Bus Interface (EBI) GFX configuration - J404
+        pinctrl:
+          lcden:
+            pinId: PC11
+            name: GFX_DISP_INTF_PIN_RD
+            function: GPIO
+            direction: out
+            latch: high
+          lcdhsync:
+            pinId: PC30
+            name: GFX_DISP_INTF_PIN_RSDC
+            function: GPIO
+            direction: out
+            latch: high
+          lcdvsync:
+            pinId: PD19
+            name: GFX_DISP_INTF_PIN_CS
+            function: GPIO
+            direction: out
+            latch: high
+          lcdpclk:
+            pinId: PC8
+            name: GFX_DISP_INTF_PIN_WR
+            function: GPIO
+            direction: out
+            latch: high
+          lcdd0:
+            pinId: PC0
+            name: GFX_DISP_INTF_PIN_D0
+            function: EBI_D0
+          lcdd1:
+            pinId: PC1
+            name: GFX_DISP_INTF_PIN_D1
+            function: EBI_D1
+          lcdd2:
+            pinId: PC2
+            name: GFX_DISP_INTF_PIN_D2
+            function: EBI_D2
+          lcdd3:
+            pinId: PC3
+            name: GFX_DISP_INTF_PIN_D3
+            function: EBI_D3
+          lcdd4:
+            pinId: PC4
+            name: GFX_DISP_INTF_PIN_D4
+            function: EBI_D4
+          lcdd5:
+            pinId: PC5
+            name: GFX_DISP_INTF_PIN_D5
+            function: EBI_D5
+          lcdd6:
+            pinId: PC6
+            name: GFX_DISP_INTF_PIN_D6
+            function: EBI_D6
+          lcdd7:
+            pinId: PC7
+            name: GFX_DISP_INTF_PIN_D7
+            function: EBI_D7
+          lcdd8:
+            pinId: PE0
+            name: GFX_DISP_INTF_PIN_D8
+            function: EBI_D8
+          lcdd9:
+            pinId: PE1
+            name: GFX_DISP_INTF_PIN_D9
+            function: EBI_D9
+          lcdd10:
+            pinId: PE2
+            name: GFX_DISP_INTF_PIN_D10
+            function: EBI_D10
+          lcdd11:
+            pinId: PE3
+            name: GFX_DISP_INTF_PIN_D11
+            function: EBI_D11
+          lcdd12:
+            pinId: PE4
+            name: GFX_DISP_INTF_PIN_D12
+            function: EBI_D12
+          lcdd13:
+            pinId: PE5
+            name: GFX_DISP_INTF_PIN_D13
+            function: EBI_D13
+          lcdd14:
+            pinId: PA15
+            name: GFX_DISP_INTF_PIN_D14
+            function: EBI_D14
+          lcdd15:
+            pinId: PA16
+            name: GFX_DISP_INTF_PIN_D15
+            function: EBI_D15
+      - name: Touch Control
+        description: GFX touch control configuration
+        pinctrl:
+          irq1:
+            pinId: PD28
+            name: BSP_MAXTOUCH_CHG
+            function: GPIO
+            direction: in
+      - name: Q Touch Control
+        description: GFX Q Touch Control
+        pinctrl:
+          irq1:
+            pinId: PA2
+            name: LCD_Q_TOUCH_CTRL
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: I2C interface
+        description: GFX I2C interface configuration
+        pinctrl:
+          sda:
+            pinId: PA3
+            name: GFX_TOUCH_I2C_SDA
+            function: TWIHS0_TWD0
+          scl:
+            pinId: PA4
+            name: GFX_TOUCH_I2C_SCL
+            function: TWIHS0_TWCK0
+      - name: LCD Backlight Control
+        description: GFX LCD backlight control
+        pinctrl:
+          pwm:
+            pinId: PC9
+            name: GFX_DISP_INTF_PIN_BACKLIGHT
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LCD RESET control
+        description: LCD RESET control
+        pinctrl:
+          reset:
+            pinId: PC13
+            name: GFX_DISP_INTF_PIN_RESET
+            function: GPIO
+            direction: out
+            latch: high
+
+  - name: Camera interface
+    description: Camera interface configuration - J400
+    options:
+      - name: Reset Control
+        description: Camera reset control
+        pinctrl:
+          reset:
+            pinId: PB13
+            name: CAMERA_RST
+            function: GPIO
+            direction: out
+            latch: high
+      - name: PWD Control
+        description: Camera PWD control
+        pinctrl:
+          pwd:
+            pinId: PC19
+            name: CAMERA_PWD
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Camera I2C interface
+        description: Camera I2C interface configuration
+        pinctrl:
+          sda:
+            pinId: PA3
+            name: CAMERA_I2C_SDA
+            function: TWIHS0_TWD0
+          scl:
+            pinId: PA4
+            name: CAMERA_I2C_SCL
+            function: TWIHS0_TWCK0
+      - name: MCK Control
+        description: Camera MCK control
+        pinctrl:
+          mck:
+            pinId: PA6
+            name: CAMERA_MCK
+            function: PMC_PCK0
+      - name: Image Sensor Interface (ISI)
+        description: Image Sensor Interface configuration
+        pinctrl:
+          vsync:
+            pinId: PD25
+            name: CAMERA_ISI_VSYNC
+            function: ISI_VSYNC
+          hsync:
+            pinId: PD24
+            name: CAMERA_ISI_HSYNC
+            function: ISI_HSYNC
+          pck:
+            pinId: PA24
+            name: CAMERA_ISI_PCK
+            function: ISI_PCK
+          d0:
+            pinId: PD22
+            name: CAMERA_ISI_D0
+            function: ISI_D0
+          d1:
+            pinId: PD21
+            name: CAMERA_ISI_D1
+            function: ISI_D1
+          d2:
+            pinId: PB3
+            name: CAMERA_ISI_D2
+            function: ISI_D2
+          d3:
+            pinId: PA9
+            name: CAMERA_ISI_D3
+            function: ISI_D3
+          d4:
+            pinId: PA5
+            name: CAMERA_ISI_D4
+            function: ISI_D4
+          d5:
+            pinId: PD11
+            name: CAMERA_ISI_D5
+            function: ISI_D5
+          d6:
+            pinId: PD12
+            name: CAMERA_ISI_D6
+            function: ISI_D6
+          d7:
+            pinId: PA27
+            name: CAMERA_ISI_D7
+            function: ISI_D7
+          d8:
+            pinId: PD27
+            name: CAMERA_ISI_D8
+            function: ISI_D8
+          d9:
+            pinId: PD28
+            name: CAMERA_ISI_D9
+            function: ISI_D9
+          d10:
+            pinId: PD30
+            name: CAMERA_ISI_D10
+            function: ISI_D10
+          d11:
+            pinId: PD31
+            name: CAMERA_ISI_D11
+            function: ISI_D11
+
+connectors:
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header 1 - J401
+    pinctrl:
+      adc plus:
+        pinId: PC31
+        name: EXT1_ADC_PLUS
+        function: AFEC1_AD6
+      adc minus:
+        pinId: PA19
+        name: EXT1_ADC_MINUS
+        function: AFEC0_AD8
+      gpio1:
+        pinId: PB3
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: out
+      gpio2:
+        pinId: PB2
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: out
+      pwm plus:
+        pinId: PA0
+        name: EXT1_PWM_PLUS
+        function: TC4_WO0
+      pwm minus:
+        pinId: PC30
+        name: EXT1_PWM_MINUS
+        function: TC1_TIOB5
+      irq:
+        pinId: PD28
+        name: EXT1_IRQ
+        function: SUPC_WKUP5
+      gpio ss:
+        pinId: PA5
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: out
+        latch: low
+      i2c:
+        sda:
+          pinId: PA3
+          name: EXT1_I2C_SDA
+          function: TWIHS0_TWD0
+        scl:
+          pinId: PA4
+          name: EXT1_I2C_SCL
+          function: TWIHS0_TWCK0
+      uart:
+        tx:
+          pinId: PB1
+          name: EXT1_USART_TX
+          function: USART0_TXD0
+        rx:
+          pinId: PB0
+          name: EXT1_USART_RX
+          function: USART0_RXD0
+      spi:
+        cs:
+          pinId: PD25
+          name: EXT1_SPI_CS
+          function: SPI0_NPCS1
+        sck:
+          pinId: PD22
+          name: EXT1_SPI_SCK
+          function: SPI0_SPCK
+        miso:
+          pinId: PD20
+          name: EXT1_SPI_MISO
+          function: SPI0_MISO
+        mosi:
+          pinId: PD21
+          name: EXT1_SPI_MOSI
+          function: SPI0_MOSI
+
+  - compatible: xplainpro
+    name: Extension Header EXT2
+    description: Xplained Pro Standard Extension Header 2 - J402
+    pinctrl:
+      adc plus:
+        pinId: PD30
+        name: EXT2_ADC_PLUS
+        function: AFEC0_AD0
+      adc minus:
+        pinId: PC13
+        name: EXT2_ADC_MINUS
+        function: AFEC1_AD1
+      gpio1:
+        pinId: PA6
+        name: EXT2_GPIO1
+        function: GPIO
+        direction: out
+      gpio2:
+        pinId: PD11
+        name: EXT2_GPIO2
+        function: GPIO
+        direction: out
+      pwm plus:
+        pinId: PC19
+        name: EXT2_PWM_PLUS
+        function: PWM0_PWMH2
+      pwm minus:
+        pinId: PD26
+        name: EXT2_PWM_MINUS
+        function: PWM0_PWML2
+      irq:
+        pinId: PA2
+        name: EXT2_IRQ
+        function: SUPC_WKUP2
+      gpio ss:
+        pinId: PA24
+        name: EXT2_GPIO_SS
+        function: GPIO
+        direction: out
+        latch: low
+      i2c:
+        sda:
+          pinId: PA3
+          name: EXT2_I2C_SDA
+          function: TWIHS0_TWD0
+        scl:
+          pinId: PA4
+          name: EXT2_I2C_SCL
+          function: TWIHS0_TWCK0
+      uart:
+        tx:
+          pinId: PB4
+          name: EXT2_USART_TX
+          function: USART1_TXD1
+        rx:
+          pinId: PA21
+          name: EXT2_USART_RX
+          function: USART1_RXD1
+      spi:
+        cs:
+          pinId: PD27
+          name: EXT2_SPI_CS
+          function: SPI0_NPCS3
+        sck:
+          pinId: PD22
+          name: EXT2_SPI_SCK
+          function: SPI0_SPCK
+        miso:
+          pinId: PD20
+          name: EXT2_SPI_MISO
+          function: SPI0_MISO
+        mosi:
+          pinId: PD21
+          name: EXT2_SPI_MOSI
+          function: SPI0_MOSI
+
+  - compatible: arduino
+    description: Arduino Due compatible header
+    options:
+      - name: ADC inputs
+        description: Analog to Digital Converter inputs
+        pinctrl:
+          adc0:
+            pinId: PD26
+            name: Arduino_ADC0
+            function: SDADC_INP1
+          adc1:
+            pinId: PC31
+            name: Arduino_ADC1
+            function: AFEC1_AD6
+          adc2:
+            pinId: PA19
+            name: Arduino_ADC2
+            function: AFEC0_AD8
+          adc3:
+            pinId: PD30
+            name: Arduino_ADC3
+            function: AFEC0_AD0
+          adc4:
+            pinId: PC13
+            name: Arduino_ADC4
+            function: AFEC1_AD1
+          adc5:
+            pinId: PE0
+            name: Arduino_ADC5
+            function: AFEC1_AD11
+          adc6:
+            pinId: PE3
+            name: Arduino_ADC6
+            function: AFEC1_AD10
+          adc7:
+            pinId: PE4
+            name: Arduino_ADC7
+            function: AFEC0_AD4
+          adc8:
+            pinId: PD24
+            name: Arduino_ADC8
+            function: ADC0_AIN10
+          adc9:
+            pinId: PA10
+            name: Arduino_ADC9
+            function: ADC0_AIN11
+          adc10:
+            pinId: PA22
+            name: Arduino_ADC10
+            function: ADC0_AIN12
+          adc11:
+            pinId: PE5
+            name: Arduino_ADC11
+            function: AFEC0_AD3
+      - name: DAC
+        description: Digital to Analog Converter
+        pinctrl:
+          dac0:
+            pinId: PB13
+            name: Arduino_DAC0
+            function: DACC_DAC0
+          dac1:
+            pinId: PD0
+            name: Arduino_DAC1
+            function: DACC_DAC1
+      - name: CAN
+        description: Controller Area Network (CAN)
+        options:
+          - name: CAN0
+            description: Controller Area Network (CAN0)
+            pinctrl:
+              tx:
+                pinId: PB2
+                name: Arduino_CANTX0
+                function: MCAN0_CANTX0
+              rx:
+                pinId: PB3
+                name: Arduino_CANRX0
+                function: MCAN0_CANRX0
+          - name: CAN1
+            description: Controller Area Network (CAN1)
+            pinctrl:
+              tx:
+                pinId: PC14
+                name: Arduino_D53_CANTX1
+                function: MCAN1_CANTX1
+              rx:
+                pinId: PC12
+                name: Arduino_D52_CANRX1
+                function: MCAN1_CANRX1
+      - name: UART
+        description: Universal Asynchronous Receiver-Transmitter
+        options:
+          - name: UART0
+            description: Universal Asynchronous Receiver-Transmitter (UART0)
+            pinctrl:
+              tx:
+                pinId: PB1
+                name: Arduino_D14_UART0_TX
+                function: USART0_TXD0
+              rx:
+                pinId: PB0
+                name: Arduino_D15_UART0_RX
+                function: USART0_RXD0
+              cts:
+                pinId: PB2
+                name: Arduino_D39_UART0_CTS
+                function: USART0_CTS0
+              rts:
+                pinId: PB3
+                name: Arduino_D40_UART0_RTS
+                function: USART0_RTS0
+          - name: UART1
+            description: Universal Asynchronous Receiver-Transmitter (UART1)
+            pinctrl:
+              tx:
+                pinId: PB4
+                name: Arduino_D47_UART1_TX
+                function: USART1_TXD1
+              rx:
+                pinId: PA21
+                name: Arduino_D46_UART1_RX
+                function: USART1_RXD1
+              cts:
+                pinId: PA25
+                name: Arduino_D44_UART1_CTS
+                function: USART1_CTS1
+              rts:
+                pinId: PA24
+                name: Arduino_D45_UART1_RTS
+                function: USART1_RTS1
+          - name: UART2
+            description: Universal Asynchronous Receiver-Transmitter (UART2)
+            pinctrl:
+              tx:
+                pinId: PD16
+                name: Arduino_D16_UART2_TX
+                function: USART2_TXD2
+              rx:
+                pinId: PD15
+                name: Arduino_D17_UART2_RX
+                function: USART2_RXD2
+              cts:
+                pinId: PD19
+                name: Arduino_D26_UART2_CTS
+                function: USART2_CTS2
+              rts:
+                pinId: PD18
+                name: Arduino_D27_UART2_RTS
+                function: USART2_RTS2
+          - name: UART3
+            description: Universal Asynchronous Receiver-Transmitter (UART3)
+            pinctrl:
+              tx:
+                pinId: PD30
+                name: Arduino_D1_UART3_TX
+                function: UART3_UTXD3
+              rx:
+                pinId: PD28
+                name: Arduino_D0_UART3_RX
+                function: UART3_URXD3
+          - name: UART4
+            description: Universal Asynchronous Receiver-Transmitter (UART4)
+            pinctrl:
+              tx:
+                pinId: PD19
+                name: Arduino_D18_UART4_TX
+                function: UART4_UTXD4
+              rx:
+                pinId: PD18
+                name: Arduino_D19_UART4_RX
+                function: UART4_URXD4
+      - name: TWI
+        description: Two Wire Interface
+        options:
+          - name: TWI0
+            description: Two Wire Interface (TWI0)
+            pinctrl:
+              sda:
+                pinId: PA3
+                name: Arduino_I2C0_SDA
+                function: TWIHS0_TWD0
+              scl:
+                pinId: PA4
+                name: Arduino_I2C0_SCL
+                function: TWIHS0_TWCK0
+          - name: TWI1
+            description: Two Wire Interface (TWI1)
+            pinctrl:
+              sda:
+                pinId: PD27
+                name: Arduino_D20_I2C2_SDA
+                function: TWIHS2_TWD2
+              scl:
+                pinId: PD28
+                name: Arduino_D21_I2C2_SCL
+                function: TWIHS2_TWCK2
+      - name: SPI
+        description: Serial Peripheral Interface
+        pinctrl:
+          cs:
+            pinId: PD25
+            name: Arduino_D10_SPI_CS
+            function: SPI0_NCS1
+          sck:
+            pinId: PD22
+            name: Arduino_D13_SPI_SCK
+            function: SPI0_SPCK
+          miso:
+            pinId: PD20
+            name: Arduino_D12_SPI_MISO
+            function: SPI0_MISO
+          mosi:
+            pinId: PD21
+            name: Arduino_D11_SPI_MOSI
+            function: SPI0_MOSI
+      - name: PWM
+        description: Pulse Width Modulation compatible pins
+        pinctrl:
+          d2:
+            pinId: PA0
+            name: Arduino_D2_PWMH0
+            function: PWM0_PWMH0
+          d5:
+            pinId: PD11
+            name: Arduino_D5_PWMH0
+            function: PWM0_PWMH0
+          d6:
+            pinId: PC19
+            name: Arduino_D6_PWMH2
+            function: PWM0_PWMH2
+          d7:
+            pinId: PA2
+            name: Arduino_D7_PWMH1
+            function: PWM0_PWMH1
+          d8:
+            pinId: PA5
+            name: Arduino_D8_PWML3
+            function: PWM1_PWML3
+      - name: GPIOs
+        description: General Purpose Input/Output pins
+        pinctrl:
+          d3:
+            pinId: PA6
+            name: Arduino_D3
+            function: GPIO
+            direction: out
+            latch: low
+          d4:
+            pinId: PD27
+            name: Arduino_D4
+            function: GPIO
+            direction: out
+            latch: low
+          d9:
+            pinId: PC9
+            name: Arduino_D9
+            function: GPIO
+            direction: out
+            latch: low
+          d22:
+            pinId: PA18
+            name: Arduino_D22
+            function: GPIO
+            direction: out
+            latch: low
+          d23:
+            pinId: PB1
+            name: Arduino_D23
+            function: GPIO
+            direction: out
+            latch: low
+          d24:
+            pinId: PB0
+            name: Arduino_D24
+            function: GPIO
+            direction: out
+            latch: low
