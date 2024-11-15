@@ -20,7 +20,8 @@ __drvDependencies = {
     'pmsm_foc': 'ADC',
     'drvGmac': 'PHY',
     'le_gfx_lcdc': 'LCDC',
-    'drvEmac': 'PHY',
+    'drvPic32mEthmac': 'PHY',
+    'ethmac': 'PHY',
     'le_gfx_slcdc': 'SLCDC',
     'ptc': 'ADC'
 }
@@ -848,7 +849,7 @@ def getAutoconnectTable(family, idDependency, idCapability):
                     if family == "SAMA":
                         instance = "".join(filter(lambda x: x.isdigit(), idDependency))
                         depType = "GMAC{}_PHY_Dependency".format(instance)
-                    if family == "SAME":
+                    if family == "SAME" or family == "SAMV" or family == "SAMS":
                         depType = "GMAC_PHY_Dependency"
                     else:
                         depType = "ETH_PHY_Dependency"
@@ -863,6 +864,9 @@ def getAutoconnectTable(family, idDependency, idCapability):
                     # get Instance number
                     instance = "".join(filter(lambda x: x.isdigit(), idDependency))
                     depType = "MAC_PHY_Dependency{}".format(instance)
+                elif 'drvPic32mEthmac' == depId:
+                    exception = True
+                    depType = "ETHMAC_PHY_Dependency"
                 elif 'ptc' == depId:
                     exception = True
                     depType = "lib_acquire"

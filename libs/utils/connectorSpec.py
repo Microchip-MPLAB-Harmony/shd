@@ -174,12 +174,26 @@ def getConnectorPinNumberFromSignal(connectorCompatible, **kwargs):
 
     return pinNumber
 
-def getConnectorSignalMapMikroBUSXplainPro():
+def getConnectorSignalMapMikroToBUSXplainPro():
     # Signal Map : {mikroBus, XplainPro}
     signalMap = {}
     signalMap.setdefault('an', 'adc plus')
     signalMap.setdefault('rst', 'gpio1')
     signalMap.setdefault('pwm', 'pwm plus')
     signalMap.setdefault('int', 'irq')
+
+    return signalMap
+    
+def getConnectorSignalMapXplainProToMikroBUS():
+    # Signal Map : {XplainPro, mikroBus}
+    signalMap = {}
+    signalMap.setdefault('adc plus', 'an')
+    signalMap.setdefault('gpio1', 'rst')
+    signalMap.setdefault('pwm plus', 'pwm')
+    signalMap.setdefault('irq', 'int')
+    signalMap.setdefault('adc minus', None)
+    signalMap.setdefault('gpio2', None)
+    signalMap.setdefault('pwm minus', None)
+    signalMap.setdefault('gpio ss', None)
 
     return signalMap

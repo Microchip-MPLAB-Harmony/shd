@@ -1,10 +1,11 @@
 name: EEPROM 10 click
-description:  >
+description: >
   EEPROM 10 click features the N24C32, 
   a 32Kb I2C CMOS Serial EEPROM from 
   ON Semiconductor
 documentation: https://www.mikroe.com/eeprom-10-click
 compatible: mikrobus
+multiconnection: True
 supported:
   i2c:
     sda:
@@ -16,5 +17,3 @@ supported:
     function: GPIO
     direction: out
     latch: low
-        
-   

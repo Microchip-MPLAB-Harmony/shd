@@ -6,6 +6,7 @@ description: >
 documentation: https://www.mikroe.com/eeprom-4-click
 compatible: mikrobus
 dependencies: [[drv_at25, spi]]
+multiconnection: False
 supported:
   rst:
     name: EEPROM4_WP

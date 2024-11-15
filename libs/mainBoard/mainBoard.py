@@ -2,7 +2,7 @@ import sys
 from os import path
 import glob
 from copy import deepcopy
-from utils.connectorSpec import getConnectorPinNumberFromSignal
+from utils.connectorSpec import getConnectorPinNumberFromSignal, getConnectorSignalMapXplainProToMikroBUS
 from utils.deviceSpec import getDeviceFunctionListByPinId, getDevicePinMap, getDeviceGPIOPeripheral, adaptDevicePeripheralDependencies
 from utils.dBMsgInterface import getDBMsgPLIBConfiguration, getDBMsgDriverConfiguration, getAutoconnectTable, getDriverDependencyFromPinName, checkPlibFromSignalConnector
 from clickBoard.clickBoard import ClickBoard
@@ -35,6 +35,7 @@ class MainBoard:
         self.__configuredPins = []
         self.__pinControlByPinId = {}
         self.__symbolInterfaces = {}
+        self.__symbolConnectors = {}
         self.__signalCallbackBusy = False
         self.__depBindings = {}
         self.__shdDependenciesPlibMultiInstance = {}
@@ -42,10 +43,11 @@ class MainBoard:
         self.__shdCheckCollisionSymbol = None
         self.__architecture = self.__atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
         self.__family = self.__atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
+        self.__connectorAdaptorSymbols = {}
 
-        # self.__log.writeDebugMessage("SHD >> __devicePinMap: {}".format(self.__devicePinMap))
-        # self.__log.writeDebugMessage("SHD >> __architecture: {}".format(self.__architecture))
-        # self.__log.writeDebugMessage("SHD >> __family: {}".format(self.__family))
+        # self.__log.writeInfoMessage("SHD >> __devicePinMap: {}".format(self.__devicePinMap))
+        # self.__log.writeInfoMessage("SHD >> __architecture: {}".format(self.__architecture))
+        # self.__log.writeInfoMessage("SHD >> __family: {}".format(self.__family))
         
         import yaml
         with open(boardYamlFile, 'r') as file:
@@ -54,18 +56,25 @@ class MainBoard:
             self.__interfaceID = "mainBoard_" + self.__defaultConfig['config'].split(".")[0].upper() 
 
         clickBoardFileList = glob.glob(path.join(clickBoardsPath, '*.yml'))
-        self.__clickBoards = {}
-        for clickBoard in clickBoardFileList:
-            clickBoardFile = path.basename(clickBoard)
+        self.__clickBoardFileList = {}
+        self.__connectedClickBoards = {}
+        for clickBoardFile in clickBoardFileList:
+            clickBoardFileName = path.basename(clickBoardFile)
+            # self.__log.writeInfoMessage("SHD >> clickBoardFileName: {}".format(clickBoardFileName))
             try:
-                interface = ClickBoard(clickBoardFile)
-                boardName = interface.getName()
-                self.__clickBoards.setdefault(boardName, interface)
-            except:
+                clickBoardInstance = ClickBoard(clickBoardFileName)
+                clickBoardName = clickBoardInstance.getName()
+                clickBoardCompatible = clickBoardInstance.getConnectorCompatible()
+                self.__clickBoardFileList.setdefault(clickBoardFileName, (clickBoardName, clickBoardCompatible))
+                del clickBoardInstance
+            except: #Exception as error:
+                # self.__log.writeInfoMessage("SHD >> ERROR loading click board : {}".format(error))
                 continue
 
+        # self.__log.writeInfoMessage("SHD >> self.__clickBoardFileList: {}".format(self.__clickBoardFileList))
+
     def __del__(self):
-        # self.__log.writeDebugMessage("SHD >> __del__ MainBoard")
+        # self.__log.writeInfoMessage("SHD >> __del__ MainBoard")
         self.resetSignalConfiguration()
         
     def __str__(self):
@@ -78,34 +87,34 @@ class MainBoard:
             functionValue = functionValue.replace(" (out)", "")
             functionValue = functionValue.replace(" (in/out)", "")
             settings = (signalId, pinId, functionValue, nameValue, value)
-            # self.__log.writeDebugMessage("SHD >> __setPLIBSettings : {}".format(settings))
+            # self.__log.writeInfoMessage("SHD >> __setPLIBSettings : {}".format(settings))
             componentID, messageID, params = getDBMsgPLIBConfiguration(self.__atdf, settings)
             if messageID != None and componentID in idActiveList:
-                # self.__log.writeDebugMessage("SHD >> __setPLIBSettings: sending message to {} : {}. params: {}".format(componentID, messageID, params))
+                # self.__log.writeInfoMessage("SHD >> __setPLIBSettings: sending message to {} : {}. params: {}".format(componentID, messageID, params))
                 res = self.__db.sendMessage(componentID, messageID, params)
                 if res != None and res.get("Result") != "Success":
-                    self.__log.writeDebugMessage("SHD mainBoard: Error in sending message to PLIB {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
+                    self.__log.writeInfoMessage("SHD mainBoard: Error in sending message to PLIB {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
             # else:
-            #     self.__log.writeDebugMessage("SHD >> __setPLIBSettings skip {} messageID:{} idActiveList{}".format(componentID, messageID, idActiveList))
+            #     self.__log.writeInfoMessage("SHD >> __setPLIBSettings skip {} messageID:{} idActiveList{}".format(componentID, messageID, idActiveList))
 
     def __setDriverSettings(self, pinDescr, value):
-        # self.__log.writeDebugMessage("SHD >> __setDriverSettings pinDescr: {}".format(pinDescr))
+        # self.__log.writeInfoMessage("SHD >> __setDriverSettings pinDescr: {}".format(pinDescr))
         # Find driver connection
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
             for plib, driver in self.__connections.items():
                 settings = (driver, signalId, pinId, functionValue, nameValue, value)
-                # self.__log.writeDebugMessage("SHD >> __setDriverSettings : {}".format(settings))
+                # self.__log.writeInfoMessage("SHD >> __setDriverSettings : {}".format(settings))
                 componentID, messageID, params = getDBMsgDriverConfiguration(settings)
                 if messageID != None:
-                    # self.__log.writeDebugMessage("SHD >> __setDriverSettings: sending message - {} : {}. params: {}".format(componentID, messageID, params))
+                    # self.__log.writeInfoMessage("SHD >> __setDriverSettings: sending message - {} : {}. params: {}".format(componentID, messageID, params))
                     res = self.__db.sendMessage(componentID, messageID, params)
                     if res != None and res.get("Result") != "Success":
-                        self.__log.writeDebugMessage("SHD mainBoard: skip sending message to DRV {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
+                        self.__log.writeInfoMessage("SHD mainBoard: skip sending message to DRV {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
                 # else:
-                #     self.__log.writeDebugMessage("SHD >> __setDriverSettings ERROR : {} {} {}".format(componentID, messageID, params))
+                #     self.__log.writeInfoMessage("SHD >> __setDriverSettings ERROR : {} {} {}".format(componentID, messageID, params))
 
     def __clearPinConfig(self, pinControl):
-        # self.__log.writeDebugMessage("SHD >> __clearPinConfig pinControl: {}".format(pinControl))
+        # self.__log.writeInfoMessage("SHD >> __clearPinConfig pinControl: {}".format(pinControl))
         pinNumber = self.__devicePinMap.get(pinControl.get('pinId'))
 
         for key, value in pinControl.items():
@@ -115,14 +124,14 @@ class MainBoard:
             params = dict()
             params.setdefault('pinNumber', pinNumber)
             params.setdefault('setting', key)
-            # self.__log.writeDebugMessage("SHD >> send Message PIN_CLEAR_CONFIG_VALUE : {}".format(params))
+            # self.__log.writeInfoMessage("SHD >> send Message PIN_CLEAR_CONFIG_VALUE : {}".format(params))
             self.__db.sendMessage("core", "PIN_CLEAR_CONFIG_VALUE", params)
 
     def __handleFunctionPioManager(self, pinCtrlFunction, functionByPinId):
-        # self.__log.writeDebugMessage("SHD >> __handleFunctionPioManager {} : {}".format(pinCtrlFunction, functionByPinId))
+        # self.__log.writeInfoMessage("SHD >> __handleFunctionPioManager {} : {}".format(pinCtrlFunction, functionByPinId))
         if 'MCSPI' in pinCtrlFunction:
             functionValues = functionByPinId.split('/')
-            # self.__log.writeDebugMessage("SHD >> __handleFunctionPioManager {}".format(functionValues))
+            # self.__log.writeInfoMessage("SHD >> __handleFunctionPioManager {}".format(functionValues))
             for function in functionValues:
                 if pinCtrlFunction in function:
                     return function
@@ -137,7 +146,7 @@ class MainBoard:
         # Adapt function name for MIPS architecture
         if self.__architecture == "MIPS":
             pinCtrlFunction = pinCtrlFunction.split("_")[-1]
-            # self.__log.writeDebugMessage("SHD >> __handleFunctionPioManager MIPS: {}".format(pinCtrlFunction))
+            # self.__log.writeInfoMessage("SHD >> __handleFunctionPioManager MIPS: {}".format(pinCtrlFunction))
 
         if pinCtrlFunction in functionByPinId:
             return functionByPinId
@@ -145,13 +154,13 @@ class MainBoard:
         return None
 
     def __setPinConfig(self, pinControl):
-        # self.__log.writeDebugMessage("SHD >> __setPinConfig pinControl: {}".format(pinControl))
+        # self.__log.writeInfoMessage("SHD >> __setPinConfig pinControl: {}".format(pinControl))
         pinId = pinControl.get('pinId')
         pinNumber = self.__devicePinMap.get(pinId)
 
         # Get function values list from the pinNumber
         functionList = getDeviceFunctionListByPinId(self.__db, self.__atdf, pinId)
-        # self.__log.writeDebugMessage("SHD >> functionList {}".format(functionList))
+        # self.__log.writeInfoMessage("SHD >> functionList {}".format(functionList))
 
         # Sort dictionary by key to set function as first setting
         sortedKeys = sorted(pinControl.keys())
@@ -172,8 +181,8 @@ class MainBoard:
                         break
                     
                 if findFunction == False:
-                    self.__log.writeDebugMessage("SHD mainBoard: Error in function setting of pinId: {} - function: {}".format(pinId, value))
-                    self.__log.writeDebugMessage("SHD mainBoard: Match function setting with one of these values: {}".format(functionList))
+                    self.__log.writeInfoMessage("SHD mainBoard: Error in function setting of pinId: {} - function: {}".format(pinId, value))
+                    self.__log.writeInfoMessage("SHD mainBoard: Match function setting with one of these values: {}".format(functionList))
                     continue
                         
             if key == 'function':
@@ -196,7 +205,7 @@ class MainBoard:
             params.setdefault('pinNumber', pinNumber)
             params.setdefault('setting', key)
             params.setdefault('value', value)
-            # self.__log.writeDebugMessage("SHD >> send Message PIN_SET_CONFIG_VALUE : {}".format(params))
+            # self.__log.writeInfoMessage("SHD >> send Message PIN_SET_CONFIG_VALUE : {}".format(params))
             self.__db.sendMessage("core", "PIN_SET_CONFIG_VALUE", params)
 
     def __checkPinIsConfigured(self, pinId):
@@ -206,7 +215,7 @@ class MainBoard:
         params.setdefault('setting', 'function')
         retDict = self.__db.sendMessage("core", "PIN_GET_CONFIG_VALUE", params)
         functionValue = retDict.get('value')
-        # self.__log.writeDebugMessage("SHD >> __checkPinIsConfigured {} : {}".format(pinId, functionValue))
+        # self.__log.writeInfoMessage("SHD >> __checkPinIsConfigured {} : {}".format(pinId, functionValue))
         if functionValue == "":
             return False
         else:
@@ -215,11 +224,11 @@ class MainBoard:
     def __showSymbol(self, symbol, event):
         eventSymbolID = event['id']
         eventValue = event['value']
-        # self.__log.writeDebugMessage("SHD >> __showSymbol eventSymbolID: {} - {}".format(eventSymbolID, eventValue))
+        # self.__log.writeInfoMessage("SHD >> __showSymbol eventSymbolID: {} - {}".format(eventSymbolID, eventValue))
         if "CSASGPIO" in eventSymbolID:
-            # self.__log.writeDebugMessage("SHD >> __showSymbol eventSymbolID: {}".format(eventSymbolID))
+            # self.__log.writeInfoMessage("SHD >> __showSymbol eventSymbolID: {}".format(eventSymbolID))
             global mainBoard
-            connectorName = self.getConnectorNameFromSymbolName(eventSymbolID)
+            connectorName = self.getConnectorNameFromSymbolID(eventSymbolID)
             newPinControl = {"spi":{"cs":{"function": "GPIO","direction": "out","latch": "high"}}}
             if eventValue == True:
                 # Update the pin function
@@ -253,15 +262,15 @@ class MainBoard:
             if pinId in symbol:
                 symbolInterface = board.getSymbolByID(symbol)
                 symbolInterface.setVisible(enable)
-                # self.__log.writeDebugMessage("SHD >> __setVisibleSignals {} -> {}".format(symbol, enable))
+                # self.__log.writeInfoMessage("SHD >> __setVisibleSignals {} -> {}".format(symbol, enable))
                 
     def __checkAllSignalsDisabled(self, symbol):
         symbolSignals = self.__symbolPinByParent.get(symbol)
-        # self.__log.writeDebugMessage("SHD >> __checkAllSignalsDisabled {}: {}".format(symbol, symbolSignals))
+        # self.__log.writeInfoMessage("SHD >> __checkAllSignalsDisabled {}: {}".format(symbol, symbolSignals))
         for symbolId in symbolSignals:
             pinId = symbolId.split('_')[-1]
             if pinId in self.__configuredPins:
-                # self.__log.writeDebugMessage("SHD >> __checkAllSignalsDisabled {} PinId: {} is configured".format(symbolId, pinId))
+                # self.__log.writeInfoMessage("SHD >> __checkAllSignalsDisabled {} PinId: {} is configured".format(symbolId, pinId))
                 return False
             
         return True
@@ -278,7 +287,7 @@ class MainBoard:
                         symbolInterface = self.__symbolInterfaces.get(symbolId)
                         if symbolInterface != None:
                             if symbolInterface.getValue() == False:
-                                # self.__log.writeDebugMessage("SHD >> __checkGlobalCollisions set Read Only - symbolId: {}".format(symbolId))
+                                # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions set Read Only - symbolId: {}".format(symbolId))
                                 if symbolId.find('SPI') == -1:
                                     symbolInterface.setReadOnly(True)
                                 self.__setVisibleSignals(True, symbolId, pinId)
@@ -286,7 +295,7 @@ class MainBoard:
             # Pin Callback selects False. Clear Read Only values
             for pinId, symbolList in self.__collisionsByPinID.items():
                 if pinId in self.__configuredPins:
-                    # self.__log.writeDebugMessage("SHD >> __checkGlobalCollisions pind is still configured: {}".format(pinId))
+                    # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions pind is still configured: {}".format(pinId))
                     continue
                 
                 # If collision Pin has not been configured. Free Symbol if all subsignals are disabled.
@@ -295,7 +304,7 @@ class MainBoard:
                     if symbolInterface != None:
                         if symbolInterface.getReadOnly() == True:
                             if self.__checkAllSignalsDisabled(symbolId) == True:
-                                # self.__log.writeDebugMessage("SHD >> __checkGlobalCollisions clear Read Only - symbolId: {}".format(symbolId))
+                                # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions clear Read Only - symbolId: {}".format(symbolId))
                                 symbolInterface.setReadOnly(False)
                                 self.__setVisibleSignals(False, symbolId, pinId)
                         elif symbolId.find('SPI') != -1:
@@ -305,7 +314,7 @@ class MainBoard:
         depId, capId = connection
             
         connectTable = getAutoconnectTable(self.__family, depId, capId)
-        # self.__log.writeDebugMessage("SHD >> __connectComponentDependencies connectTable: {}".format(connectTable)) 
+        # self.__log.writeInfoMessage("SHD >> __connectComponentDependencies connectTable: {}".format(connectTable)) 
 
         if len(connectTable) > 0:
             res = self.__db.connectDependencies(connectTable)
@@ -315,6 +324,7 @@ class MainBoard:
                     self.__connections.setdefault(capId, depId[:-2])
                 else:
                     self.__connections.setdefault(capId, depId)
+                # self.__log.writeInfoMessage("SHD >> __connectComponentDependencies self.__connections: {}".format(self.__connections)) 
 
     def __checkIsMultiInstanceDriver(self, driver):
         for multiInstanceDriver in shdMultiInstanceDrivers:
@@ -353,13 +363,13 @@ class MainBoard:
 
             # Only for dependencies on Connectors (click Boards)
             bindings = self.__depBindings.get(connectorName)
-            # self.__log.writeDebugMessage("SHD >> __overlapDependencies ({},{}): {}".format(depId, capId, bindings))
+            # self.__log.writeInfoMessage("SHD >> __overlapDependencies ({},{}): {}".format(depId, capId, bindings))
             if bindings != None:
                 for binding in bindings:
                     driver, signal = binding
                     # Check if Plib supports the signal in bindings
                     if checkPlibFromSignalConnector(capId, signal) == True:
-                        # self.__log.writeDebugMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:TRUE {} {}".format(capId, signal))
+                        # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:TRUE {} {}".format(capId, signal))
                         depId = driver
                         
             newDeps.setdefault(depId, capId)
@@ -369,13 +379,13 @@ class MainBoard:
     def __configureDriverSettings(self, enabledPinIdList, disabledPinIdList):
         for pinId, pinDescr in enabledPinIdList.items():
             # signal, (pinFunction, pinName) = enabledPinIdList[pinId]
-            # self.__log.writeDebugMessage("SHD >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
+            # self.__log.writeInfoMessage("SHD >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
             self.__setPLIBSettings(pinDescr, True)
             self.__setDriverSettings(pinDescr, True)
         
         for pinId, pinDescr  in disabledPinIdList.items():
             # signal, (pinFunction, pinName) = disabledPinIdList[pinId]
-            # self.__log.writeDebugMessage("SHD >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
+            # self.__log.writeInfoMessage("SHD >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
             self.__setPLIBSettings(pinDescr, False)
 
     def __getPinListByMultiPinDriver(self, dependency):
@@ -387,7 +397,7 @@ class MainBoard:
             params.setdefault('setting', 'function')
             ret = self.__db.sendMessage("core", "PIN_GET_CONFIG_VALUE", params)
             pinFunction = ret.get("value")
-            # self.__log.writeDebugMessage("SHD >> __getPinListByMultiPinDriver {}: {} in {}".format(pinId, dependency, pinFunction))
+            # self.__log.writeInfoMessage("SHD >> __getPinListByMultiPinDriver {}: {} in {}".format(pinId, dependency, pinFunction))
             # Handle exceptions: MCPWM, ADCHS
             if dependency == 'mcpwm':
                 dependency = 'pwm'
@@ -399,11 +409,11 @@ class MainBoard:
         return pinIdList
 
     def __updateDriverConnections(self, addDependency, dependencyList, connectorName):
-        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections[{}]: {}".format(addDependency, dependencyList))
+        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections[{}]: {}".format(addDependency, dependencyList))
 
         # Check overlap bindings
         dependencyList = self.__overlapDependencies(dependencyList, connectorName)
-        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections new dependencyList: {}".format(dependencyList))
+        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections new dependencyList: {}".format(dependencyList))
         
         # Check if capability is already in use (this is needed because setReadOnly triggers callback)
         dependencyListFiltered = {}
@@ -415,9 +425,9 @@ class MainBoard:
                 
                 driverInstance = self.__shdDependenciesPlibMultiInstance.get(capId)
                 if driverInstance != None:
-                    # self.__log.writeDebugMessage("SHD >> __updateDriverConnections checking {} in {}".format(depId, driverInstance))
+                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections checking {} in {}".format(depId, driverInstance))
                     if depId in driverInstance: 
-                        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections already in use ({})".format(capId))
+                        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections already in use ({})".format(capId))
                         continue
 
                 dependencyListFiltered.setdefault(depId, capId)
@@ -426,14 +436,14 @@ class MainBoard:
 
         # Get Active components    
         idActiveList = self.__db.getActiveComponentIDs()
-        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections idActiveList: {}".format(idActiveList))
+        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections idActiveList: {}".format(idActiveList))
 
         # Adapt Dependency List according to PIO peripheral ID 
         dependencyList = adaptDevicePeripheralDependencies(self.__atdf, dependencyListFiltered)
-        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections PIO adapted dependencyList: {}".format(dependencyList))
+        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections PIO adapted dependencyList: {}".format(dependencyList))
 
         # if addDependency == True and self.__checkExistConnection(dependencyList):
-        #     self.__log.writeDebugMessage("SHD >> __updateDriverConnections connections already created: {}".format(dependencyList))
+        #     self.__log.writeInfoMessage("SHD >> __updateDriverConnections connections already created: {}".format(dependencyList))
         #     return
 
         newConnections = []
@@ -445,6 +455,7 @@ class MainBoard:
         for depId, capId in dependencyList.items():
             if addDependency is True:
                 if self.__checkIsMultiInstanceDriver(depId) == True:
+                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver TRUE: {}".format(depId))
                     # Add new component/connection (multi instance)
                     newInstanceNumber = self.__getDriverMultiInstanceNumber(idActiveList, depId)
                     newDep ="{}_{}".format(depId, newInstanceNumber)
@@ -458,18 +469,25 @@ class MainBoard:
                         
                     updatePlibInstance = True
                 else:
-                    if depId not in idActiveList:    
+                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver FALSE: {}".format(depId))
+                    if depId not in idActiveList:
                         # Add new component/connection (single instance)
                         newComponents.append(depId)
+                        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections depId NOT IN idActiveList - adding {}".format(depId))
                         
                     if capId != "" and capId not in idActiveList:
-                        newConnections.append((depId, capId))
-                        newComponents.append(capId)
+                        # Check if depId has not been previously added
+                        if depId not in idActiveList:
+                            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections capId NOT IN idActiveList - adding {}".format(capId))
+                            newComponents.append(capId)
+                            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections adding new connection: {}".format((depId, capId)))
+                            newConnections.append((depId, capId))
+                            
             else:
                 if capId in idActiveList:
                     # Check MultiPin drivers (driver that uses more than 1 pin)
                     pinList = self.__getPinListByMultiPinDriver(capId)
-                    # self.__log.writeDebugMessage("SHD >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
+                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
                     if len(pinList) == 0:
                         removeComponents.append(capId)
 
@@ -482,7 +500,7 @@ class MainBoard:
                         # MultiInstance drivers are removed in removeComponents loop (Deactivate components)
                         # Check MultiPin drivers (driver that uses more than 1 pin)
                         pinList = self.__getPinListByMultiPinDriver(depId)
-                        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
+                        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
                         if len(pinList) == 0:
                             removeComponents.append(depId)
                 
@@ -491,11 +509,11 @@ class MainBoard:
             self.__db.activateComponents(multiInstanceComponent)
             
         if len(newComponents) > 0:
-            # self.__log.writeDebugMessage("SHD >> __updateDriverConnections newComponents: {}".format(newComponents))
+            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections newComponents: {}".format(newComponents))
             self.__db.activateComponents(newComponents)
 
         # Add new dependencies (Activate components)
-        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections newConnections: {}".format(newConnections))
+        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections newConnections: {}".format(newConnections))
         for connection in newConnections:
             self.__connectComponentDependencies(connection)
             # Update PLIB MultiInstance information
@@ -505,7 +523,7 @@ class MainBoard:
 
         # Remove Components (Deactivate components)
         for component in removeComponents:
-            # self.__log.writeDebugMessage("SHD >> __updateDriverConnections remove Components: {}".format(component))
+            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections remove Components: {}".format(component))
             res = self.__db.deactivateComponents([component])
             if res == True and self.__connections.get(component) != None:
                 del self.__connections[component]
@@ -514,30 +532,30 @@ class MainBoard:
             if driver != None:
                 driverInstance = int(driver[-1])
                 instancesNumber = self.__getDriverMultiInstanceNumber(idActiveList, driver[0:-2])
-                # self.__log.writeDebugMessage("SHD >> __updateDriverConnections remove multiInstance: {} {} {}".format(driver, driverInstance, instancesNumber))
+                # self.__log.writeInfoMessage("SHD >> __updateDriverConnections remove multiInstance: {} {} {}".format(driver, driverInstance, instancesNumber))
                 if instancesNumber == 1:
-                    # self.__log.writeDebugMessage("SHD >> __updateDriverConnections deactivate component 1: {}".format(driver[0:-2]))
+                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections deactivate component 1: {}".format(driver[0:-2]))
                     self.__db.deactivateComponents([driver[0:-2]])
                 elif driverInstance == (instancesNumber - 1):
-                    # self.__log.writeDebugMessage("SHD >> __updateDriverConnections deactivate component 2: {}".format(driver))
+                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections deactivate component 2: {}".format(driver))
                     self.__db.deactivateComponents([driver])
 
                 del self.__shdDependenciesPlibMultiInstance[component]
                 
-        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections self.__shdDependenciesPlibMultiInstance: {}".format(self.__shdDependenciesPlibMultiInstance))
-        # self.__log.writeDebugMessage("SHD >> __updateDriverConnections self.__connections: {}".format(self.__connections))
+        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__shdDependenciesPlibMultiInstance: {}".format(self.__shdDependenciesPlibMultiInstance))
+        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__connections: {}".format(self.__connections))
         
     def __signalEnableCallback(self, symbol, event):
         dependencies = {}
         enabledPinIdList = {}
         disabledPinIdList = {}
         if self.__signalCallbackBusy == False:
-            # self.__log.writeDebugMessage("SHD >> __signalEnableCallback id: {} = {} ------------ ".format(event['id'], event['value']))
+            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback id: {} = {} ------------ ".format(event['id'], event['value']))
             self.__signalCallbackBusy = True
 
             # Get Pin Control List
             srcSymbolSplit = event["id"].split('_')
-            # self.__log.writeDebugMessage("SHD >> __signalEnableCallback srcSymbolSplit: {}".format(srcSymbolSplit))
+            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback srcSymbolSplit: {}".format(srcSymbolSplit))
             if "INTERFACE" in event["id"]:
                 connectorName = None
                 if "_OPT_" in event["id"]:
@@ -546,13 +564,13 @@ class MainBoard:
                     pinControlList = self.getPinControlListByInterface(interfaceIndex, optionIndex)
                     # Extract dependencies from configuration file
                     newDepList = self.__currentConfig['interfaces'][interfaceIndex]['options'][optionIndex].get('dependencies')
-                    # self.__log.writeDebugMessage("SHD >> __signalEnableCallback iface_{}: opt_{}".format(interfaceIndex, optionIndex))
+                    # self.__log.writeInfoMessage("SHD >> __signalEnableCallback iface_{}: opt_{}".format(interfaceIndex, optionIndex))
                 else:
                     interfaceIndex = int(srcSymbolSplit[-1])
                     pinControlList = self.getPinControlListByInterface(interfaceIndex)
                     # Extract dependencies from configuration file
                     newDepList = self.__currentConfig['interfaces'][interfaceIndex].get('dependencies')
-                    # self.__log.writeDebugMessage("SHD >> __signalEnableCallback iface_{}".format(interfaceIndex))
+                    # self.__log.writeInfoMessage("SHD >> __signalEnableCallback iface_{}".format(interfaceIndex))
 
                 if newDepList != None:
                     for newDep in newDepList:
@@ -566,10 +584,10 @@ class MainBoard:
             else:
                 connectorSignal = srcSymbolSplit[-1].lower()
                 connectorName = srcSymbolSplit[-2].replace("-"," ")
-                # self.__log.writeDebugMessage("SHD >> __signalEnableCallback {}: {}".format(connectorName, connectorSignal))
+                # self.__log.writeInfoMessage("SHD >> __signalEnableCallback {}: {}".format(connectorName, connectorSignal))
                 pinControlList = self.getPinControlListByConnectorSignal(connectorName, connectorSignal)
 
-            # self.__log.writeDebugMessage("SHD >> __signalEnableCallback pinControlList: {}".format(pinControlList))
+            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback pinControlList: {}".format(pinControlList))
 
             for pinControl in pinControlList:
                 signalId, pinCtrl = pinControl
@@ -608,8 +626,8 @@ class MainBoard:
                         autodetectDeps = False
 
                 if autodetectDeps == True:
-                    # self.__log.writeDebugMessage("SHD >> __signalEnableCallback Autodetect dependency [{},{}]".format(depId, capId))
-                    # self.__log.writeDebugMessage("SHD >> __signalEnableCallback dependencies tmp: {}".format(dependencies))
+                    # self.__log.writeInfoMessage("SHD >> __signalEnableCallback Autodetect dependency [{},{}]".format(depId, capId))
+                    # self.__log.writeInfoMessage("SHD >> __signalEnableCallback dependencies tmp: {}".format(dependencies))
                     if depId != "" or capId != "":
                         addDependency = True
                         for depIdItem, capIdItem in dependencies.items():
@@ -629,7 +647,7 @@ class MainBoard:
                 if event["value"] is True:
                     # Check if that pin is already added                    
                     if not pinId in self.__configuredPins:
-                        # self.__log.writeDebugMessage("SHD >> __signalEnableCallback set Pin {}".format(pinId))
+                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback set Pin {}".format(pinId))
                         self.__configuredPins.append(pinId)
                         self.__pinControlByPinId.setdefault(pinId, pinCtrl)
                         self.__setPinConfig(pinCtrl)
@@ -637,13 +655,13 @@ class MainBoard:
                 else:
                     # Check if that pin has to be removed
                     if pinId in self.__configuredPins:
-                        # self.__log.writeDebugMessage("SHD >> __signalEnableCallback clear Pin {}".format(pinId))
+                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback clear Pin {}".format(pinId))
                         self.__configuredPins.remove(pinId)
                         del self.__pinControlByPinId[pinId]
                         self.__clearPinConfig(pinCtrl)
                         disabledPinIdList.setdefault(pinId, pinDescr)
 
-            # self.__log.writeDebugMessage("SHD >> __signalEnableCallback dependencies: {}".format(dependencies))
+            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback dependencies: {}".format(dependencies))
 
             # Activate/Deactivate components and create connections
             self.__updateDriverConnections(event["value"], dependencies, connectorName)
@@ -655,7 +673,7 @@ class MainBoard:
             self.__shdCheckCollisionSymbol.setValue(event["value"])
 
             self.__signalCallbackBusy = False
-            # self.__log.writeDebugMessage("SHD >> __signalEnableCallback __configuredPins: {}".format(self.__configuredPins))
+            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback __configuredPins: {}".format(self.__configuredPins))
 
     def __getSymbolLabel(self, name, function, subSignal, pinNumber, pinId):
         if subSignal is None:
@@ -668,56 +686,116 @@ class MainBoard:
         labelSplit[1] = function
         return ":".join(labelSplit)
 
+    def __checkConnectorAdaptor(self, connectorName, clickBoardCompatible):
+        # self.__log.writeInfoMessage("SHD >> __checkConnectorAdaptor: connectorName: {} - clickBoardCompatible: {}".format(connectorName, clickBoardCompatible))
+        connectorCompatible = self.getCompatibleByConnectorName(connectorName)
+        # self.__log.writeInfoMessage("SHD >> __checkConnectorAdaptor: connectorCompatible: {}".format(connectorCompatible))
+        if connectorCompatible == 'xplainpro' and clickBoardCompatible == 'mikrobus':
+            return True
+        else:
+            return False
+
+    def __checkAvailableClickBoard(self, connectorName, clickBoardInterface):
+        result = True
+        for connector in self.__currentConfig['connectors']:
+            if connector['name'] == connectorName:
+                # Skip connector
+                continue
+
+            connectorSymbolName = self.getConnectorSymbolName(connector['name'])
+            connectorInterface = self.__symbolConnectors.get(connectorSymbolName)
+            if connectorInterface != None:
+                connectorValue = connectorInterface.getValue()
+                if connectorValue == clickBoardInterface.getName():
+                    result = clickBoardInterface.getMulticonnection()
+                    
+        return result
+        
     def __connectClickBoard(self, symbol, event):
         clickBoardSelection = event['value']
-        id = symbol.getID()
-        connectorSymbolName = id.replace("_DUMMY", "")
-        connectorName = self.getConnectorNameFromSymbolName(connectorSymbolName)
-        # self.__log.writeDebugMessage("SHD >> __connectClickBoard: {} - {}".format(id, clickBoardSelection))
+        connectorSymbolID = symbol.getID().replace("_DUMMY", "")
+        connectorName = self.getConnectorNameFromSymbolID(connectorSymbolID)
+        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: connectorName: {}".format(clickBoardSelection))
+        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: connectorSymbolName: {}".format(connectorSymbolID))
+        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: connectorName: {}".format(connectorName))
 
         self.resetConnectorConfig(connectorName)
 
         if clickBoardSelection == "Select extension board":
             if self.__depBindings.get(connectorName) != None:
                 del self.__depBindings[connectorName]
-            # self.__log.writeDebugMessage("SHD >> __connectClickBoard: resetConnectorConfig - {} self.__depBindings:{}".format(connectorName, self.__depBindings))
+                del self.__connectedClickBoards[connectorName]
+                self.__connectedClickBoards[connectorName] = None
+                connectorAdaptorSymbol = self.__connectorAdaptorSymbols.get(connectorName)
+                if connectorAdaptorSymbol != None:
+                    connectorAdaptorSymbol.setVisible(False)
+
         else:
-            clickBoardInterface = self.__clickBoards.get(clickBoardSelection)
-            pinControlClickBoard = clickBoardInterface.getConnections()
-            # self.__log.writeDebugMessage("SHD >> __connectClickBoard: pinControlClickBoard - {}".format(pinControlClickBoard))
-            
-            bindingList = clickBoardInterface.getDependencies()
-            # self.__log.writeDebugMessage("SHD >> __connectClickBoard: bindingList - {}".format(bindingList))
-            index = 0
-            for depIdCon, signalCon in bindingList:
-                pinControlConnector = self.getPinControlByConnectorName(connectorName)
-                pinControlSignal = pinControlConnector.get(signalCon)
-                if pinControlSignal != None:
-                    pinFunction = pinControlSignal.get("function")
-                    if pinFunction == None: # this is a bus signals (usart, i2c, spi)
-                        if signalCon == 'spi':
-                            pinFunction = pinControlSignal.get("mosi").get("function")
-                        elif signalCon == 'uart':
-                            pinFunction = pinControlSignal.get("tx").get("function")
-                        elif signalCon == 'i2c':
-                            pinFunction = pinControlSignal.get("sda").get("function")
+            clickBoardInterface = None
+            for clickBoardFileName, (clickBoardName, clickBoardCompatible) in self.__clickBoardFileList.items():
+                if clickBoardName == clickBoardSelection:
+                    clickBoardInterface = ClickBoard(clickBoardFileName)
+                    self.__connectedClickBoards.setdefault(connectorName, clickBoardInterface)
 
-                    if pinFunction != None:
-                        pinFunction = pinFunction.upper()
-                        if pinFunction != 'GPIO':
-                            plib = pinFunction.split("_")
-                            if len(plib) > 1:
-                                plib = plib[0]
-                            # Overwrite the current element of the bindingList
-                            bindingList[index] = [depIdCon, plib.lower()]
-                            # self.__log.writeDebugMessage("SHD >> __connectClickBoard added bindingList[{}]: {}".format(index, bindingList[index]))
+            if clickBoardInterface != None:
+                # Check if multi-connection is allowed
+                if self.__checkAvailableClickBoard(connectorName, clickBoardInterface) == True:
+                    self.__log.writeInfoMessage("SHD >> Connect Click Board: {}".format(clickBoardInterface.getName()))
+                    self.__log.writeInfoMessage("SHD >> For further information: {}".format(clickBoardInterface.getDocumentation()))
 
-                index = index + 1
-                            
-                self.__depBindings.setdefault(connectorName, bindingList)
-                # self.__log.writeDebugMessage("SHD >> __connectClickBoard: __setAdditionalDependencies: {}".format(self.__depBindings))
-                
-            self.setConnectorConfig(connectorName, pinControlClickBoard)
+                    # Check if XplainPro to mikroBUS adapator board is needed
+                    connectorAdaptorSymbol = self.__connectorAdaptorSymbols.get(connectorName)
+                    useHWAdaptor = False
+                    if connectorAdaptorSymbol != None:            
+                        if self.__checkConnectorAdaptor(connectorName, clickBoardCompatible) == True:
+                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard WITH ADAPTOR - {}".format(connectorAdaptorSymbol))
+                            connectorAdaptorSymbol.setVisible(True)
+                            useHWAdaptor = True
+                            clickBoardInterface.convertFromMikroBusToXplainProBoard()
+                        else:
+                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard WITHOUT ADAPTOR - {}".format(connectorAdaptorSymbol))
+                            connectorAdaptorSymbol.setVisible(False)
+                            clickBoardInterface.restoreFromXplainProToMikroBusBoard()
+
+                    # Handle Bindings
+                    bindingList = clickBoardInterface.getDependencies()
+                    # self.__log.writeInfoMessage("SHD >> __connectClickBoard: bindingList - {}".format(bindingList))
+                    if bindingList != None:
+                        index = 0
+                        for depIdCon, signalCon in bindingList:
+                            pinControlConnector = self.getPinControlByConnectorName(connectorName)
+                            pinControlSignal = pinControlConnector.get(signalCon)
+                            if pinControlSignal != None:
+                                pinFunction = pinControlSignal.get("function")
+                                if pinFunction == None: # this is a bus signals (usart, i2c, spi)
+                                    if signalCon == 'spi':
+                                        pinFunction = pinControlSignal.get("mosi").get("function")
+                                    elif signalCon == 'uart':
+                                        pinFunction = pinControlSignal.get("tx").get("function")
+                                    elif signalCon == 'i2c':
+                                        pinFunction = pinControlSignal.get("sda").get("function")
+
+                                if pinFunction != None:
+                                    pinFunction = pinFunction.upper()
+                                    if pinFunction != 'GPIO':
+                                        plib = pinFunction.split("_")
+                                        if len(plib) > 1:
+                                            plib = plib[0]
+                                        # Overwrite the current element of the bindingList
+                                        bindingList[index] = [depIdCon, plib.lower()]
+                                        # self.__log.writeInfoMessage("SHD >> __connectClickBoard added bindingList[{}]: {}".format(index, bindingList[index]))
+
+                            index = index + 1
+                                        
+                            self.__depBindings.setdefault(connectorName, bindingList)
+                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard: __setAdditionalDependencies: {}".format(self.__depBindings))
+
+                    # Get only the active signals from ClickBoard
+                    pinControlClickBoard = clickBoardInterface.getConnections()
+                    # self.__log.writeInfoMessage("SHD >> __connectClickBoard: pinControlClickBoard - {}".format(pinControlClickBoard))
+
+                    # Set connector configuration
+                    self.setConnectorConfig(connectorName, pinControlClickBoard, useHWAdaptor)
          
     def getName(self):
         return self.__currentConfig.get('name')
@@ -837,6 +915,13 @@ class MainBoard:
                 pinControl = connector['pinctrl']
                 
         return pinControl
+
+    def getCompatibleByConnectorName(self, connectorName):
+        for connector in self.__currentConfig['connectors']:
+            if connector['name'] == connectorName:
+                return connector['compatible']
+                
+        return None
             
     def getDescriptionListByConnectorSignal(self, connectorName, connectorSignal):
         pinControlList = []
@@ -863,7 +948,7 @@ class MainBoard:
     def getPinControlListByConnectorSignal(self, connectorName, connectorSignal):
         pinControlList = []
         for connector in self.__currentConfig['connectors']:
-            # self.__log.writeDebugMessage("SHD >> getPinControlListByConnectorSignal: {} - {}".format(connector['name'], connectorName))
+            # self.__log.writeInfoMessage("SHD >> getPinControlListByConnectorSignal: {} - {}".format(connector['name'], connectorName))
             if connector['name'] == connectorName:
                 signalControl = connector['pinctrl'].get(connectorSignal)
                 if signalControl != None:
@@ -878,14 +963,27 @@ class MainBoard:
         else:
             return None
 
-    def updatePinControlByConnector(self, connectorName, newPinControl):
+    def updatePinControlByConnector(self, connectorName, newPinControl, useHWAdaptor):
         for connector in self.__currentConfig['connectors']:
-            # self.__log.writeDebugMessage("SHD >> SHD updatePinControlByConnector {} == {}".format(connector['name'], connectorName))
+            # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector {} == {}".format(connector['name'], connectorName))
             if connector['name'] == connectorName:
                 pinControlCurrent = connector['pinctrl']
                 break
 
-        # self.__log.writeDebugMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 1: {}".format(pinControlCurrent))
+        # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent: {}".format(pinControlCurrent))
+        
+        # Update signal labels according to useHWAdaptor (only for xplainPro to mikroBUS)
+        if useHWAdaptor == True:
+            board = self.__db.getComponentByID(self.__interfaceID)
+            signalsToAdapt = getConnectorSignalMapXplainProToMikroBUS()
+            for xproSignal, uBusSignal in signalsToAdapt.items():
+                signalSymbolID = self.getConnectorSignalSymbolName(connectorName, xproSignal)
+                symbolInterface = board.getSymbolByID(signalSymbolID)
+                if uBusSignal is None:
+                    symbolInterface.setVisible(False)
+                else:
+                    symbolInterface.setLabel(uBusSignal.upper())
+                        
         for signal, newConfig in newPinControl.items():
             pDict = dict()
             if newConfig.get('name') != None:
@@ -910,19 +1008,19 @@ class MainBoard:
                         # restore function if not present
                         pinControlCurrent[signal][subSignal]["function"] = fn
 
-        # self.__log.writeDebugMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
+        # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
 
     def restorePinControlByConnector(self, connectorName):
         connectorIndex = 0
         for connector in self.__currentConfig['connectors']:
-            # self.__log.writeDebugMessage("SHD >> restorePinControlByConnector: {} - {}".format(connector['name'], connectorName))
+            # self.__log.writeInfoMessage("SHD >> restorePinControlByConnector: {} - {}".format(connector['name'], connectorName))
             if connector['name'] == connectorName:
                 pinControlCurrent = connector['pinctrl']
                 break
             else:
                 connectorIndex = connectorIndex + 1
 
-        # self.__log.writeDebugMessage("SHD >> restorePinControlByConnector: connectorIndex: {}".format(connectorIndex))
+        # self.__log.writeInfoMessage("SHD >> restorePinControlByConnector: connectorIndex: {}".format(connectorIndex))
         pinControlDefault = self.__defaultConfig['connectors'][connectorIndex]['pinctrl']
         
         for signal in pinControlCurrent:
@@ -933,7 +1031,7 @@ class MainBoard:
     def getConnectorSymbolName(self, connectorName):
         return "SHD_MAINBOARD_CONNECTOR_{}".format(connectorName.replace(" ","-"))
 
-    def getConnectorNameFromSymbolName(self, connectorSymbolName):
+    def getConnectorNameFromSymbolID(self, connectorSymbolName):
         return connectorSymbolName.split("_")[3].replace("-", " ")
 
     def getConnectorSignalSymbolName(self, connectorName, signalName):
@@ -944,27 +1042,27 @@ class MainBoard:
         connectorSignalName = self.getConnectorSignalSymbolName(connectorName, signalName)
         return "{}_{}".format(connectorSignalName, pinId.upper())
 
-    def setConnectorConfig(self, connectorName, pinCtrl):
-        # self.__log.writeDebugMessage("SHD >> SHD setConnectorConfig connectorName: {}, pinCtrl: {}".format(connectorName, pinCtrl))
+    def setConnectorConfig(self, connectorName, pinCtrl, useHWAdaptor):
+        # self.__log.writeInfoMessage("SHD >> SHD setConnectorConfig connectorName: {}, pinCtrl: {}".format(connectorName, pinCtrl))
         board = self.__db.getComponentByID(self.__interfaceID)
         
         # Update Pin Control of the Main Board by Connector
-        self.updatePinControlByConnector(connectorName, pinCtrl)
+        self.updatePinControlByConnector(connectorName, pinCtrl, useHWAdaptor)
 
         # Update Configuration Options by Connector
         signalList = self.getSignalListByConnectorName(connectorName)
         signalList.sort(reverse=True)
-        # self.__log.writeDebugMessage("SHD >> setConnectorConfig signalList: {}".format(signalList))
+        # self.__log.writeInfoMessage("SHD >> setConnectorConfig signalList: {}".format(signalList))
         for signal in signalList:
             # Enable/Disable signals
             connectorSignalName = self.getConnectorSignalSymbolName(connectorName, signal)
             signalSymbol = board.getSymbolByID(connectorSignalName)
             if pinCtrl.get(signal) != None:
-                # self.__log.writeDebugMessage("SHD >> setConnectorConfig Enable symbol: {}".format(connectorSignalName))
+                # self.__log.writeInfoMessage("SHD >> setConnectorConfig Enable symbol: {}".format(connectorSignalName))
                 signalSymbol.setValue(True)
                 
                 pinDescriptionList = self.getDescriptionListByConnectorSignal(connectorName, signal)
-                # self.__log.writeDebugMessage("SHD >> setConnectorConfig pinDescriptionList: {}".format(pinDescriptionList))
+                # self.__log.writeInfoMessage("SHD >> setConnectorConfig pinDescriptionList: {}".format(pinDescriptionList))
                 # Update Symbol label
                 for pinDescription in pinDescriptionList:
                     if len(pinDescription) == 4:
@@ -975,10 +1073,10 @@ class MainBoard:
                         label = self.__getSymbolLabel(name, function, subSignal, pinNumber, pinId)
                         # Handle SPI CS exception (configuration option is not allowed)
                         if subSignal.lower() == 'cs' and function != "GPIO":
-                            # self.__log.writeDebugMessage("SHD >> Handle SPI CS exception - subSignal: {}".format(subSignal.lower())) 
+                            # self.__log.writeInfoMessage("SHD >> Handle SPI CS exception - subSignal: {}".format(subSignal.lower())) 
                             symbolName = self.__symbolNamesByConnector[connectorName][pinId]
                             shdSpiCSConfigSymbolName = "{}_{}".format(symbolName, "CSASGPIO")
-                            # self.__log.writeDebugMessage("SHD >> CS set Visible: {}".format(shdSpiCSConfigSymbolName))
+                            # self.__log.writeInfoMessage("SHD >> CS set Visible: {}".format(shdSpiCSConfigSymbolName))
                             signalSpiCsPinSymbol = board.getSymbolByID(shdSpiCSConfigSymbolName)
                             signalSpiCsPinSymbol.setVisible(True)
 
@@ -986,14 +1084,14 @@ class MainBoard:
                     signalPinSymbol.setLabel(label)
 
             # else:
-            #     # self.__log.writeDebugMessage("SHD >> Disable symbol: {}".format(connectorSignalName))
+            #     # self.__log.writeInfoMessage("SHD >> Disable symbol: {}".format(connectorSignalName))
             #     signalSymbol.setValue(False)
             #     signalSymbol.setVisible(False)
 
             # signalSymbol.setReadOnly(True)
             
     def resetConnectorConfig(self, connectorName):
-        # self.__log.writeDebugMessage("SHD >> SHD restoreConnections connectorName: {}".format(connectorName))
+        # self.__log.writeInfoMessage("SHD >> SHD restoreConnections connectorName: {}".format(connectorName))
         board = self.__db.getComponentByID(self.__interfaceID)
         
         # Restore Pin Control by default of the Main Board by Connector
@@ -1007,7 +1105,7 @@ class MainBoard:
             signalSymbol.clearValue()
             # signalSymbol.setReadOnly(False)
             signalSymbol.setVisible(True)
-            
+            signalSymbol.setLabel(signal.upper())
             # Update Symbol label
             pinDescriptionList = self.getDescriptionListByConnectorSignal(connectorName, signal)
             for pinDescription in pinDescriptionList:
@@ -1029,7 +1127,7 @@ class MainBoard:
 
     def handleMessage(self, id, args):
         retDict = {}
-        # self.__log.writeDebugMessage("SHD >> mainBoard handleMessage: {} args: {}".format(id, args))
+        # self.__log.writeInfoMessage("SHD >> mainBoard handleMessage: {} args: {}".format(id, args))
         if (id == "CONNECTOR_SET_CONFIGURATION"):
             for connectorName, pinCtrl in args.items():
                 self.setConnectorConfig(connectorName, pinCtrl)
@@ -1055,7 +1153,8 @@ class MainBoard:
         return retDict
 
     def createConfigurationSymbols(self, boardInterface):
-        self.__boardComponent = boardInterface
+        self.__log.writeInfoMessage("SHD >> Loading SHD Board: {}".format(self.getName()))
+        self.__log.writeInfoMessage("SHD >> For further information: {}".format(self.getDocumentation()))
 
         self.__db.activateComponents(["HarmonyCore"])
 
@@ -1157,7 +1256,7 @@ class MainBoard:
 
         # INTERFACE DEFINITIONS -----------------------------------------------
         boardInterfaces = self.__currentConfig.get('interfaces')
-        # self.__log.writeDebugMessage("SHD >> boardInterfaces: {}".format(boardInterfaces))
+        # self.__log.writeInfoMessage("SHD >> boardInterfaces: {}".format(boardInterfaces))
         if boardInterfaces != None:
             shdInterfaceList = boardInterface.createMenuSymbol("SHD_MAINBOARD_INTERFACES", None)
             shdInterfaceList.setLabel("Interfaces")
@@ -1169,7 +1268,7 @@ class MainBoard:
             interfaceList = self.getInterfaceList()
             interfaceIndex = 0
             for interface in self.__currentConfig.get('interfaces'):
-                # self.__log.writeDebugMessage("SHD >> boardInterfaces interface: {}".format(interface))
+                # self.__log.writeInfoMessage("SHD >> boardInterfaces interface: {}".format(interface))
                 hasOptions = interface.get('options') != None
                 if hasOptions:
                     interfaceName = "SHD_MAINBOARD_INTERFACE_{}".format(interfaceIndex)
@@ -1189,9 +1288,9 @@ class MainBoard:
                         self.__symbolInterfaces.setdefault(optionSymbolName, symbol)
 
                         pinControlList = self.getDescriptionListByInterface(interfaceIndex, optionIndex)
-                        # self.__log.writeDebugMessage("SHD >> option pinControlList: {}".format(pinControlList))
+                        # self.__log.writeInfoMessage("SHD >> option pinControlList: {}".format(pinControlList))
                         for pinControl in pinControlList:
-                            # self.__log.writeDebugMessage("SHD >> option pinControl: {}".format(pinControl))
+                            # self.__log.writeInfoMessage("SHD >> option pinControl: {}".format(pinControl))
                             pinControlIndex, function, pinId = pinControl
                             symbolName = "{}_{}_{}".format(optionSymbolName, pinControlIndex, pinId)
                             shdConfigComment = boardInterface.createCommentSymbol(symbolName, symbol)
@@ -1223,9 +1322,9 @@ class MainBoard:
                     self.__symbolInterfaces.setdefault(interfaceSymbolName, symbol)
 
                     pinControlList = self.getDescriptionListByInterface(interfaceIndex)
-                    # self.__log.writeDebugMessage("SHD >> pinControlList: {}".format(pinControlList))
+                    # self.__log.writeInfoMessage("SHD >> pinControlList: {}".format(pinControlList))
                     for pinControl in pinControlList:
-                        # self.__log.writeDebugMessage("SHD >> pinControl: {}".format(pinControl))
+                        # self.__log.writeInfoMessage("SHD >> pinControl: {}".format(pinControl))
                         pinControlIndex, function, pinId = pinControl
                         symbolName = "{}_{}_{}".format(interfaceSymbolName, pinControlIndex, pinId)
                         shdConfigComment = boardInterface.createCommentSymbol(symbolName, symbol)
@@ -1248,7 +1347,7 @@ class MainBoard:
                 interfaceIndex = interfaceIndex + 1
                 
             shdInterfaceList.setDependencies(self.__signalEnableCallback, interfaceDependencies)
-            # self.__log.writeDebugMessage("SHD >> interfaceDependencies: {}".format(interfaceDependencies))
+            # self.__log.writeInfoMessage("SHD >> interfaceDependencies: {}".format(interfaceDependencies))
             
             # Add collision data
             self.__collisionsByPinID = deepcopy(self.__symbolInterfaceByPin)
@@ -1256,7 +1355,7 @@ class MainBoard:
         # EXTERNAL CONNECTORS DEFINITIONS -------------------------------------
         boardConnectors = self.__currentConfig.get('connectors')
         if boardConnectors != None:
-            # self.__log.writeDebugMessage("SHD >> createMenuSymbol: SHD_MAINBOARD_CONNECTORS")
+            # self.__log.writeInfoMessage("SHD >> createMenuSymbol: SHD_MAINBOARD_CONNECTORS")
             shdConnectorList = boardInterface.createMenuSymbol("SHD_MAINBOARD_CONNECTORS", None)
             shdConnectorList.setLabel("External Connectors")
             shdConnectorList.setDescription("List of external connectors")
@@ -1271,23 +1370,41 @@ class MainBoard:
 
                 # Filter clickBoard list by compatible data
                 clickBoardSelection = ['Select extension board']
-                for name, interface in self.__clickBoards.items():
-                    if boardConnectors[conIndex].get('compatible') == interface.getConnectorCompatible():
-                        clickBoardSelection.append(name)
+                
+                for clickBoardBaseName, (clickBoardName, clickBoardCompatible) in self.__clickBoardFileList.items():
+                    addClickBoard = False
+                    boardConnCompatible = boardConnectors[conIndex].get('compatible')
+                    # clickBoardCompatible = interface.getConnectorCompatible()
+                    if boardConnCompatible == clickBoardCompatible:
+                        addClickBoard = True
+                    # elif boardConnCompatible == 'mikrobus' and clickBoardCompatible == 'xplainpro':
+                    #     addClickBoard = True
+                    elif boardConnCompatible == 'xplainpro' and clickBoardCompatible == 'mikrobus':
+                        addClickBoard = True
+
+                    if addClickBoard == True:
+                        clickBoardSelection.append(clickBoardName)
                 
                 if len(clickBoardSelection) == 1:
                     clickBoardSelection = ['No extension board available']
                 
                 connectorSymbolName = self.getConnectorSymbolName(conName)
-                # self.__log.writeDebugMessage("SHD >> createMenuSymbol: {}".format(connectorSymbolName))
+                # self.__log.writeInfoMessage("SHD >> createMenuSymbol: {}".format(connectorSymbolName))
                 shdConnectorSymbol = boardInterface.createComboSymbol(connectorSymbolName, shdConnectorList, clickBoardSelection)
                 shdConnectorSymbol.setLabel(conName)            
                 shdConnectorSymbol.setDefaultValue(clickBoardSelection[0])
                 shdConnectorSymbol.setDescription(conDescription)
                 shdConnectorSymbol.setVisible(True)
                 if len(clickBoardSelection) == 1:
-                    shdConnectorSymbol.setReadOnly(True)       
+                    shdConnectorSymbol.setReadOnly(True)
                 shdConnectorSymbol.setHelp(shdMainBoardHelp)
+                self.__symbolConnectors.setdefault(connectorSymbolName, shdConnectorSymbol)
+
+                if boardConnectors[conIndex].get('compatible') == 'xplainpro':
+                    shdConnectorSymbolAdaptor = boardInterface.createCommentSymbol(connectorSymbolName + "_ADAPTOR", shdConnectorSymbol)
+                    shdConnectorSymbolAdaptor.setLabel("Warning!! This connection requires an ATMBUSADAPTER-XPRO adapter board")
+                    shdConnectorSymbolAdaptor.setVisible(False)
+                    self.__connectorAdaptorSymbols.setdefault(conName, shdConnectorSymbolAdaptor)
 
                 shdConnectorSymbolDummy = boardInterface.createMenuSymbol(connectorSymbolName + "_DUMMY", shdConnectorList)
                 shdConnectorSymbolDummy.setLabel("")
@@ -1297,7 +1414,7 @@ class MainBoard:
                 signalList = self.getSignalListByConnector(conIndex)
                 for signal in signalList:
                     connectorSignalName = self.getConnectorSignalSymbolName(conName, signal)
-                    # self.__log.writeDebugMessage("SHD >> createBooleanSymbol: {}".format(connectorSignalName))
+                    # self.__log.writeInfoMessage("SHD >> createBooleanSymbol: {}".format(connectorSignalName))
                     shdConSignalSymbol = boardInterface.createBooleanSymbol(connectorSignalName, shdConnectorSymbol)
                     shdConSignalSymbol.setLabel(signal.upper())
                     shdConSignalSymbol.setDescription("Enable {} : {}".format(conName, signal.upper()))
@@ -1307,7 +1424,7 @@ class MainBoard:
                     
                     pinDescriptionList = self.getDescriptionListByConnectorSignal(conName, signal)
                     for pinDescription in pinDescriptionList:
-                        # self.__log.writeDebugMessage("SHD >> pinDescription: {}".format(pinDescription))
+                        # self.__log.writeInfoMessage("SHD >> pinDescription: {}".format(pinDescription))
                         spiCSdetected = False
                         # Check if single signal or signal group
                         if len(pinDescription) == 4:
@@ -1318,17 +1435,17 @@ class MainBoard:
                             label = self.__getSymbolLabel(name, function, subSignal, pinNumber, pinId)
                             if subSignal.lower() == 'cs' and function != "GPIO":
                                 # Defined as peripheral CS, but it can be configured as GPIO.
-                                # self.__log.writeDebugMessage("SHD >> Handle SPI CS exception: {} {} {} {} {}".format(name, function, subSignal, pinNumber, pinId))
+                                # self.__log.writeInfoMessage("SHD >> Handle SPI CS exception: {} {} {} {} {}".format(name, function, subSignal, pinNumber, pinId))
                                 # Handle SPI CS exception
                                 spiCSdetected = True
                             
                         shdConPinControlSymbolName = self.getConnectorSignalPinSymbolName(conName, signal, pinId)
                         # Store the Symbol name to be used in click Boards connection events
                         symbolNamesByPinId.setdefault(pinId, shdConPinControlSymbolName)
-                        # self.__log.writeDebugMessage("SHD >> symbolNamesByPinId: {}".format(symbolNamesByPinId))
+                        # self.__log.writeInfoMessage("SHD >> symbolNamesByPinId: {}".format(symbolNamesByPinId))
 
-                        # self.__log.writeDebugMessage("SHD >> conPinControlName: ", conPinControlName)
-                        # self.__log.writeDebugMessage("SHD >> createCommentSymbol: {}".format(shdConPinControlSymbolName))
+                        # self.__log.writeInfoMessage("SHD >> conPinControlName: ", conPinControlName)
+                        # self.__log.writeInfoMessage("SHD >> createCommentSymbol: {}".format(shdConPinControlSymbolName))
                         shdConPinControlSymbol = boardInterface.createCommentSymbol(shdConPinControlSymbolName, shdConSignalSymbol)
                         shdConPinControlSymbol.setLabel(label)
                         shdConPinControlSymbol.setVisible(False)
@@ -1349,7 +1466,7 @@ class MainBoard:
                         # Check SPI CS exception. It could be handled as GPIO. Add configuration option.
                         if spiCSdetected == True:
                             shdSpiCSConfigSymbolName = "{}_{}".format(shdConPinControlSymbolName, "CSASGPIO")
-                            # self.__log.writeDebugMessage("SHD >> createBooleanSymbol: {}".format(shdSpiCSConfigSymbolName))
+                            # self.__log.writeInfoMessage("SHD >> createBooleanSymbol: {}".format(shdSpiCSConfigSymbolName))
                             shdSpiCSConfigSymbol = boardInterface.createBooleanSymbol(shdSpiCSConfigSymbolName, shdConPinControlSymbol)
                             shdSpiCSConfigSymbol.setLabel("Drive CS signal as GPIO")
                             shdSpiCSConfigSymbol.setDescription("Drive CS signal as GPIO")
@@ -1357,7 +1474,7 @@ class MainBoard:
                             shdSpiCSConfigSymbol.setHelp(shdMainBoardHelp)
                             self.__symbolInterfaces.setdefault(shdSpiCSConfigSymbolName, shdSpiCSConfigSymbol)
 
-                            # self.__log.writeDebugMessage("SHD >> spiCSdetected connectorSignalName: {} shdSpiCSConfigSymbolName: {}".format(connectorSignalName, shdSpiCSConfigSymbolName))
+                            # self.__log.writeInfoMessage("SHD >> spiCSdetected connectorSignalName: {} shdSpiCSConfigSymbolName: {}".format(connectorSignalName, shdSpiCSConfigSymbolName))
                             shdConPinControlSymbol.setDependencies(self.__showSymbol, [connectorSignalName, shdSpiCSConfigSymbolName])
 
                         else:
@@ -1367,7 +1484,7 @@ class MainBoard:
                     
                 self.__symbolNamesByConnector.setdefault(conName, symbolNamesByPinId)
                 shdConnectorSymbol.setDependencies(self.__signalEnableCallback, connectorDependencies)
-                # self.__log.writeDebugMessage("SHD >> connectorDependencies: {}".format(connectorDependencies))
+                # self.__log.writeInfoMessage("SHD >> connectorDependencies: {}".format(connectorDependencies))
 
         # remove no collision data
         for key, value in self.__collisionsByPinID.items():
@@ -1375,19 +1492,19 @@ class MainBoard:
                 self.__collisionsByPinID.pop(key, value)
 
         # for key, symbolList in self.__symbolInterfaceByPin.items():
-        #     self.__log.writeDebugMessage("SHD >> self.__symbolInterfaceByPin: {}: {}".format(key, symbolList))
+        #     self.__log.writeInfoMessage("SHD >> self.__symbolInterfaceByPin: {}: {}".format(key, symbolList))
 
         # for key, value in self.__symbolNamesByConnector.items():
-        #     self.__log.writeDebugMessage("SHD >> self.__symbolNamesByConnector: {}: {}".format(key, value))
+        #     self.__log.writeInfoMessage("SHD >> self.__symbolNamesByConnector: {}: {}".format(key, value))
 
         # for key, value in self.__collisionsByPinID.items():
-        #     self.__log.writeDebugMessage("SHD >> self.__collisionsByPinID: {}: {}".format(key, value))
+        #     self.__log.writeInfoMessage("SHD >> self.__collisionsByPinID: {}: {}".format(key, value))
 
         # for key, value in self.__symbolPinByParent.items():
-        #     self.__log.writeDebugMessage("SHD >> self.__symbolPinByParent: {}: {}".format(key, value))
+        #     self.__log.writeInfoMessage("SHD >> self.__symbolPinByParent: {}: {}".format(key, value))
 
     def resetSignalConfiguration(self):
-        # self.__log.writeDebugMessage("SHD >> resetSignalConfiguration: {}".format(self.__configuredPins))
+        # self.__log.writeInfoMessage("SHD >> resetSignalConfiguration: {}".format(self.__configuredPins))
         for pinId in self.__configuredPins:
             pinControl = self.__pinControlByPinId.get(pinId)
             if pinControl != None:

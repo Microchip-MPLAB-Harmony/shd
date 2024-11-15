@@ -5,6 +5,7 @@ description: >
 documentation: https://www.microchip.com/en-us/development-tool/ATIO1-XPRO
 compatible: xplainpro
 dependencies: [[drv_sdspi, spi]]
+multiconnection: True
 supported:
   adc plus:
     name: IO1_LightSensor

@@ -5,6 +5,7 @@ description: >
 documentation: https://www.microchip.com/en-us/development-tool/EV13L63A
 compatible: xplainpro
 dependencies: [[drvPlcPhy, spi]]
+multiconnection: False
 supported:
   adc plus:
     name: PL460_SUPPLY_MON
