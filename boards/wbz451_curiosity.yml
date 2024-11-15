@@ -1,22 +1,49 @@
-name: wbz351-curiosity
-config: wbz351_curiosity.py
-documentation: https://www.microchip.com/en-us/development-tool/ev19j06a
+name: wbz451-curiosity
+config: wbz451_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/ev96b94a
 processor:
-  name: WBZ351
+  name: WBZ451
   architecture: CORTEX-M4
-  family: WBZ3
-  series: WBZ35
+  family: WBZ45
+  series: BZ45
 
 interfaces:
   - name: Digital interface
-    description: LEDs and Buttons configurations
+    description: LEDs and Button configurations
     options:
       - name: User LED
-        description: User LED
+        description: User LED (D5)
         pinctrl:
           gpio:
             pinId: RB7
             name: USER_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LED - Red
+        description: LED - Red
+        pinctrl:
+          gpio:
+            pinId: RB0
+            name: LED_RED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LED - Green
+        description: LED - Green
+        pinctrl:
+          gpio:
+            pinId: RB3
+            name: LED_GREEN
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LED - Blue
+        description: LED - Blue
+        pinctrl:
+          gpio:
+            pinId: RB5
+            name: LED_BLUE
             function: GPIO
             direction: out
             latch: high
@@ -26,42 +53,27 @@ interfaces:
           gpio:
             pinId: RB0
             name: RGB_LED_RED
-            function: GPIO
-            direction: out
-            latch: low
+            function: TCC0_WO0
       - name: RGB LED - Green
         description: RGB LED - Green
         pinctrl:
           gpio:
             pinId: RB3
             name: RGB_LED_GREEN
-            function: GPIO
-            direction: out
-            latch: low
+            function: TCC0_WO1
       - name: RGB LED - Blue
         description: RGB LED - Blue
         pinctrl:
           gpio:
             pinId: RB5
             name: RGB_LED_BLUE
-            function: GPIO
-            direction: out
-            latch: low
-      - name: User Button 1 (SW2)
-        description: User Button 1 (SW2)
+            function: TCC0_WO2
+      - name: User Button
+        description: User Button (SW2)
         pinctrl:
           gpio:
-            pinId: RB9
+            pinId: RB4
             name: USER_SW2
-            function: GPIO
-            direction: in
-            pull up: True
-      - name: User Button 2 (SW3)
-        description: User Button 2 (SW3)
-        pinctrl:
-          gpio:
-            pinId: RA4
-            name: USER_SW3
             function: GPIO
             direction: in
             pull up: True
@@ -74,24 +86,23 @@ interfaces:
         dependencies: [[drv_sst26, qspi]]
         pinctrl:
           qsck:
-            pinId: RA1
+            pinId: RB11
             function: QSPI_SCK (out)
           qcs:
-            pinId: RB13
+            pinId: RB10
             function: QSPI_CS (out)
           sio0:
-            pinId: RA0
+            pinId: RB12
             function: QSPI_DATA0 (in/out)
           sio1:
-            pinId: RB12
+            pinId: RB13
             function: QSPI_DATA1 (in/out)
           sio2:
-            pinId: RB11
+            pinId: RA0
             function: QSPI_DATA2 (in/out)
           sio3:
-            pinId: RA2
+            pinId: RA1
             function: QSPI_DATA3 (in/out)
-            pull up: True
 
   - name: Temp sensor interface
     description: On-board temp sensor configurations
@@ -131,18 +142,18 @@ interfaces:
             name: USB_USART_RX
             function: SERCOM0_PAD1 (in)
           rts:
-            pinId: RB4
+            pinId: RA3
             name: USB_USART_RTS
             function: SERCOM0_PAD2 (out)
           cts:
-            pinId: RA3
+            pinId: RA4
             name: USB_USART_CTS
             function: SERCOM0_PAD3 (in)
 
 connectors:
   - compatible: mikrobus
     name: MikroBUS Header
-    description: MikroBUS header configuration (J4)
+    description: MikroBUS headers configurations (J4)
     pinctrl:
       an:
         pinId: RB1
@@ -172,13 +183,13 @@ connectors:
           name: MikroBUS_SPI_MOSI
           function: SERCOM1_PAD0 (out)
       int:
-        pinId: RB10
+        pinId: RA2
         name: MikroBUS_INT
-        function: EIC_EXTINT2 (in)
+        function: EIC_EXTINT0 (in)
       pwm:
-        pinId: PB10
+        pinId: RA2
         name: MikroBUS_PWM
-        function: TCC0_WO2
+        function: TCC1_WO1
       uart:
         tx:
           pinId: RA7
@@ -192,84 +203,8 @@ connectors:
         sda:
           pinId: RA13
           name: MikroBUS_I2C_SDA
-          function: SERCOM2_SDA (in)
+          function: SERCOM2_PAD0 (in)
         scl:
           pinId: RA14
           name: MikroBUS_I2C_SCL
-          function: SERCOM2_SCL (out)
-
-  - compatible: xplainpro
-    name: Extension Header EXT1
-    description: Xplained Pro Standard Extension Header 1
-    pinctrl:
-      adc plus:
-        pinId: RB0
-        name: EXT1_ADC_PLUS
-        function: ADCHS_AN4
-      adc minus:
-        pinId: RB3
-        name: EXT1_ADC_PLUS2
-        function: ADCHS_AN7
-      gpio1:
-        pinId: RB10
-        name: EXT1_GPIO1
-        function: GPIO
-        direction: in
-      gpio2:
-        pinId: RA4
-        name: EXT1_GPIO2
-        function: GPIO
-        direction: in
-      pwm plus:
-        pinId: RB5
-        name: EXT1_PWM_PLUS
-        function: TCC0_WO0
-      pwm minus:
-        pinId: RB1
-        name: EXT1_PWM_MINUS
-        function: TCC0_WO1
-      irq:
-        pinId: RB2
-        name: EXT1_IRQ
-        function: EIC_EXTINT2 (in)
-      gpio ss:
-        pinId: RB4
-        name: EXT1_GPIO_SS
-        function: GPIO
-        direction: out
-        latch: low
-      i2c:
-        sda:
-          pinId: RA13
-          name: EXT1_I2C_SDA
-          function: SERCOM2_SDA (in)
-        scl:
-          pinId: RA14
-          name: EXT1_I2C_SCL
-          function: SERCOM2_SCL (out)
-      uart:
-        tx:
-          pinId: RA7
-          name: MikroBUS_UART_TX
-          function: SERCOM1_PAD0 (out)
-        rx:
-          pinId: RA8
-          name: MikroBUS_UART_RX
-          function: SERCOM1_PAD1 (in)
-      spi:
-        cs:
-          pinId: RA9
-          name: EXT1_SPI_CS
-          function: SERCOM1_PAD2 (out)
-        sck:
-          pinId: RA8
-          name: EXT1_SPI_SCK
-          function: SERCOM1_PAD1 (out)
-        miso:
-          pinId: RA10
-          name: EXT1_SPI_MISO
-          function: SERCOM1_PAD3 (in)
-        mosi:
-          pinId: RA7
-          name: EXT1_SPI_MOSI
-          function: SERCOM1_PAD0 (out)
+          function: SERCOM2_PAD1 (out)
