@@ -141,13 +141,13 @@ interfaces:
   - name: USB interface
     description: USB configuration
     options:
-      - name: VBUS Sense Pin
-        description: USB VBUS Sense Pin
+      - name: VBUS Detect
+        description: USB VBUS Detect Pin
         dependencies: [[drv_usbhs_v1]]
         pinctrl:
           gpio:
             pinId: PC9
-            name: USB_VBUS_SENSE
+            name: USB_VBUS_DETECT
             function: GPIO
             direction: in
       - name: VBUS Host Enable
@@ -166,7 +166,6 @@ interfaces:
     options:
       - name: S25FL116K interface
         description: S25FL116K QSPI flash memory
-        dependencies: [[qspi]]
         pinctrl:
           qsck:
             pinId: PA14
@@ -239,7 +238,7 @@ interfaces:
     options:
       - name: Ethernet RMII interface
         description: Ethernet GMAC configuration
-        dependencies: [[drvGmac, drvExtPhyLan8061]]
+        dependencies: [[drvGmac, drvExtPhyKsz8061]]
         pinctrl:
           gtxen:
             pinId: PD1
@@ -388,91 +387,91 @@ interfaces:
         pinctrl:
           lcden:
             pinId: PC11
-            name: GFX_DISP_INTF_PIN_RD
+            name: GFX_DISP_PIN_RD
             function: GPIO
             direction: out
             latch: high
           lcdhsync:
             pinId: PC30
-            name: GFX_DISP_INTF_PIN_RSDC
+            name: GFX_DISP_PIN_RSDC
             function: GPIO
             direction: out
             latch: high
           lcdvsync:
             pinId: PD19
-            name: GFX_DISP_INTF_PIN_CS
+            name: GFX_DISP_PIN_CS
             function: GPIO
             direction: out
             latch: high
           lcdpclk:
             pinId: PC8
-            name: GFX_DISP_INTF_PIN_WR
+            name: GFX_DISP_PIN_WR
             function: GPIO
             direction: out
             latch: high
           lcdd0:
             pinId: PC0
-            name: GFX_DISP_INTF_PIN_D0
+            name: GFX_DISP_PIN_D0
             function: EBI_D0
           lcdd1:
             pinId: PC1
-            name: GFX_DISP_INTF_PIN_D1
+            name: GFX_DISP_PIN_D1
             function: EBI_D1
           lcdd2:
             pinId: PC2
-            name: GFX_DISP_INTF_PIN_D2
+            name: GFX_DISP_PIN_D2
             function: EBI_D2
           lcdd3:
             pinId: PC3
-            name: GFX_DISP_INTF_PIN_D3
+            name: GFX_DISP_PIN_D3
             function: EBI_D3
           lcdd4:
             pinId: PC4
-            name: GFX_DISP_INTF_PIN_D4
+            name: GFX_DISP_PIN_D4
             function: EBI_D4
           lcdd5:
             pinId: PC5
-            name: GFX_DISP_INTF_PIN_D5
+            name: GFX_DISP_PIN_D5
             function: EBI_D5
           lcdd6:
             pinId: PC6
-            name: GFX_DISP_INTF_PIN_D6
+            name: GFX_DISP_PIN_D6
             function: EBI_D6
           lcdd7:
             pinId: PC7
-            name: GFX_DISP_INTF_PIN_D7
+            name: GFX_DISP_PIN_D7
             function: EBI_D7
           lcdd8:
             pinId: PE0
-            name: GFX_DISP_INTF_PIN_D8
+            name: GFX_DISP_PIN_D8
             function: EBI_D8
           lcdd9:
             pinId: PE1
-            name: GFX_DISP_INTF_PIN_D9
+            name: GFX_DISP_PIN_D9
             function: EBI_D9
           lcdd10:
             pinId: PE2
-            name: GFX_DISP_INTF_PIN_D10
+            name: GFX_DISP_PIN_D10
             function: EBI_D10
           lcdd11:
             pinId: PE3
-            name: GFX_DISP_INTF_PIN_D11
+            name: GFX_DISP_PIN_D11
             function: EBI_D11
           lcdd12:
             pinId: PE4
-            name: GFX_DISP_INTF_PIN_D12
+            name: GFX_DISP_PIN_D12
             function: EBI_D12
           lcdd13:
             pinId: PE5
-            name: GFX_DISP_INTF_PIN_D13
+            name: GFX_DISP_PIN_D13
             function: EBI_D13
           lcdd14:
             pinId: PA15
-            name: GFX_DISP_INTF_PIN_D14
+            name: GFX_DISP_PIN_D14
             function: EBI_D14
           lcdd15:
             pinId: PA16
-            name: GFX_DISP_INTF_PIN_D15
+            name: GFX_DISP_PIN_D15
             function: EBI_D15
       - name: Touch Control
         description: GFX touch control configuration
@@ -507,7 +506,7 @@ interfaces:
         pinctrl:
           pwm:
             pinId: PC9
-            name: GFX_DISP_INTF_PIN_BACKLIGHT
+            name: GFX_DISP_PIN_BACKLIGHT
             function: GPIO
             direction: out
             latch: high
@@ -516,7 +515,7 @@ interfaces:
         pinctrl:
           reset:
             pinId: PC13
-            name: GFX_DISP_INTF_PIN_RESET
+            name: GFX_DISP_PIN_RESET
             function: GPIO
             direction: out
             latch: high
@@ -650,7 +649,7 @@ connectors:
       pwm plus:
         pinId: PA0
         name: EXT1_PWM_PLUS
-        function: TC4_WO0
+        function: PWM0_PWMH0
       pwm minus:
         pinId: PC30
         name: EXT1_PWM_MINUS
@@ -776,282 +775,3 @@ connectors:
           pinId: PD21
           name: EXT2_SPI_MOSI
           function: SPI0_MOSI
-
-  - compatible: arduino
-    description: Arduino Due compatible header
-    options:
-      - name: ADC inputs
-        description: Analog to Digital Converter inputs
-        pinctrl:
-          adc0:
-            pinId: PD26
-            name: Arduino_ADC0
-            function: SDADC_INP1
-          adc1:
-            pinId: PC31
-            name: Arduino_ADC1
-            function: AFEC1_AD6
-          adc2:
-            pinId: PA19
-            name: Arduino_ADC2
-            function: AFEC0_AD8
-          adc3:
-            pinId: PD30
-            name: Arduino_ADC3
-            function: AFEC0_AD0
-          adc4:
-            pinId: PC13
-            name: Arduino_ADC4
-            function: AFEC1_AD1
-          adc5:
-            pinId: PE0
-            name: Arduino_ADC5
-            function: AFEC1_AD11
-          adc6:
-            pinId: PE3
-            name: Arduino_ADC6
-            function: AFEC1_AD10
-          adc7:
-            pinId: PE4
-            name: Arduino_ADC7
-            function: AFEC0_AD4
-          adc8:
-            pinId: PD24
-            name: Arduino_ADC8
-            function: ADC0_AIN10
-          adc9:
-            pinId: PA10
-            name: Arduino_ADC9
-            function: ADC0_AIN11
-          adc10:
-            pinId: PA22
-            name: Arduino_ADC10
-            function: ADC0_AIN12
-          adc11:
-            pinId: PE5
-            name: Arduino_ADC11
-            function: AFEC0_AD3
-      - name: DAC
-        description: Digital to Analog Converter
-        pinctrl:
-          dac0:
-            pinId: PB13
-            name: Arduino_DAC0
-            function: DACC_DAC0
-          dac1:
-            pinId: PD0
-            name: Arduino_DAC1
-            function: DACC_DAC1
-      - name: CAN
-        description: Controller Area Network (CAN)
-        options:
-          - name: CAN0
-            description: Controller Area Network (CAN0)
-            pinctrl:
-              tx:
-                pinId: PB2
-                name: Arduino_CANTX0
-                function: MCAN0_CANTX0
-              rx:
-                pinId: PB3
-                name: Arduino_CANRX0
-                function: MCAN0_CANRX0
-          - name: CAN1
-            description: Controller Area Network (CAN1)
-            pinctrl:
-              tx:
-                pinId: PC14
-                name: Arduino_D53_CANTX1
-                function: MCAN1_CANTX1
-              rx:
-                pinId: PC12
-                name: Arduino_D52_CANRX1
-                function: MCAN1_CANRX1
-      - name: UART
-        description: Universal Asynchronous Receiver-Transmitter
-        options:
-          - name: UART0
-            description: Universal Asynchronous Receiver-Transmitter (UART0)
-            pinctrl:
-              tx:
-                pinId: PB1
-                name: Arduino_D14_UART0_TX
-                function: USART0_TXD0
-              rx:
-                pinId: PB0
-                name: Arduino_D15_UART0_RX
-                function: USART0_RXD0
-              cts:
-                pinId: PB2
-                name: Arduino_D39_UART0_CTS
-                function: USART0_CTS0
-              rts:
-                pinId: PB3
-                name: Arduino_D40_UART0_RTS
-                function: USART0_RTS0
-          - name: UART1
-            description: Universal Asynchronous Receiver-Transmitter (UART1)
-            pinctrl:
-              tx:
-                pinId: PB4
-                name: Arduino_D47_UART1_TX
-                function: USART1_TXD1
-              rx:
-                pinId: PA21
-                name: Arduino_D46_UART1_RX
-                function: USART1_RXD1
-              cts:
-                pinId: PA25
-                name: Arduino_D44_UART1_CTS
-                function: USART1_CTS1
-              rts:
-                pinId: PA24
-                name: Arduino_D45_UART1_RTS
-                function: USART1_RTS1
-          - name: UART2
-            description: Universal Asynchronous Receiver-Transmitter (UART2)
-            pinctrl:
-              tx:
-                pinId: PD16
-                name: Arduino_D16_UART2_TX
-                function: USART2_TXD2
-              rx:
-                pinId: PD15
-                name: Arduino_D17_UART2_RX
-                function: USART2_RXD2
-              cts:
-                pinId: PD19
-                name: Arduino_D26_UART2_CTS
-                function: USART2_CTS2
-              rts:
-                pinId: PD18
-                name: Arduino_D27_UART2_RTS
-                function: USART2_RTS2
-          - name: UART3
-            description: Universal Asynchronous Receiver-Transmitter (UART3)
-            pinctrl:
-              tx:
-                pinId: PD30
-                name: Arduino_D1_UART3_TX
-                function: UART3_UTXD3
-              rx:
-                pinId: PD28
-                name: Arduino_D0_UART3_RX
-                function: UART3_URXD3
-          - name: UART4
-            description: Universal Asynchronous Receiver-Transmitter (UART4)
-            pinctrl:
-              tx:
-                pinId: PD19
-                name: Arduino_D18_UART4_TX
-                function: UART4_UTXD4
-              rx:
-                pinId: PD18
-                name: Arduino_D19_UART4_RX
-                function: UART4_URXD4
-      - name: TWI
-        description: Two Wire Interface
-        options:
-          - name: TWI0
-            description: Two Wire Interface (TWI0)
-            pinctrl:
-              sda:
-                pinId: PA3
-                name: Arduino_I2C0_SDA
-                function: TWIHS0_TWD0
-              scl:
-                pinId: PA4
-                name: Arduino_I2C0_SCL
-                function: TWIHS0_TWCK0
-          - name: TWI1
-            description: Two Wire Interface (TWI1)
-            pinctrl:
-              sda:
-                pinId: PD27
-                name: Arduino_D20_I2C2_SDA
-                function: TWIHS2_TWD2
-              scl:
-                pinId: PD28
-                name: Arduino_D21_I2C2_SCL
-                function: TWIHS2_TWCK2
-      - name: SPI
-        description: Serial Peripheral Interface
-        pinctrl:
-          cs:
-            pinId: PD25
-            name: Arduino_D10_SPI_CS
-            function: SPI0_NCS1
-          sck:
-            pinId: PD22
-            name: Arduino_D13_SPI_SCK
-            function: SPI0_SPCK
-          miso:
-            pinId: PD20
-            name: Arduino_D12_SPI_MISO
-            function: SPI0_MISO
-          mosi:
-            pinId: PD21
-            name: Arduino_D11_SPI_MOSI
-            function: SPI0_MOSI
-      - name: PWM
-        description: Pulse Width Modulation compatible pins
-        pinctrl:
-          d2:
-            pinId: PA0
-            name: Arduino_D2_PWMH0
-            function: PWM0_PWMH0
-          d5:
-            pinId: PD11
-            name: Arduino_D5_PWMH0
-            function: PWM0_PWMH0
-          d6:
-            pinId: PC19
-            name: Arduino_D6_PWMH2
-            function: PWM0_PWMH2
-          d7:
-            pinId: PA2
-            name: Arduino_D7_PWMH1
-            function: PWM0_PWMH1
-          d8:
-            pinId: PA5
-            name: Arduino_D8_PWML3
-            function: PWM1_PWML3
-      - name: GPIOs
-        description: General Purpose Input/Output pins
-        pinctrl:
-          d3:
-            pinId: PA6
-            name: Arduino_D3
-            function: GPIO
-            direction: out
-            latch: low
-          d4:
-            pinId: PD27
-            name: Arduino_D4
-            function: GPIO
-            direction: out
-            latch: low
-          d9:
-            pinId: PC9
-            name: Arduino_D9
-            function: GPIO
-            direction: out
-            latch: low
-          d22:
-            pinId: PA18
-            name: Arduino_D22
-            function: GPIO
-            direction: out
-            latch: low
-          d23:
-            pinId: PB1
-            name: Arduino_D23
-            function: GPIO
-            direction: out
-            latch: low
-          d24:
-            pinId: PB0
-            name: Arduino_D24
-            function: GPIO
-            direction: out
-            latch: low
