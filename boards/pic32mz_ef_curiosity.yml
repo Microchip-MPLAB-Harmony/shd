@@ -228,9 +228,7 @@ interfaces:
           nirq:
             pinId: RJ2
             name: ETH_nIRQ
-            function: GPIO
-            direction: out
-            latch: high
+            function: INT4
       - name: Ethernet nRST interface
         description: Ethernet nRST configuration
         pinctrl:
