@@ -106,13 +106,13 @@ interfaces:
             name: USB_PGOOD
             function: GPIO
             direction: out
-            latch: high
+            latch: low
           gpio2:
             pinId: RB2
             name: USB_VBUSON
             function: GPIO
             direction: in
-            pull down: True
+            pull up: True
 
   - name: Storage interface
     description: Storage on-board components configurations
@@ -183,9 +183,7 @@ interfaces:
           nirq:
             pinId: RC13
             name: ETH_nIRQ
-            function: GPIO
-            direction: out
-            latch: high
+            function: INT4
       - name: Ethernet nRST interface
         description: Ethernet nRST configuration
         pinctrl:
