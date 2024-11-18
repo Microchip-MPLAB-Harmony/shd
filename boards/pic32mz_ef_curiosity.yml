@@ -74,7 +74,6 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-            change notification: True
       - name: User Button 2
         description: User Button 2 (RJ5)
         pinctrl:
@@ -84,7 +83,6 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-            change notification: True
       - name: User Button 3
         description: User Button 3 (RJ6)
         pinctrl:
@@ -94,7 +92,6 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-            change notification: True
       - name: User Button 4
         description: User Button 4 (RC15)
         pinctrl:
@@ -104,7 +101,6 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-            change notification: True
 
   - name: Storage interface
     description: Storage on-board components configurations
@@ -202,33 +198,36 @@ interfaces:
             pinId: RJ1
             function: EETHMAC_EMDIO
       - name: Ethernet SPI interface
-        description: Ethernet SPI1 configuration
+        description: Ethernet SPI3 configuration
         pinctrl:
           cs:
             pinId: RD9
-            name: ETH_SPI_CS
+            name: ETH_SPI_CS3
             function: GPIO
             direction: out
             latch: high
           sck:
             pinId: RD1
             name: ETH_SPI_SCK
-            function: SPI1_SCK1
+            function: SPI3_SCK3
           miso:
             pinId: RD14
             name: ETH_SPI_MISO
-            function: SPI1_SDI1
+            function: SPI3_SDI3
           mosi:
             pinId: RD7
             name: ETH_SPI_MOSI
-            function: SPI1_SDO1
+            function: SPI3_SDO3
       - name: Ethernet nIRQ interface
         description: Ethernet nIRQ interface
         pinctrl:
           nirq:
             pinId: RJ2
             name: ETH_nIRQ
-            function: INT4
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
       - name: Ethernet nRST interface
         description: Ethernet nRST configuration
         pinctrl:
@@ -241,7 +240,7 @@ interfaces:
       - name: Ethernet GPIO0 interface
         description: Ethernet GPIO0 interface
         pinctrl:
-          nirq:
+          gpio:
             pinId: RH12
             name: ETH_GPIO0
             function: GPIO
@@ -249,7 +248,7 @@ interfaces:
       - name: Ethernet GPIO1 interface
         description: Ethernet GPIO1 interface
         pinctrl:
-          nirq:
+          gpio:
             pinId: RH14
             name: ETH_GPIO1
             function: GPIO
@@ -257,7 +256,7 @@ interfaces:
       - name: Ethernet GPIO2 interface
         description: Ethernet GPIO2 interface
         pinctrl:
-          nirq:
+          gpio:
             pinId: RH15
             name: ETH_GPIO2
             function: GPIO
@@ -568,16 +567,16 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: Touch I2C interface
-        description: GFX Touch I2C interface
+      - name: I2C interface
+        description: GFX I2C interface
         pinctrl:
           sda:
             pinId: RA3
-            name: GFX_TOUCH_I2C_SDA
+            name: GFX_I2C_SDA
             function: I2C2_SDA2
           scl:
             pinId: RA2
-            name: GFX_TOUCH_I2C_SCL
+            name: GFX_I2C_SCL
             function: I2C2_SCL2
       - name: SPI interface
         description: GFX SPI interface
@@ -780,12 +779,16 @@ connectors:
       irq:
         pinId: RK0
         name: EXT1_IRQ
-        function: EIC_EXTINT6
+        function: GPIO
+        direction: in
+        pull up: True
+        change notification: True
       gpio ss:
         pinId: RK6
-        name: EXT1_GPIO_SS
+        name: EXT1_GPIO_CS
         function: GPIO
-        direction: in/out
+        direction: out
+        latch: high
       i2c:
         sda:
           pinId: RA15
@@ -861,8 +864,9 @@ connectors:
         pinId: RF12
         name: MikroBUS1_INT
         function: GPIO
-        direction: out
-        latch: high
+        direction: in
+        pull up: True
+        change notification: True
       uart:
         tx:
           pinId: RC4
@@ -921,8 +925,9 @@ connectors:
         pinId: RD10
         name: MikroBUS2_INT
         function: GPIO
-        direction: out
-        latch: high
+        direction: in
+        pull up: True
+        change notification: True
       uart:
         tx:
           pinId: RG9
