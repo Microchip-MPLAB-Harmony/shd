@@ -103,13 +103,13 @@ interfaces:
             function: USBID
           gpio1:
             pinId: RB5
-            name: USB_PGOOD
+            name: USB_VBUSON
             function: GPIO
             direction: out
             latch: low
           gpio2:
             pinId: RB2
-            name: USB_VBUSON
+            name: USB_PGOOD
             function: GPIO
             direction: in
             pull up: True
