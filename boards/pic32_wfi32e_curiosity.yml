@@ -1,9 +1,9 @@
-name: pic32-wfi32-20-curiosity
-config: pic32_wfi32_20_curiosity.py
-documentation: https://www.microchip.com/en-us/development-tool/EV67T15A
-part number: EV67T15A
+name: pic32-wfi32e-curiosity
+config: pic32_wfi32e_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/ev12f11a
+part number: EV12F11A
 processor:
-  name: PIC32MZ2051W104132
+  name: PIC32MZ1025W104132
   architecture: MIPS
   family: PIC32MZW
   series: PIC32MZW
@@ -39,9 +39,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-
   - name: Storage interface
-    description: Storage on-board components configurations
+    description: Storage interface configuration - U203
     options:
       - name: SST26VF032B interface
         description: SST26VF032B QSPI flash memory
@@ -49,7 +48,7 @@ interfaces:
         pinctrl:
           cs:
             pinId: RA1
-            name: SST26_SPI_SS1
+            name: SST26_SPI_CS1
             function: SPI1_SS1
           sdo:
             pinId: RC8
@@ -63,22 +62,21 @@ interfaces:
             pinId: RC6
             name: SST26_SPI_SCK1
             function: SPI1_SCK1
-
-  - name: Temp sensor interface
-    description: On-board temp sensor configurations
+  - name: Temperature sensor interface
+    description: Temperature sensor configuration - U204 (Ensure J209 jumper is mounted on pins 1-2)
     options:
-      - name: Microchip TC1047A interface
+      - name: TC1047A interface
         description: Temperature Sensor TC1047A
         pinctrl:
           an:
             pinId: RA13
-            name: TC1047A_AN
-            function: ADCHS_AN15
+            name: TEMPSENSOR_AN
+            function: ADCHS_ANN1
 
 connectors:
   - compatible: mikrobus
     name: MikroBUS Header
-    description: MikroBUS headers configurations (J200)
+    description: MikroBUS header configuration - J200
     pinctrl:
       an:
         pinId: RA14
@@ -107,14 +105,14 @@ connectors:
           pinId: RK4
           name: MikroBUS_SPI_MOSI
           function: SPI2_SDO2
-      int:
-        pinId: RK6
-        name: MikroBUS_INT
-        function: INT_INT2
       pwm:
         pinId: RB12
         name: MikroBUS_PWM
         function: OCMP1_OC1
+      int:
+        pinId: RK6
+        name: MikroBUS_INT
+        function: INT_INT2
       uart:
         tx:
           pinId: RK7
@@ -136,7 +134,7 @@ connectors:
 
   - compatible: rmii
     name: Ethernet PHY Header
-    description: Ethernet PHY Header configurations (J208)
+    description: Ethernet PHY Header configurations - J208, J208-1
     pinctrl:
       ethphy:
         txen:
@@ -191,80 +189,77 @@ connectors:
         latch: low
 
   - compatible: xplainpro
-    name: Extension XPRO Header (J203)
-    description: Xplained Pro Standard Extension Header
+    name: Extension XPRO Header
+    description: Xplained Pro Standard Extension Header  - J203
     pinctrl:
       adc plus:
         pinId: RB6
-        name: EXT1_ADC_PLUS
+        name: EXT_ADC_PLUS
         function: ADCHS_AN6
       adc minus:
         pinId: RA14
-        name: EXT1_ADC_MINUS
-        function: ADCHS_AN14
+        name: EXT_ADC_MINUS
+        function: ADCHS_ANN0
       gpio1:
         pinId: RB12
-        name: EXT1_GPIO1
+        name: EXT_GPIO1
         function: GPIO
         direction: in/out
       gpio2:
         pinId: RK6
-        name: EXT1_GPIO2
+        name: EXT_GPIO2
         function: GPIO
         direction: in/out
       pwm plus:
         pinId: RB8
-        name: EXT1_PWM_PLUS
+        name: EXT_PWM_PLUS
         function: OCMP1_OC1
       pwm minus:
         pinId: RA13
-        name: EXT1_PWM_MINUS
+        name: EXT_PWM_MINUS
         function: OCMP2_OC2
       irq:
         pinId: RA10
-        name: EXT1_IRQ
-        function: GPIO
-        direction: in
-        pull up: True
-        change notification: True
+        name: EXT_IRQ
+        function: INT_INT0
       gpio ss:
         pinId: RB2
-        name: EXT1_GPIO_CS
+        name: EXT_GPIO_CS
         function: GPIO
         direction: out
-        latch: high
+        latch: HIGH
       i2c:
         sda:
           pinId: RA5
-          name: EXT1_I2C_SDA
+          name: EXT_I2C_SDA
           function: I2C1_SDA1
         scl:
           pinId: RA4
-          name: EXT1_I2C_SCL
+          name: EXT_I2C_SCL
           function: I2C1_SCL1
       uart:
         tx:
           pinId: RK7
-          name: EXT1_USART_TX
+          name: EXT_USART_TX
           function: UART2_U2TX
         rx:
           pinId: RB9
-          name: EXT1_USART_RX
+          name: EXT_USART_RX
           function: UART2_U2RX
       spi:
         cs:
           pinId: RB7
-          name: EXT1_SPI_CS
+          name: EXT_SPI_CS
           function: SPI2_SS2 (out)
         sck:
           pinId: RA11
-          name: EXT1_SPI_SCK
+          name: EXT_SPI_SCK
           function: SPI2_SCK2
         miso:
           pinId: RK5
-          name: EXT1_SPI_MISO
+          name: EXT_SPI_MISO
           function: SPI2_SDI2
         mosi:
           pinId: RK4
-          name: EXT1_SPI_MOSI
+          name: EXT_SPI_MOSI
           function: SPI2_SDO2

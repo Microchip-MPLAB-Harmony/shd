@@ -159,7 +159,7 @@ __connectorSpec = {
     'rmii': {
         'ethphy': {
             'txen': 1,
-            'txdo': 2,
+            'txd0': 2,
             'txd1': 3,
             'refck': 8,
             'rxd1': 15,

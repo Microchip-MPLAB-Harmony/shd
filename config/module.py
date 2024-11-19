@@ -4,7 +4,7 @@ import glob
 
 ######################  Harmony System Hardware Definitions  ######################
 def loadModule():
-    print("Load Module: Harmony System Hardware Description (SHD)")
+    print("Load Module: Harmony System Hardware Definitions (SHD)")
 
     processor = Variables.get("__PROCESSOR")
     shdPath = Variables.get("__MODULE_ROOT")
@@ -31,7 +31,7 @@ def loadModule():
             print("SHD loading main board " + boardName.upper())
             shdModule = Module.CreateComponent("mainBoard_" + config.split(".")[0].upper(),
                                             boardName.upper(),
-                                            "/System Hardware Description (SHD)/Main Boards/",
+                                            "/System Hardware Definitions (SHD)/Main Boards/",
                                             "/boards/"+ config)
             shdModule.setDisplayType("MAIN BOARD")
         

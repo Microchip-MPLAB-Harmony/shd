@@ -9,8 +9,8 @@ supported:
   ethphy:
     txen:
       name: PHY_DB_RMII_TXEN
-    txdo:
-      name: PHY_DB_RMII_TXDO
+    txd0:
+      name: PHY_DB_RMII_TXD0
     txd1:
       name: PHY_DB_RMII_TXD1
     refck:
