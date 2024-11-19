@@ -92,8 +92,8 @@ class MainBoard:
             if messageID != None and componentID in idActiveList:
                 # self.__log.writeInfoMessage("SHD >> __setPLIBSettings: sending message to {} : {}. params: {}".format(componentID, messageID, params))
                 res = self.__db.sendMessage(componentID, messageID, params)
-                if res != None and res.get("Result") != "Success":
-                    self.__log.writeInfoMessage("SHD mainBoard: Error in sending message to PLIB {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
+                # if res != None and res.get("Result") != "Success":
+                #     self.__log.writeInfoMessage("SHD mainBoard: Error in sending message to PLIB {} : {}({}). Error: {}".format(componentID, messageID, params, res.get("Result")))
             # else:
             #     self.__log.writeInfoMessage("SHD >> __setPLIBSettings skip {} messageID:{} idActiveList{}".format(componentID, messageID, idActiveList))
 
@@ -108,8 +108,8 @@ class MainBoard:
                 if messageID != None:
                     # self.__log.writeInfoMessage("SHD >> __setDriverSettings: sending message - {} : {}. params: {}".format(componentID, messageID, params))
                     res = self.__db.sendMessage(componentID, messageID, params)
-                    if res != None and res.get("Result") != "Success":
-                        self.__log.writeInfoMessage("SHD mainBoard: skip sending message to DRV {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
+                    # if res != None and res.get("Result") != "Success":
+                    #     self.__log.writeInfoMessage("SHD mainBoard: skip sending message to DRV {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
                 # else:
                 #     self.__log.writeInfoMessage("SHD >> __setDriverSettings ERROR : {} {} {}".format(componentID, messageID, params))
 
@@ -797,6 +797,23 @@ class MainBoard:
                     # Set connector configuration
                     self.setConnectorConfig(connectorName, pinControlClickBoard, useHWAdaptor)
          
+    def __updatePinConfiguration(self, config, newConfig):
+        result = config.copy()
+        for key, value in newConfig.items():
+            result[key] = value
+            
+        # Check discrepancies
+        if result.get('direction') == 'in' and result.get('latch') != None:
+            # Remove latch since pin is an input
+            del result['latch']
+        elif result.get('direction') == 'out':
+            if result.get('pull up') != None:
+                del result['pull up']
+            if result.get('pull down') != None:
+                del result['pull down']
+            
+        return result
+    
     def getName(self):
         return self.__currentConfig.get('name')
     
@@ -954,7 +971,7 @@ class MainBoard:
                 if signalControl != None:
                     if self.isPinSignal(signalControl):
                         # Single pin signal
-                        pinControlList.append(('gpio', signalControl))
+                        pinControlList.append((connectorSignal, signalControl))
                     else:
                         for signalId, pinControl in signalControl.items():
                             # Multi pin signal
@@ -963,14 +980,14 @@ class MainBoard:
         else:
             return None
 
-    def updatePinControlByConnector(self, connectorName, newPinControl, useHWAdaptor):
+    def updatePinControlByConnector(self, connectorName, newPinControl, useHWAdaptor=False):
         for connector in self.__currentConfig['connectors']:
             # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector {} == {}".format(connector['name'], connectorName))
             if connector['name'] == connectorName:
                 pinControlCurrent = connector['pinctrl']
                 break
 
-        # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent: {}".format(pinControlCurrent))
+        # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 1: {}".format(pinControlCurrent))
         
         # Update signal labels according to useHWAdaptor (only for xplainPro to mikroBUS)
         if useHWAdaptor == True:
@@ -985,28 +1002,13 @@ class MainBoard:
                     symbolInterface.setLabel(uBusSignal.upper())
                         
         for signal, newConfig in newPinControl.items():
-            pDict = dict()
             if newConfig.get('name') != None:
                 # Single Pin
-                pinId = pinControlCurrent[signal]["pinId"]
-                fn = pinControlCurrent[signal]["function"]
-                # Add new values
-                pinControlCurrent[signal] = newConfig
-                pinControlCurrent[signal]["pinId"] = pinId
-                if pinControlCurrent[signal].get("function") == None:
-                    # restore function if not present
-                    pinControlCurrent[signal]["function"] = fn
+                pinControlCurrent[signal] = self.__updatePinConfiguration(pinControlCurrent[signal], newConfig)
             else:
                 # Multi Pin
                 for subSignal, newSubConfig in newConfig.items():
-                    pinId = pinControlCurrent[signal][subSignal]["pinId"]
-                    fn = pinControlCurrent[signal][subSignal]["function"]
-                    # Add new values
-                    pinControlCurrent[signal][subSignal] = newSubConfig
-                    pinControlCurrent[signal][subSignal]["pinId"] = pinId
-                    if pinControlCurrent[signal][subSignal].get("function") == None:
-                        # restore function if not present
-                        pinControlCurrent[signal][subSignal]["function"] = fn
+                    pinControlCurrent[signal][subSignal] = self.__updatePinConfiguration(pinControlCurrent[signal][subSignal], newSubConfig)
 
         # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
 
@@ -1083,13 +1085,6 @@ class MainBoard:
                     signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId])
                     signalPinSymbol.setLabel(label)
 
-            # else:
-            #     # self.__log.writeInfoMessage("SHD >> Disable symbol: {}".format(connectorSignalName))
-            #     signalSymbol.setValue(False)
-            #     signalSymbol.setVisible(False)
-
-            # signalSymbol.setReadOnly(True)
-            
     def resetConnectorConfig(self, connectorName):
         # self.__log.writeInfoMessage("SHD >> SHD restoreConnections connectorName: {}".format(connectorName))
         board = self.__db.getComponentByID(self.__interfaceID)

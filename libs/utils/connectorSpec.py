@@ -159,12 +159,12 @@ __connectorSpec = {
 }
 
 def getConnectorPinNumberFromSignal(connectorCompatible, **kwargs):
-    # print("CHRIS dbg: getPinNumberFromConnectorSpec", connector, kwargs)
+    # print("SHD >> getPinNumberFromConnectorSpec", connector, kwargs)
     connectorPins = __connectorSpec.get(connectorCompatible)
     if connectorPins != None:
         signalGroup = kwargs.get('signalGroup')
         signalPin = kwargs.get('signalPin')
-        # print("CHRIS dbg: getPinNumberFromConnectorSpec {} {}".format(signalGroup, signalPin))
+        # print("SHD >> getPinNumberFromConnectorSpec {} {}".format(signalGroup, signalPin))
         if (signalGroup != None):
             pinNumber = __connectorSpec.get(connectorCompatible).get(signalGroup).get(signalPin)
         else:

@@ -23,7 +23,8 @@ __drvDependencies = {
     'drvPic32mEthmac': 'PHY',
     'ethmac': 'PHY',
     'le_gfx_slcdc': 'SLCDC',
-    'ptc': 'ADC'
+    'ptc': 'ADC',
+    'drvWifiWincS02': 'SPI'
 }
 
 def __checkSubstringList(substringList, string):
@@ -175,7 +176,7 @@ def __getConfigDatabaseADC(periphID, settings):
 
     # elif periphID == 'ADC_02486':
     # else:
-        # print("CHRIS dbg >> getConfigDatabaseADC {} NOT FOUND!!!".format(periphID))
+        # print("SHD >> getConfigDatabaseADC {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -197,7 +198,7 @@ def __getConfigDatabaseDAC(periphID, settings):
 
     # elif periphID == 'DAC_CTRL_05063':
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseDAC {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseDAC {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -231,7 +232,7 @@ def __getConfigDatabaseAC(periphID, settings):
 
     # elif periphID == 'AC_U225':
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseAC {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseAC {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -254,7 +255,7 @@ def __getConfigDatabaseACC(periphID, settings):
 
     # elif periphID == 'ACC_6490':
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseAC {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseAC {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -291,7 +292,7 @@ def __getConfigDatabasePWM(periphID, settings):
     # elif periphID == 'PWM_54':
 
     # else:
-    #     print("CHRIS dbg >> getConfigDatabasePWM {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabasePWM {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -314,7 +315,7 @@ def __getConfigDatabaseFLEXCOM(periphID, settings):
         if 'npcs' in setting:
             configDB.setdefault('config', (setting.upper(), enable))
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseFLEXCOM {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseFLEXCOM {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -346,7 +347,7 @@ def __getConfigDatabaseSERCOM(periphID, settings):
         if mode != "":
             configDB.setdefault('config', (mode, pinCtrl, enable))
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseSERCOM {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseSERCOM {} NOT FOUND!!!".format(periphID))
     
     return configDB
 
@@ -365,7 +366,7 @@ def __getConfigDatabaseMCSPI(periphID, settings):
             configDB.setdefault('config', (setting.upper(), enable))
 
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseMCSPI {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseMCSPI {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -392,7 +393,7 @@ def __getConfigDatabaseEIC(periphID, settings):
         configDB.setdefault('config', (channel, enable))
 
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseEIC {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseEIC {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -411,7 +412,7 @@ def __getConfigDatabaseAIC(periphID, settings):
         componentID = "core"
         
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseAIC {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseAIC {} NOT FOUND!!!".format(periphID))
 
     return componentID, configDB
 
@@ -444,7 +445,7 @@ def __getConfigDatabaseSUPC(periphID, settings):
     # elif periphID == 'SUPC_44082':
 
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseSUPC {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseSUPC {} NOT FOUND!!!".format(periphID))
 
     return componentID, configDB
 
@@ -464,7 +465,7 @@ def __getConfigDatabaseOCMP(periphID, settings):
         configDB.setdefault('compID', componentID)
 
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseOCMP {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseOCMP {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -501,7 +502,7 @@ def __getConfigDatabaseCCP(periphID, settings):
         configDB.setdefault('compID', componentID)
 
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseOCMP {} NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseOCMP {} NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -540,7 +541,7 @@ def __getConfigDatabaseSPI(periphID, settings):
     # elif periphID == 'SPI_00753':
     # elif periphID == 'SPI_01329':
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseSPI {} - NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseSPI {} - NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -561,7 +562,7 @@ def __getConfigDatabaseI2S(periphID, settings):
     # elif periphID == 'SPI_00753':
     # elif periphID == 'SPI_01329':
     # else:
-    #     print("CHRIS dbg >> getConfigDatabaseI2S {} - NOT FOUND!!!".format(periphID))
+    #     print("SHD >> getConfigDatabaseI2S {} - NOT FOUND!!!".format(periphID))
 
     return componentID, configDB
 
@@ -599,7 +600,7 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
     dependencyList = dict()
     dependencyList[plib] = componentID
     newDependencyList = adaptDevicePeripheralDependencies(ATDF, dependencyList)
-    # print("CHRIS dbg >> getDBMsgPLIBConfiguration newDependencyList {}".format(newDependencyList))
+    # print("SHD >> getDBMsgPLIBConfiguration newDependencyList {}".format(newDependencyList))
 
     for depId, capId in newDependencyList.items():
         componentID = capId
@@ -611,7 +612,7 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
         
         for peripheral in periphList:
             pName = peripheral.split('_')[0].lower()
-            # print("CHRIS dbg >> checking periph {}: {} = {}".format(peripheral, plib, pName))
+            # print("SHD >> checking periph {}: {} = {}".format(peripheral, plib, pName))
             if plib == pName:
                 periphID = peripheral
                 params.setdefault('peripheral', peripheral)
@@ -675,7 +676,7 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
             configDB = __getConfigDatabaseSDADC(periphID, settings)
         
         # else:
-        #     print("CHRIS dbg >> getDevicePLIBConfigurationDBMessage {} NOT FOUND!!! - {}".format(plib, periphID))
+        #     print("SHD >> getDevicePLIBConfigurationDBMessage {} NOT FOUND!!! - {}".format(plib, periphID))
             
         config = configDB.get('config')
         if config != None:
@@ -731,7 +732,7 @@ def __getConfigDatabaseDrvSST26(settings):
     configDB = dict()
 
     fn = "".join(filter(lambda x: x.isalpha(), functionValue))
-    # print("CHRIS dbg >> getConfigDatabaseDrvSST26 fn: {} ".format(fn))
+    # print("SHD >> getConfigDatabaseDrvSST26 fn: {} ".format(fn))
     if fn.upper() == 'SQICS':
         protocol = 'SQI'
         cs = int("".join(filter(lambda x: x.isdigit(), functionValue)))
@@ -746,7 +747,7 @@ def __getConfigDatabaseDrvAT25(settings):
     configDB = dict()
 
     pinFn = nameValue.split("_")[-1].upper()
-    # print("CHRIS dbg >> getConfigDatabaseDrvAT25 pinFn: {} ".format(pinFn))
+    # print("SHD >> getConfigDatabaseDrvAT25 pinFn: {} ".format(pinFn))
     if pinFn in ["WP", "CS", "HOLD"]:
         configDB.setdefault('msgID', 'AT25_CONFIG_HW_IO')
         configDB.setdefault('config', (pinFn, pinId, enable))
@@ -759,10 +760,23 @@ def __getConfigDatabaseDrvAT25DF(settings):
     configDB = dict()
 
     pinFn = nameValue.split("_")[-1].upper()
-    # print("CHRIS dbg >> getConfigDatabaseDrvAT25 pinFn: {} ".format(pinFn))
+    # print("SHD >> getConfigDatabaseDrvAT25 pinFn: {} ".format(pinFn))
     if pinFn in ["CS"]:
         configDB.setdefault('msgID', 'AT25DF_CONFIG_HW_IO')
         configDB.setdefault('config', (pinFn, pinId, enable))
+    
+    return configDB
+
+def __getConfigDatabaseDrvWINCS02(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+    if (signalId == 'irq'):
+        plib = functionValue.split("_")[0]
+        setting = functionValue.split('_')[-1]
+        channel = "".join(filter(lambda x: x.isdigit(), setting))
+        configDB.setdefault('msgID', 'WINCS02_CONFIG_HW_IO')
+        configDB.setdefault('config', (plib, channel, enable))
     
     return configDB
 
@@ -785,22 +799,24 @@ def getDBMsgDriverConfiguration(settings):
         configDB = __getConfigDatabaseDrvAT25(settings)
     elif driver == 'drv_at25df':
         configDB = __getConfigDatabaseDrvAT25DF(settings)
-    # else:
-    #     print("CHRIS dbg >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
+    elif driver == 'drvWifiWincS02':
+        configDB = __getConfigDatabaseDrvWINCS02(settings)
+    else:
+        print("SHD >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
         
     config = configDB.get('config')
     if config != None:
         msgID = configDB.get('msgID')
         params.setdefault('config', config)
     else:
-        # print("CHRIS dbg >> getDeviceDriverConfigurationDBMessage error config {}".format(configDB))
+        # print("SHD >> getDeviceDriverConfigurationDBMessage error config {}".format(configDB))
         msgID = None
 
     return (componentID, msgID, params)
 
 def getAutoconnectTable(family, idDependency, idCapability):
     connectionTable = []
-    # print("CHRIS dbg >> getAutoconnectTable dep:{} cap:{}".format(idDependency, idCapability)) 
+    # print("SHD >> getAutoconnectTable dep:{} cap:{}".format(idDependency, idCapability)) 
 
     if idDependency != "":
         for depId, capId in __drvDependencies.items():
@@ -812,7 +828,7 @@ def getAutoconnectTable(family, idDependency, idCapability):
             if idDepSplit[-1].isdigit():
                 depToCheck = "_".join(idDepSplit[:-1])
 
-            # print("CHRIS dbg >> getAutoconnectTable depId:{} depToCheck:{}".format(depId, depToCheck)) 
+            # print("SHD >> getAutoconnectTable depId:{} depToCheck:{}".format(depId, depToCheck)) 
             if depId == depToCheck:
                 connection = []
                 # Add dependency
@@ -839,13 +855,13 @@ def getAutoconnectTable(family, idDependency, idCapability):
                     elif plib == 'dsci':
                         depType = "pmsmfoc_X2CSCOPE"
                     else:
-                        # print("CHRIS dbg >> getAutoconnectTable skip pmsm_foc: plib:{}".format(plib)) 
+                        # print("SHD >> getAutoconnectTable skip pmsm_foc: plib:{}".format(plib)) 
                         continue
                     
-                    # print("CHRIS dbg >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType)) 
+                    # print("SHD >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType)) 
                 elif 'drvGmac' == depId:
                     exception = True
-                    # print("CHRIS dbg >> getAutoconnectTable drvGmac: family:{} - depId:{}".format(family, depId)) 
+                    # print("SHD >> getAutoconnectTable drvGmac: family:{} - depId:{}".format(family, depId)) 
                     if family == "SAMA":
                         instance = "".join(filter(lambda x: x.isdigit(), idDependency))
                         depType = "GMAC{}_PHY_Dependency".format(instance)
@@ -870,6 +886,9 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 elif 'ptc' == depId:
                     exception = True
                     depType = "lib_acquire"
+                elif 'drvWifiWincS02' == depId:
+                    exception = True
+                    depType = "spi_dependency"
                 else:
                     depType = depId
 
@@ -907,7 +926,7 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 
                 connectionTable.append(connection)
 
-    # print("CHRIS dbg >> getAutoconnectTable connectionTable:{}".format(connectionTable)) 
+    # print("SHD >> getAutoconnectTable connectionTable:{}".format(connectionTable)) 
     return connectionTable
 
 def getDriverDependencyFromPinName(pinName):

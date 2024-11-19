@@ -3,7 +3,7 @@ package:
   name: "shd"
   type: "api"
   status: "production"
-  required: false
+  required: true
   version: "v1.0.0"
 
   dependencies:

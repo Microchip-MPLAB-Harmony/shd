@@ -1,0 +1,22 @@
+name: WINCS02 add on board
+description: >
+  The WINCS02 Add On Board is an efficient, low-cost development platform to evaluate 
+  and demonstrate the features and functionalities of Microchip low-power Wi-Fi 
+  WINCS02PC Module
+documentation: https://www.microchip.com/en-us/development-tool/EV68G27A
+compatible: mikrobus
+dependencies: [[drvWifiWincS02, spi]]
+supported:
+  rst:
+    name: WDRV_WINC_RESETN
+  spi:
+    cs:
+      name: WDRV_WINC_CHIP_EN
+    sck:
+      name: WDRV_WINC_SCK
+    miso:
+      name: WDRV_WINC_MISO
+    mosi:
+      name: WDRV_WINC_MOSI
+  int:
+    name: WDRV_WINC_INT

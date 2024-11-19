@@ -17,21 +17,12 @@ def loadModule():
     
     import yaml
 
-    # plugInMainBoardList = []
-    
     mainBoardCompatibleList = []
     mainBoardFileList = glob.glob(path.join(boardPath, '*.yml'))
     for mainBoardFile in mainBoardFileList:
         mainBoardYaml = yaml.safe_load(open(mainBoardFile, 'r'))
         if mainBoardYaml['processor']['name'] == processor:
             mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'))) 
-            # connectorList = []
-            # connectors = mainBoardYaml.get('connectors')
-            # if connectors != None:
-            #     for connector in connectors:
-            #         connectorList.append((connector.get('name'), connector.get('compatible')))
-            # mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'), connectorList)) 
-            # plugInMainBoardList.append(path.relpath(mainBoardFile, shdPath).replace("\\", "/"))
     
     for mainBoard in mainBoardCompatibleList:
         boardName, config = mainBoard
@@ -44,9 +35,3 @@ def loadModule():
                                             "/boards/"+ config)
             shdModule.setDisplayType("MAIN BOARD")
         
-    # plugInFileName = path.join(shdPath, 'config', 'hw_description.yml')
-    # plugInFile.setdefault('mainboards', plugInMainBoardList)
-    # plugInFile.setdefault('clickboards', clickBoardPathList)
-    # with open(plugInFileName, 'w') as file:
-    #     print('CHRIS dbg -> creating {}'.format(plugInFileName))
-    #     yaml.safe_dump(plugInFile, file, encoding='utf-8', allow_unicode=True)

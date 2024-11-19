@@ -24,7 +24,7 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
             instanceList = module.getChildrenByName("instance")
             for instance in instanceList:
                 instanceName = instance.getAttribute("name")
-                # print("CHRIS dbg: getDeviceFunctionListByPinId instanceName:{}".format(instanceName))
+                # print("SHD >> getDeviceFunctionListByPinId instanceName:{}".format(instanceName))
                 foundSignal = False
                 signalsNodes = instance.getChildrenByName("signals")
                 for signalsNode in signalsNodes:
@@ -32,28 +32,28 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
                     signalFunctionPrev = None
                     for signal in signalList:
                         signalPad = signal.getAttribute("pad")
-                        # print("CHRIS dbg: getDeviceFunctionListByPinId signalPad1:{}".format(signalPad))
+                        # print("SHD >> getDeviceFunctionListByPinId signalPad1:{}".format(signalPad))
                         
                         # Adapt nomeclature used in Pin Configurator (PlugIn) for WBZ devices
                         if "WBZ" in family:
                             signalPad = signalPad.replace("P", "R")
 
-                        # print("CHRIS dbg: getDeviceFunctionListByPinId signalPad2:{} = {}".format(signalPad, pinId))
+                        # print("SHD >> getDeviceFunctionListByPinId signalPad2:{} = {}".format(signalPad, pinId))
                              
                         # Handle multiple signals on the same pad
                         if pinId == signalPad:
                             signalFunction = signal.getAttribute("function")
                                 
-                            # print("CHRIS dbg: getDeviceFunctionListByPinId signalFunction:{} -> {}".format(signalFunctionPrev, signalFunction))
+                            # print("SHD >> getDeviceFunctionListByPinId signalFunction:{} -> {}".format(signalFunctionPrev, signalFunction))
                             if signalFunction != signalFunctionPrev:
                                 if signalFunctionPrev != None:
                                     functionList.append(functionName)
-                                    # print("CHRIS dbg: getDeviceFunctionListByPinId functionList1:{}".format(functionList))
+                                    # print("SHD >> getDeviceFunctionListByPinId functionList1:{}".format(functionList))
                                 functionName = "{}_".format(instanceName)
                                 signalFunctionPrev = signalFunction
                                 foundSignal = False
 
-                            # print("CHRIS dbg: getDeviceFunctionListByPinId functionName1:{}".format(functionName))
+                            # print("SHD >> getDeviceFunctionListByPinId functionName1:{}".format(functionName))
                             
                             if foundSignal:
                                 functionName += '/'
@@ -61,7 +61,7 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
                                 if instanceName == 'MCSPI':
                                     functionName += 'MCSPI_'
 
-                            # print("CHRIS dbg: getDeviceFunctionListByPinId functionName2:{}".format(functionName))
+                            # print("SHD >> getDeviceFunctionListByPinId functionName2:{}".format(functionName))
                                 
                             groupName = signal.getAttribute("group")
                             groupNameSplitted = groupName.split("_")
@@ -75,18 +75,18 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
                             if index != None:
                                 functionName += index
                                 
-                            # print("CHRIS dbg: getDeviceFunctionListByPinId functionName3:{}".format(functionName))
+                            # print("SHD >> getDeviceFunctionListByPinId functionName3:{}".format(functionName))
                             
                             foundSignal = True
 
                             if "FLEXCOM" in instanceName:
                                 functionList.append(functionName)
-                                # print("CHRIS dbg: getDeviceFunctionListByPinId Flexcom functionList:{}".format(functionList))
+                                # print("SHD >> getDeviceFunctionListByPinId Flexcom functionList:{}".format(functionList))
                                 foundSignal = False
 
                 if foundSignal:
                     functionList.append(functionName)
-                    # print("CHRIS dbg: getDeviceFunctionListByPinId foundSignal functionList:{}".format(functionList))
+                    # print("SHD >> getDeviceFunctionListByPinId foundSignal functionList:{}".format(functionList))
 
     functionList.append('GPIO')
             
