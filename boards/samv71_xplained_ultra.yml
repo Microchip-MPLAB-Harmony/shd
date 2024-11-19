@@ -379,36 +379,12 @@ interfaces:
         name: CAN1_RX
         function: MCAN1_CANRX1
 
-  - name: EBI interface
+  - name: EXT4 LCD connector interface
     description: External Bus Interface (EBI) configuration
     options:
-      - name: EBI-GFX
-        description: External Bus Interface (EBI) GFX configuration - J404
+      - name: EBI-LCD
+        description: External Bus Interface (EBI) configuration - J404
         pinctrl:
-          lcden:
-            pinId: PC11
-            name: GFX_DISP_PIN_RD
-            function: GPIO
-            direction: out
-            latch: high
-          lcdhsync:
-            pinId: PC30
-            name: GFX_DISP_PIN_RSDC
-            function: GPIO
-            direction: out
-            latch: high
-          lcdvsync:
-            pinId: PD19
-            name: GFX_DISP_PIN_CS
-            function: GPIO
-            direction: out
-            latch: high
-          lcdpclk:
-            pinId: PC8
-            name: GFX_DISP_PIN_WR
-            function: GPIO
-            direction: out
-            latch: high
           lcdd0:
             pinId: PC0
             name: GFX_DISP_PIN_D0
@@ -473,22 +449,46 @@ interfaces:
             pinId: PA16
             name: GFX_DISP_PIN_D15
             function: EBI_D15
-      - name: Touch Control
-        description: GFX touch control configuration
+      - name: LCD Control
+        description: LCD control configuration
         pinctrl:
+          lcdhsync:
+            pinId: PC30
+            name: GFX_DISP_PIN_CMD_DATA_SEL
+            function: GPIO
+            direction: out
+            latch: high
+          lcdvsync:
+            pinId: PD19
+            name: GFX_DISP_PIN_CS
+            function: GPIO
+            direction: out
+            latch: high
+          lcdpclk:
+            pinId: PC8
+            name: GFX_DISP_PIN_WE
+            function: GPIO
+            direction: out
+            latch: high
+          lcden:
+            pinId: PC11
+            name: GFX_DISP_PIN_RE
+            function: GPIO
+            direction: out
+            latch: high
           irq1:
             pinId: PD28
             name: BSP_MAXTOUCH_CHG
             function: GPIO
             direction: in
-      - name: Q Touch Control
-        description: GFX Q Touch Control
-        pinctrl:
-          irq1:
+            interrupt: falling edge
+            pull up: True
+          irq2:
             pinId: PA2
             name: LCD_Q_TOUCH_CTRL
             function: GPIO
             direction: in
+            interrupt: falling edge
             pull up: True
       - name: I2C interface
         description: GFX I2C interface configuration
@@ -531,7 +531,7 @@ interfaces:
             name: CAMERA_RST
             function: GPIO
             direction: out
-            latch: high
+            latch: low
       - name: PWD Control
         description: Camera PWD control
         pinctrl:
