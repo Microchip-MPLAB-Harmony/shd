@@ -189,6 +189,7 @@ class MainBoard:
                 value = value.upper()
                 value = value.replace("(IN)", "(in)")
                 value = value.replace("(OUT)", "(out)")
+                value = value.replace("(IN/OUT)", "(in/out)")
             elif key in ['name', 'pinId']:
                 value = value.upper()
             elif type(value).__name__ == 'bool':
@@ -365,13 +366,17 @@ class MainBoard:
             bindings = self.__depBindings.get(connectorName)
             # self.__log.writeInfoMessage("SHD >> __overlapDependencies ({},{}): {}".format(depId, capId, bindings))
             if bindings != None:
-                for binding in bindings:
-                    driver, signal = binding
+                for driver, signal in bindings:
                     # Check if Plib supports the signal in bindings
                     if checkPlibFromSignalConnector(capId, signal) == True:
-                        # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:TRUE {} {}".format(capId, signal))
                         depId = driver
-                        
+                        # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:PLIB {} {}".format(depId, capId))
+                    elif 'drvExtPhy' in signal:
+                        # RMII connector
+                        depId = capId
+                        capId = signal
+                        # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:RMII {} {}".format(depId, capId))
+                    
             newDeps.setdefault(depId, capId)
 
         return newDeps
@@ -453,6 +458,7 @@ class MainBoard:
         updatePlibInstance = False
         
         for depId, capId in dependencyList.items():
+            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections dependencyList.items: {} {}".format(depId, capId))
             if addDependency is True:
                 if self.__checkIsMultiInstanceDriver(depId) == True:
                     # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver TRUE: {}".format(depId))
@@ -762,18 +768,22 @@ class MainBoard:
                     # self.__log.writeInfoMessage("SHD >> __connectClickBoard: bindingList - {}".format(bindingList))
                     if bindingList != None:
                         index = 0
+                        rmiiConDetected = False
                         for depIdCon, signalCon in bindingList:
                             pinControlConnector = self.getPinControlByConnectorName(connectorName)
                             pinControlSignal = pinControlConnector.get(signalCon)
                             if pinControlSignal != None:
                                 pinFunction = pinControlSignal.get("function")
-                                if pinFunction == None: # this is a bus signals (usart, i2c, spi)
+                                if pinFunction == None: # this is a bus signals (usart, i2c, spi, rmii)
                                     if signalCon == 'spi':
                                         pinFunction = pinControlSignal.get("mosi").get("function")
                                     elif signalCon == 'uart':
                                         pinFunction = pinControlSignal.get("tx").get("function")
                                     elif signalCon == 'i2c':
                                         pinFunction = pinControlSignal.get("sda").get("function")
+                                    elif signalCon == 'ethphy':
+                                        rmiiConDetected = True
+                                        pinFunction = pinControlSignal.get("txen").get("function")
 
                                 if pinFunction != None:
                                     pinFunction = pinFunction.upper()
@@ -782,7 +792,12 @@ class MainBoard:
                                         if len(plib) > 1:
                                             plib = plib[0]
                                         # Overwrite the current element of the bindingList
-                                        bindingList[index] = [depIdCon, plib.lower()]
+                                        if rmiiConDetected == False:
+                                            bindingList[index] = [depIdCon, plib.lower()]
+                                        else:
+                                            # RMII binding adaptation: depIdCon is the capability, PLIB includes the dependency (driver)
+                                            bindingList[index] = [plib.lower(), depIdCon]
+                                            
                                         # self.__log.writeInfoMessage("SHD >> __connectClickBoard added bindingList[{}]: {}".format(index, bindingList[index]))
 
                             index = index + 1

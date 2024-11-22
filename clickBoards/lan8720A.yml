@@ -1,0 +1,29 @@
+name: LAN8720A Phy Board
+description: >
+  Microchip's LAN8720A PHY Daughter Board is populated with high-performance, 
+  small-footprint, low-power 10BASE-T/100BASE-TX Ethernet LAN8720A PHY
+documentation: https://www.microchip.com/en-us/development-tool/ac320004-3
+compatible: rmii
+dependencies: [[drvExtPhyLan8720, ethphy]]
+supported:
+  ethphy:
+    txen:
+      name: PHY_DB_RMII_TXEN
+    txdo:
+      name: PHY_DB_RMII_TXDO
+    txd1:
+      name: PHY_DB_RMII_TXD1
+    refck:
+      name: PHY_DB_RMII_REFCK
+    rxd1:
+      name: PHY_DB_RMII_RXD1
+    rxd0:
+      name: PHY_DB_RMII_RXDO
+    rxer:
+      name: PHY_DB_RMII_RXER
+    rxdv:
+      name: PHY_DB_RMII_RXDV
+    mdc:
+      name: PHY_DB_RMII_MDC
+    mdio:
+      name: PHY_DB_RMII_MDIO

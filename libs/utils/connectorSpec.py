@@ -155,6 +155,22 @@ __connectorSpec = {
             'sda': 5,
             'scl': 6,
         }
+    },
+    'rmii': {
+        'ethphy': {
+            'txen': 1,
+            'txdo': 2,
+            'txd1': 3,
+            'refck': 8,
+            'rxd1': 15,
+            'rxd0': 16,
+            'rxer': 17,
+            'rxdv': 18,
+            'mdc': 19,
+            'mdio': 20,
+        },
+        'nint': 21,
+        'nrst': 22
     }
 }
 

@@ -580,7 +580,7 @@ def __getConfigDatabaseSDADC(periphID, settings):
     if periphID == 'SDADC_U2260':
         configDB.setdefault('config', (setting.upper(), pinId, enable))
     # else:
-    #     print("CHRIS dbg >> __getConfigDatabaseSDADC {} - NOT FOUND!!!".format(periphID))
+    #     print("SHD dbg >> __getConfigDatabaseSDADC {} - NOT FOUND!!!".format(periphID))
 
     return configDB
 
@@ -732,12 +732,17 @@ def __getConfigDatabaseDrvSST26(settings):
     configDB = dict()
 
     fn = "".join(filter(lambda x: x.isalpha(), functionValue))
-    # print("SHD >> getConfigDatabaseDrvSST26 fn: {} ".format(fn))
-    if fn.upper() == 'SQICS':
+    # print("SHD dbg >> getConfigDatabaseDrvSST26 settings: {} ".format(settings))
+    if 'SQI' in fn.upper():
         protocol = 'SQI'
-        cs = int("".join(filter(lambda x: x.isdigit(), functionValue)))
+        cs = "".join(filter(lambda x: x.isdigit(), functionValue))
         configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
-        configDB.setdefault('config', (protocol, cs, enable))
+        configDB.setdefault('config', (pinId, protocol, cs, enable))
+    elif 'SS' in fn.upper() or 'CS' in fn.upper():
+        protocol = 'SPI'
+        cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
+        configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
+        configDB.setdefault('config', (pinId, protocol, cs, enable))
     
     return configDB
 
@@ -801,8 +806,8 @@ def getDBMsgDriverConfiguration(settings):
         configDB = __getConfigDatabaseDrvAT25DF(settings)
     elif driver == 'drvWifiWincS02':
         configDB = __getConfigDatabaseDrvWINCS02(settings)
-    else:
-        print("SHD >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
+    # else:
+    #     print("SHD >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
         
     config = configDB.get('config')
     if config != None:
@@ -889,6 +894,10 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 elif 'drvWifiWincS02' == depId:
                     exception = True
                     depType = "spi_dependency"
+                elif 'drv_sst26' == depId:
+                    depType = depId
+                    if 'spi' in idCapability:
+                        capId = "SPI"
                 else:
                     depType = depId
 

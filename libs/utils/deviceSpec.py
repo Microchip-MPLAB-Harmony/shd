@@ -129,14 +129,23 @@ def __getDeviceFLEXCOMPeripheral(ATDF):
 def adaptDevicePeripheralDependencies(ATDF, dependencyList):
     architecture = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
     if architecture == "MIPS":
-        # family = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
-        # if family == "PIC32MK":
-        return dependencyList
+        family = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
+        if family == "PIC32MZW":
+            newDependencyList = {}
+            for depId, capId in dependencyList.items():
+                if depId == 'ethmac':
+                    depId = 'drvPic32mEthmac'
+
+                newDependencyList.setdefault(depId, capId)
+
+            return newDependencyList 
+        else:
+            return dependencyList
     else:
         newDependencyList = {}
         pioPeriphID = getDeviceGPIOPeripheral(ATDF)
         flexcomID = __getDeviceFLEXCOMPeripheral(ATDF)
-        # print("CHRIS dbg >> adaptDevicePeripheralDependencies {} - {}".format(pioPeriphID, flexcomID))
+        # print("SHD dbg >> adaptDevicePeripheralDependencies {} - {}".format(pioPeriphID, flexcomID))
         if pioPeriphID == "PIO_11004" and flexcomID != 'NOT_SUPPORTED':
             for depId, capId in dependencyList.items():
                 if "usart" in capId[:5]:
