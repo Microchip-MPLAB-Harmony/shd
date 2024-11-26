@@ -19,7 +19,7 @@ interfaces:
             name: RGB_RED_LED
             function: GPIO
             direction: out
-            latch: high
+            latch: low
       - name: RGB Green Led
         description: RGB Green Led
         pinctrl:
@@ -28,7 +28,7 @@ interfaces:
             name: RGB_GREEN_LED
             function: GPIO
             direction: out
-            latch: high
+            latch: low
       - name: RGB Blue Led
         description: RGB Blue Led
         pinctrl:
@@ -37,7 +37,7 @@ interfaces:
             name: RGB_BLUE_LED
             function: GPIO
             direction: out
-            latch: high
+            latch: low
       - name: User Button
         description: User Button
         pinctrl:
@@ -67,7 +67,7 @@ interfaces:
             name: CAN0_STBY
             function: GPIO
             direction: out
-            latch: low
+            latch: high
 
       - name: CAN1 interface
         description: CAN1 interface
@@ -85,7 +85,7 @@ interfaces:
             name: CAN1_STBY
             function: GPIO
             direction: out
-            latch: low
+            latch: high
 
   - name: Graphics interface
     description: Graphics Data and Control configuration
@@ -193,9 +193,11 @@ interfaces:
         pinctrl:
           irq1:
             pinId: PC25
-            name: BSP_MAXTOUCH_CHG
+            name: GFX_CTRL_IRQ1
             function: GPIO
             direction: in
+            pull up: True
+            interrupt: falling edge
       - name: IRQ Q Touch
         description: GFX Q Touch interrupt
         pinctrl:
@@ -205,6 +207,7 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
+            interrupt: falling edge
       - name: Touch I2C interface
         description: GFX Touch I2C interface
         pinctrl:
@@ -228,8 +231,17 @@ interfaces:
         pinctrl:
           disp:
             pinId: PC24
-            name: GFX_DISP
+            name: GFX_DISP_INTF_EN
             function: LCDC_LCDDISP
+      - name: LCD Reset
+        description: GFX LCD RST
+        pinctrl:
+          reset:
+            pinId: PB25
+            name: GFX_DISP_INTF_PIN_RESET
+            function: GPIO
+            direction: out
+            latch: high
 
   - name: Storage interface
     description: Storage on-board components configurations
@@ -255,6 +267,7 @@ interfaces:
             name: SDMMC0_CD
             function: GPIO
             direction: in
+            pull up: true
           cmd:
             pinId: PA16
             name: SDMMC0_CMD
@@ -288,11 +301,13 @@ interfaces:
             name: SDMMC1_CD
             function: GPIO
             direction: in
+            pull up: true
           wp:
             pinId: PA14
             name: SDMMC1_WP
             function: GPIO
             direction: in
+            pull up: true
           cmd:
             pinId: PA12
             name: SDMMC1_CMD
@@ -367,7 +382,64 @@ interfaces:
             name: ETH_NRESET
             function: GPIO
             direction: out
-            latch: high
+            latch: low
+
+  - name: USB-A Port
+    description: USB-A configuration
+    options:
+      - name: VBUS Detect Pin
+        description: USB VBUS Detect Pin
+        pinctrl:
+          gpio:
+            pinId: PA27
+            name: VBUS_DETECT
+            function: GPIO
+            direction: in
+            pulld down: True
+
+  - name: USB-B Port
+    description: USB-B configuration
+    options:
+      - name: USB-B Enable Pin
+        description: USB-B Port Enable Pin
+        pinctrl:
+          gpio:
+            pinId: PD18
+            name: USBB_EN
+            function: GPIO
+            direction: out
+            latch: low
+      - name: USB-B Overcurrent Pin
+        description: USB-B Port Overcurrent Pin
+        pinctrl:
+          gpio:
+            pinId: PA26
+            name: USBB_OVCUR
+            function: GPIO
+            direction: in
+            pull down: True
+
+  - name: USB-C Port
+    description: USB-C configuration
+    options:
+      - name: USB-C Enable Pin
+        description: USB-C Port Enable Pin
+        pinctrl:
+          gpio:
+            pinId: PD15
+            name: USBC_EN
+            function: GPIO
+            direction: out
+            latch: low
+      - name: USB-C Overcurrent Pin
+        description: USB-C Port Overcurrent Pin
+        pinctrl:
+          gpio:
+            pinId: PA28
+            name: USBC_OVCUR
+            function: GPIO
+            direction: in
+            pull down: True
 
   - name: Debugging interface
     description: Debugging interface
