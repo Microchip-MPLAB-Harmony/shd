@@ -1,5 +1,5 @@
-name: sam-a7g5-ek
-config: sam_a7g5_ek.py
+name: sam-a7g54-ek
+config: sam_a7g54_ek.py
 documentation: https://www.microchip.com/en-us/development-tool/EV21H18A
 processor:
   name: SAMA7G54
@@ -19,16 +19,16 @@ interfaces:
             name: RGB_RED_LED
             function: GPIO
             direction: out
-            latch: high
+            latch: low
       - name: RGB Green Led
         description: RGB Green Led
         pinctrl:
           gpio:
-            pinId: PA31
+            pinId: PA13
             name: RGB_GREEN_LED
             function: GPIO
             direction: out
-            latch: high
+            latch: low
       - name: RGB Blue Led
         description: RGB Blue Led
         pinctrl:
@@ -37,7 +37,7 @@ interfaces:
             name: RGB_BLUE_LED
             function: GPIO
             direction: out
-            latch: high
+            latch: low
       - name: User Button
         description: User Button
         pinctrl:
@@ -67,7 +67,7 @@ interfaces:
             name: CAN0_STBY
             function: GPIO
             direction: out
-            latch: low
+            latch: high
       - name: CAN1 interface
         description: CAN1 interface
         pinctrl:
@@ -84,7 +84,7 @@ interfaces:
             name: CAN1_STBY
             function: GPIO
             direction: out
-            latch: low
+            latch: high
 
   - name: Storage interface
     description: Storage on-board components configurations
@@ -181,7 +181,7 @@ interfaces:
             pinId: PA11
             function: SDMMC0_DS
       - name: SDMMC interface
-        description: Secure Digital Multimedia Card 0 (SDMMC0)
+        description: Secure Digital Multimedia Card 1 (SDMMC1)
         dependencies: [[drv_sdmmc, sdmmc1]]
         pinctrl:
           ck:
@@ -208,6 +208,18 @@ interfaces:
           dat3:
             pinId: PC2
             function: SDMMC1_DAT3
+          gpio:
+            pinId: PC5
+            name: SDMMC1_VSEL
+            function: GPIO
+            direction: out
+            latch: low
+          rst:
+            pinId: PB28
+            name: SDMMC1_RST
+            function: GPIO
+            direction: out
+            latch: low
 
   - name: Ethernet interface
     description: Modular Ethernet PHY system
@@ -251,7 +263,7 @@ interfaces:
             name: ETH_NRESET
             function: GPIO
             direction: out
-            latch: high
+            latch: low
       - name: Gigabit Ethernet interface
         description: Gigabit Ethernet configuration
         dependencies: [[drvGmac0, drvExtPhyKsz9131]]
@@ -305,11 +317,72 @@ interfaces:
             pinId: PA31
             function: GMAC0_G0_TXER
 
+  - name: USB interface
+    description: USB COM Ports interface
+    options:
+      - name: USB-A Port
+        description: USB-A Port configuration
+        pinctrl:
+          gpio1:
+            pinId: PD11
+            name: VBUSA_DETECT
+            function: GPIO
+            direction: in
+            pulld down: True
+          gpio2:
+            pinId: PB2
+            name: USBA_EN
+            function: GPIO
+            direction: out
+            latch: low
+          gpio3:
+            pinId: PC7
+            name: USBA_OVCUR
+            function: GPIO
+            direction: in
+            pull down: True
+      - name: USB-B Port
+        description: USB-B Port configuration
+        pinctrl:
+          gpio1:
+            pinId: PC12
+            name: VBUSB_DETECT
+            function: GPIO
+            direction: in
+            pulld down: True
+          gpio2:
+            pinId: PC11
+            name: USBB_EN
+            function: GPIO
+            direction: out
+            latch: low
+          gpio3:
+            pinId: PC22
+            name: USBB_OVCUR
+            function: GPIO
+            direction: in
+            pull down: True
+      - name: USB-C Port
+        description: USB-C Port configuration
+        pinctrl:
+          gpio1:
+            pinId: PC6
+            name: USBC_EN
+            function: GPIO
+            direction: out
+            latch: low
+          gpio2:
+            pinId: PC17
+            name: USBC_OVCUR
+            function: GPIO
+            direction: in
+            pull down: True
+
   - name: Audio interface
     description: Audio interfaces
     options:
       - name: SPDIF interface
-        description: S/PDIF TX/RX interfaces
+        description: SPDIF TX-RX interfaces
         pinctrl:
           tx:
             pinId: PB1
@@ -330,8 +403,8 @@ interfaces:
             pinId: PD24
             function: PDMC0_DS1
 
-  - name: RPi CSI Camera interface
-    description: RPi CSI Camera interface
+  - name: RPi MIPI CSI Camera interface
+    description: RPi MIPI CSI Camera interface
     pinctrl:
       gpio0:
         pinId: PE1
