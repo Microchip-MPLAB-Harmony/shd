@@ -4,7 +4,7 @@ import glob
 from copy import deepcopy
 from utils.connectorSpec import getConnectorPinNumberFromSignal, getConnectorSignalMapXplainProToMikroBUS
 from utils.deviceSpec import getDeviceFunctionListByPinId, getDevicePinMap, getDeviceGPIOPeripheral, adaptDevicePeripheralDependencies
-from utils.dBMsgInterface import getDBMsgPLIBConfiguration, getDBMsgDriverConfiguration, getAutoconnectTable, getDriverDependencyFromPinName, checkPlibFromSignalConnector
+from utils.dBMsgInterface import getDBMsgPLIBConfiguration, getDBMsgDriverConfiguration, getAutoconnectTable, getDriverDependencyFromPin, checkPlibFromSignalConnector
 from clickBoard.clickBoard import ClickBoard
 
 shdMainBoardHelp = 'shdMainBoardHelpKeyword'
@@ -649,7 +649,7 @@ class MainBoard:
                 # Extract DRIVER dependencies from Pin Name
                 pinName = pinCtrl.get('name')
                 if pinName != None:
-                    newDep = getDriverDependencyFromPinName(pinName);
+                    newDep = getDriverDependencyFromPin(pinName, pinFunction);
                     if (newDep != ""):
                         depId = newDep
                     

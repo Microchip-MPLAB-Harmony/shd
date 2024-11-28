@@ -972,7 +972,7 @@ def getAutoconnectTable(family, idDependency, idCapability):
     # print("SHD >> getAutoconnectTable connectionTable:{}".format(connectionTable)) 
     return connectionTable
 
-def getDriverDependencyFromPinName(pinName):
+def getDriverDependencyFromPin(pinName, pinFunction):
     dep = ""
     string = pinName.upper()
     if __checkSubstringList(['MCSPI'], string) == True:
@@ -991,6 +991,10 @@ def getDriverDependencyFromPinName(pinName):
             dep = "drv_spi"
     elif __checkSubstringList(['UART', 'USART', 'VIRTUAL_COM'], string) == True:
         dep = "drv_usart"
+    else:
+        string = pinFunction.upper()
+        if __checkSubstringList(['SDMMC'], string) == True:
+            dep = "drv_sdmmc"
         
     return dep
 
