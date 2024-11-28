@@ -8,7 +8,7 @@ from utils.dBMsgInterface import getDBMsgPLIBConfiguration, getDBMsgDriverConfig
 from clickBoard.clickBoard import ClickBoard
 
 shdMainBoardHelp = 'shdMainBoardHelpKeyword'
-shdMultiInstanceDrivers = ['drv_i2c', 'drv_spi', 'drv_usart', 'drv_sdmmc', 'a_drv_i2s', 'drv_sdspi', 'sys_console']
+shdMultiInstanceDrivers = ['drv_i2c', 'drv_spi', 'drv_usart', 'drv_sdmmc', 'a_drv_i2s', 'drv_sdspi', 'sys_console', 'RNBD_Dependency']
 
 class MainBoard:
     def __init__(self, context):
@@ -40,6 +40,7 @@ class MainBoard:
         self.__depBindings = {}
         self.__shdDependenciesPlibMultiInstance = {}
         self.__connections = {}
+        self.__drvUnconnected = {}
         self.__shdCheckCollisionSymbol = None
         self.__architecture = self.__atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
         self.__family = self.__atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
@@ -83,6 +84,9 @@ class MainBoard:
     def __setPLIBSettings(self, pinDescr, value):
         idActiveList = self.__db.getActiveComponentIDs()
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
+            if functionValue.lower() == 'unused':
+                continue
+            
             functionValue = functionValue.replace(" (in)", "")
             functionValue = functionValue.replace(" (out)", "")
             functionValue = functionValue.replace(" (in/out)", "")
@@ -95,23 +99,41 @@ class MainBoard:
                 # if res != None and res.get("Result") != "Success":
                 #     self.__log.writeInfoMessage("SHD mainBoard: Error in sending message to PLIB {} : {}({}). Error: {}".format(componentID, messageID, params, res.get("Result")))
             # else:
-            #     self.__log.writeInfoMessage("SHD >> __setPLIBSettings skip {} messageID:{} idActiveList{}".format(componentID, messageID, idActiveList))
+                # self.__log.writeInfoMessage("SHD >> __setPLIBSettings skip {} messageID:{} idActiveList{}".format(componentID, messageID, idActiveList))
 
     def __setDriverSettings(self, pinDescr, value):
         # self.__log.writeInfoMessage("SHD >> __setDriverSettings pinDescr: {}".format(pinDescr))
         # Find driver connection
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
-            for plib, driver in self.__connections.items():
-                settings = (driver, signalId, pinId, functionValue, nameValue, value)
-                # self.__log.writeInfoMessage("SHD >> __setDriverSettings : {}".format(settings))
-                componentID, messageID, params = getDBMsgDriverConfiguration(settings)
-                if messageID != None:
-                    # self.__log.writeInfoMessage("SHD >> __setDriverSettings: sending message - {} : {}. params: {}".format(componentID, messageID, params))
-                    res = self.__db.sendMessage(componentID, messageID, params)
-                    # if res != None and res.get("Result") != "Success":
-                    #     self.__log.writeInfoMessage("SHD mainBoard: skip sending message to DRV {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
-                # else:
-                #     self.__log.writeInfoMessage("SHD >> __setDriverSettings ERROR : {} {} {}".format(componentID, messageID, params))
+            if functionValue.lower() != 'unused':
+                for plib, driver in self.__connections.items():
+                    settings = (driver, signalId, pinId, functionValue, nameValue, value)
+                    # self.__log.writeInfoMessage("SHD >> __setDriverSettings Connections : {}".format(settings))
+                    componentID, messageID, params = getDBMsgDriverConfiguration(settings)
+                    if messageID != None:
+                        # self.__log.writeInfoMessage("SHD >> __setDriverSettings: sending message - {} : {}. params: {}".format(componentID, messageID, params))
+                        res = self.__db.sendMessage(componentID, messageID, params)
+                        # if res != None and res.get("Result") != "Success":
+                        #     self.__log.writeInfoMessage("SHD mainBoard: skip sending message to DRV {} : {}. Error: {}".format(componentID, messageID, res.get("Result")))
+                    # else:
+                    #     self.__log.writeInfoMessage("SHD >> __setDriverSettings ERROR : {} {} {}".format(componentID, messageID, params))
+
+                for driver, drvConfigured in self.__drvUnconnected.items():
+                    if drvConfigured == False:
+                        self.__drvUnconnected[driver] = True
+                        settings = (driver, signalId, pinId, functionValue, nameValue, value)
+                        componentID, messageID, params = getDBMsgDriverConfiguration(settings)
+                        if messageID != None:
+                            if (messageID == "WIRELESS_RNWF_CONFIG_HW_IO"):
+                                addon, plib, enable = params['config']
+                                wifiParams = dict()
+                                wifiParams.setdefault('host', self.__currentConfig.get('name'))
+                                wifiParams.setdefault('addon', addon)
+                                wifiParams.setdefault('plib', self.__currentConfig.get('name'))
+                                wifiParams.setdefault('enable', self.__currentConfig.get('name'))
+                                # self.__log.writeInfoMessage("SHD >> sending Wifi message -  {} : {}. params: {}".format(componentID, messageID, wifiParams))
+                                res = self.__db.sendMessage(componentID, messageID, wifiParams)
+                                # self.__log.writeInfoMessage("SHD >> Wifi message result: {}".format(res))
 
     def __clearPinConfig(self, pinControl):
         # self.__log.writeInfoMessage("SHD >> __clearPinConfig pinControl: {}".format(pinControl))
@@ -157,57 +179,58 @@ class MainBoard:
         # self.__log.writeInfoMessage("SHD >> __setPinConfig pinControl: {}".format(pinControl))
         pinId = pinControl.get('pinId')
         pinNumber = self.__devicePinMap.get(pinId)
+        pinFunction = pinControl.get('function')
+        if pinFunction.lower() != 'unused':
+            # Get function values list from the pinNumber
+            functionList = getDeviceFunctionListByPinId(self.__db, self.__atdf, pinId)
+            # self.__log.writeInfoMessage("SHD >> functionList {}".format(functionList))
 
-        # Get function values list from the pinNumber
-        functionList = getDeviceFunctionListByPinId(self.__db, self.__atdf, pinId)
-        # self.__log.writeInfoMessage("SHD >> functionList {}".format(functionList))
+            # Sort dictionary by key to set function as first setting
+            sortedKeys = sorted(pinControl.keys())
+            sortedPinControl = {key:pinControl[key] for key in sortedKeys}
+            findFunction = False
 
-        # Sort dictionary by key to set function as first setting
-        sortedKeys = sorted(pinControl.keys())
-        sortedPinControl = {key:pinControl[key] for key in sortedKeys}
-        findFunction = False
-
-        for key, value in sortedPinControl.items():
-            if key == 'pinId':
-                continue
-            
-            if key == 'function':
-                for functionIndex in range(len(functionList)):
-                    # Adapt Function Name to the function used in Pio Manager
-                    newValue = self.__handleFunctionPioManager(value, functionList[functionIndex])
-                    if newValue != None:
-                        value = newValue
-                        findFunction = True
-                        break
-                    
-                if findFunction == False:
-                    self.__log.writeInfoMessage("SHD mainBoard: Error in function setting of pinId: {} - function: {}".format(pinId, value))
-                    self.__log.writeInfoMessage("SHD mainBoard: Match function setting with one of these values: {}".format(functionList))
+            for key, value in sortedPinControl.items():
+                if key == 'pinId':
                     continue
-                        
-            if key == 'function':
-                value = value.upper()
-                value = value.replace("(IN)", "(in)")
-                value = value.replace("(OUT)", "(out)")
-                value = value.replace("(IN/OUT)", "(in/out)")
-            elif key in ['name', 'pinId']:
-                value = value.upper()
-            elif type(value).__name__ == 'bool':
-                if key in ['pull up', 'pull down', 'open drain', 'change notification']:
-                    value = "True" if value else "False"
-            else:
-                value = value.title()
                 
-            # Don't set any value in case of direction: input
-            # if key == 'direction' and value == 'In':
-            #     continue
+                if key == 'function':
+                    for functionIndex in range(len(functionList)):
+                        # Adapt Function Name to the function used in Pio Manager
+                        newValue = self.__handleFunctionPioManager(value, functionList[functionIndex])
+                        if newValue != None:
+                            value = newValue
+                            findFunction = True
+                            break
+                        
+                    if findFunction == False:
+                        self.__log.writeInfoMessage("SHD mainBoard: Error in function setting of pinId: {} - function: {}".format(pinId, value))
+                        self.__log.writeInfoMessage("SHD mainBoard: Match function setting with one of these values: {}".format(functionList))
+                        continue
+                            
+                if key == 'function':
+                    value = value.upper()
+                    value = value.replace("(IN)", "(in)")
+                    value = value.replace("(OUT)", "(out)")
+                    value = value.replace("(IN/OUT)", "(in/out)")
+                elif key in ['name', 'pinId']:
+                    value = value.upper()
+                elif type(value).__name__ == 'bool':
+                    if key in ['pull up', 'pull down', 'open drain', 'change notification', 'slewrate']:
+                        value = "True" if value else "False"
+                else:
+                    value = value.title()
+                    
+                # Don't set any value in case of direction: input
+                # if key == 'direction' and value == 'In':
+                #     continue
 
-            params = dict()
-            params.setdefault('pinNumber', pinNumber)
-            params.setdefault('setting', key)
-            params.setdefault('value', value)
-            # self.__log.writeInfoMessage("SHD >> send Message PIN_SET_CONFIG_VALUE : {}".format(params))
-            self.__db.sendMessage("core", "PIN_SET_CONFIG_VALUE", params)
+                params = dict()
+                params.setdefault('pinNumber', pinNumber)
+                params.setdefault('setting', key)
+                params.setdefault('value', value)
+                # self.__log.writeInfoMessage("SHD >> send Message PIN_SET_CONFIG_VALUE : {}".format(params))
+                self.__db.sendMessage("core", "PIN_SET_CONFIG_VALUE", params)
 
     def __checkPinIsConfigured(self, pinId):
         params = dict()
@@ -247,8 +270,14 @@ class MainBoard:
                     self.__setPinConfig(pinControl)
                     newLabel = self.__updateFunctionInSymbolLabel(pinControl['function'], symbol.getLabel())
                     symbol.setLabel(newLabel)
+                    # self.__log.writeInfoMessage("SHD >> __showSymbol cs detected. Set newlabel: {}".format(newLabel))
         else:
-            symbol.setVisible(eventValue)
+            # self.__log.writeInfoMessage("SHD >> __showSymbol {} setVisible: {}".format(symbol.getLabel(), eventValue))
+            if 'unused' not in symbol.getLabel().lower():
+                symbol.setVisible(eventValue)
+            else:
+                # self.__log.writeInfoMessage("SHD >> __showSymbol detected unused function: {}".format(symbol.getLabel()))
+                symbol.setVisible(False)
 
     def __showSettingSymbol(self, symbol, event):
         eventSymbolID = event['id']
@@ -326,6 +355,9 @@ class MainBoard:
                 else:
                     self.__connections.setdefault(capId, depId)
                 # self.__log.writeInfoMessage("SHD >> __connectComponentDependencies self.__connections: {}".format(self.__connections)) 
+        else:
+            if depId != "":
+                self.__drvUnconnected.setdefault(depId, False)
 
     def __checkIsMultiInstanceDriver(self, driver):
         for multiInstanceDriver in shdMultiInstanceDrivers:
@@ -366,16 +398,21 @@ class MainBoard:
             bindings = self.__depBindings.get(connectorName)
             # self.__log.writeInfoMessage("SHD >> __overlapDependencies ({},{}): {}".format(depId, capId, bindings))
             if bindings != None:
-                for driver, signal in bindings:
-                    # Check if Plib supports the signal in bindings
-                    if checkPlibFromSignalConnector(capId, signal) == True:
-                        depId = driver
-                        # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:PLIB {} {}".format(depId, capId))
-                    elif 'drvExtPhy' in signal:
-                        # RMII connector
-                        depId = capId
-                        capId = signal
-                        # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:RMII {} {}".format(depId, capId))
+                for binding in bindings:
+                    if len(binding) == 1:
+                        depId = binding[0]
+                        capId = ""
+                    elif len(binding) == 2:
+                        driver, signal = binding
+                        # Check if Plib supports the signal in bindings
+                        if checkPlibFromSignalConnector(capId, signal) == True:
+                            depId = driver
+                            # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:PLIB {} {}".format(depId, capId))
+                        elif 'drvExtPhy' in signal:
+                            # RMII connector
+                            depId = capId
+                            capId = signal
+                            # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:RMII {} {}".format(depId, capId))
                     
             newDeps.setdefault(depId, capId)
 
@@ -383,14 +420,10 @@ class MainBoard:
 
     def __configureDriverSettings(self, enabledPinIdList, disabledPinIdList):
         for pinId, pinDescr in enabledPinIdList.items():
-            # signal, (pinFunction, pinName) = enabledPinIdList[pinId]
-            # self.__log.writeInfoMessage("SHD >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
             self.__setPLIBSettings(pinDescr, True)
             self.__setDriverSettings(pinDescr, True)
         
         for pinId, pinDescr  in disabledPinIdList.items():
-            # signal, (pinFunction, pinName) = disabledPinIdList[pinId]
-            # self.__log.writeInfoMessage("SHD >> __configureDriverSettings Set {}: {}, {}".format(pinId, signal, pinFunction, pinName))
             self.__setPLIBSettings(pinDescr, False)
 
     def __getPinListByMultiPinDriver(self, dependency):
@@ -531,8 +564,12 @@ class MainBoard:
         for component in removeComponents:
             # self.__log.writeInfoMessage("SHD >> __updateDriverConnections remove Components: {}".format(component))
             res = self.__db.deactivateComponents([component])
-            if res == True and self.__connections.get(component) != None:
-                del self.__connections[component]
+            if res == True:
+                if self.__connections.get(component) != None:
+                    del self.__connections[component]
+                if self.__drvUnconnected.get(component) != None:
+                    del self.__drvUnconnected[component]
+                    
             # Check multiinstance driver connection
             driver = self.__shdDependenciesPlibMultiInstance.get(component)
             if driver != None:
@@ -550,6 +587,7 @@ class MainBoard:
                 
         # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__shdDependenciesPlibMultiInstance: {}".format(self.__shdDependenciesPlibMultiInstance))
         # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__connections: {}".format(self.__connections))
+        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__drvUnconnected: {}".format(self.__drvUnconnected))
         
     def __signalEnableCallback(self, symbol, event):
         dependencies = {}
@@ -742,6 +780,7 @@ class MainBoard:
                 if clickBoardName == clickBoardSelection:
                     clickBoardInterface = ClickBoard(clickBoardFileName)
                     self.__connectedClickBoards.setdefault(connectorName, clickBoardInterface)
+                    break
 
             if clickBoardInterface != None:
                 # Check if multi-connection is allowed
@@ -769,41 +808,44 @@ class MainBoard:
                     if bindingList != None:
                         index = 0
                         rmiiConDetected = False
-                        for depIdCon, signalCon in bindingList:
-                            pinControlConnector = self.getPinControlByConnectorName(connectorName)
-                            pinControlSignal = pinControlConnector.get(signalCon)
-                            if pinControlSignal != None:
-                                pinFunction = pinControlSignal.get("function")
-                                if pinFunction == None: # this is a bus signals (usart, i2c, spi, rmii)
-                                    if signalCon == 'spi':
-                                        pinFunction = pinControlSignal.get("mosi").get("function")
-                                    elif signalCon == 'uart':
-                                        pinFunction = pinControlSignal.get("tx").get("function")
-                                    elif signalCon == 'i2c':
-                                        pinFunction = pinControlSignal.get("sda").get("function")
-                                    elif signalCon == 'ethphy':
-                                        rmiiConDetected = True
-                                        pinFunction = pinControlSignal.get("txen").get("function")
+                        for binding in bindingList:
+                            if len(binding) == 1:
+                                bindingList[index] = binding
+                            elif len(binding) == 2:
+                                depIdCon, signalCon = binding
+                                pinControlConnector = self.getPinControlByConnectorName(connectorName)
+                                pinControlSignal = pinControlConnector.get(signalCon)
+                                if pinControlSignal != None:
+                                    pinFunction = pinControlSignal.get("function")
+                                    if pinFunction == None: # this is a bus signals (usart, i2c, spi, rmii)
+                                        if signalCon == 'spi':
+                                            pinFunction = pinControlSignal.get("mosi").get("function")
+                                        elif signalCon == 'uart':
+                                            pinFunction = pinControlSignal.get("tx").get("function")
+                                        elif signalCon == 'i2c':
+                                            pinFunction = pinControlSignal.get("sda").get("function")
+                                        elif signalCon == 'ethphy':
+                                            rmiiConDetected = True
+                                            pinFunction = pinControlSignal.get("txen").get("function")
 
-                                if pinFunction != None:
-                                    pinFunction = pinFunction.upper()
-                                    if pinFunction != 'GPIO':
-                                        plib = pinFunction.split("_")
-                                        if len(plib) > 1:
-                                            plib = plib[0]
-                                        # Overwrite the current element of the bindingList
-                                        if rmiiConDetected == False:
-                                            bindingList[index] = [depIdCon, plib.lower()]
-                                        else:
-                                            # RMII binding adaptation: depIdCon is the capability, PLIB includes the dependency (driver)
-                                            bindingList[index] = [plib.lower(), depIdCon]
-                                            
-                                        # self.__log.writeInfoMessage("SHD >> __connectClickBoard added bindingList[{}]: {}".format(index, bindingList[index]))
-
+                                    if pinFunction != None:
+                                        pinFunction = pinFunction.upper()
+                                        if pinFunction != 'GPIO':
+                                            plib = pinFunction.split("_")
+                                            if len(plib) > 1:
+                                                plib = plib[0]
+                                            # Overwrite the current element of the bindingList
+                                            if rmiiConDetected == False:
+                                                bindingList[index] = [depIdCon, plib.lower()]
+                                            else:
+                                                # RMII binding adaptation: depIdCon is the capability, PLIB includes the dependency (driver)
+                                                bindingList[index] = [plib.lower(), depIdCon]
+                                                
+                                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard added bindingList[{}]: {}".format(index, bindingList[index]))
                             index = index + 1
-                                        
-                            self.__depBindings.setdefault(connectorName, bindingList)
-                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard: __setAdditionalDependencies: {}".format(self.__depBindings))
+                            
+                        self.__depBindings.setdefault(connectorName, bindingList)
+                        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: __setAdditionalDependencies: {}".format(self.__depBindings))
 
                     # Get only the active signals from ClickBoard
                     pinControlClickBoard = clickBoardInterface.getConnections()
@@ -814,9 +856,11 @@ class MainBoard:
          
     def __updatePinConfiguration(self, config, newConfig):
         result = config.copy()
+        # self.__log.writeInfoMessage("SHD >> __updatePinConfiguration: result: {}".format(result))
         for key, value in newConfig.items():
             result[key] = value
-            
+
+        # self.__log.writeInfoMessage("SHD >> __updatePinConfiguration: new result: {}".format(result))
         # Check discrepancies
         if result.get('direction') == 'in' and result.get('latch') != None:
             # Remove latch since pin is an input
@@ -1024,7 +1068,7 @@ class MainBoard:
                 # Multi Pin
                 for subSignal, newSubConfig in newConfig.items():
                     pinControlCurrent[signal][subSignal] = self.__updatePinConfiguration(pinControlCurrent[signal][subSignal], newSubConfig)
-
+                    
         # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
 
     def restorePinControlByConnector(self, connectorName):
@@ -1075,9 +1119,6 @@ class MainBoard:
             connectorSignalName = self.getConnectorSignalSymbolName(connectorName, signal)
             signalSymbol = board.getSymbolByID(connectorSignalName)
             if pinCtrl.get(signal) != None:
-                # self.__log.writeInfoMessage("SHD >> setConnectorConfig Enable symbol: {}".format(connectorSignalName))
-                signalSymbol.setValue(True)
-                
                 pinDescriptionList = self.getDescriptionListByConnectorSignal(connectorName, signal)
                 # self.__log.writeInfoMessage("SHD >> setConnectorConfig pinDescriptionList: {}".format(pinDescriptionList))
                 # Update Symbol label
@@ -1089,7 +1130,7 @@ class MainBoard:
                         name, function, subSignal, pinNumber, pinId = pinDescription
                         label = self.__getSymbolLabel(name, function, subSignal, pinNumber, pinId)
                         # Handle SPI CS exception (configuration option is not allowed)
-                        if subSignal.lower() == 'cs' and function != "GPIO":
+                        if subSignal.lower() == 'cs' and function.lower() not in ["gpio", "unused"]:
                             # self.__log.writeInfoMessage("SHD >> Handle SPI CS exception - subSignal: {}".format(subSignal.lower())) 
                             symbolName = self.__symbolNamesByConnector[connectorName][pinId]
                             shdSpiCSConfigSymbolName = "{}_{}".format(symbolName, "CSASGPIO")
@@ -1099,6 +1140,9 @@ class MainBoard:
 
                     signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId])
                     signalPinSymbol.setLabel(label)
+                    
+                # self.__log.writeInfoMessage("SHD >> setConnectorConfig Enable symbol: {}".format(connectorSignalName))
+                signalSymbol.setValue(True)
 
     def resetConnectorConfig(self, connectorName):
         # self.__log.writeInfoMessage("SHD >> SHD restoreConnections connectorName: {}".format(connectorName))
@@ -1379,8 +1423,7 @@ class MainBoard:
                 conIndex, conName, conDescription = connector
 
                 # Filter clickBoard list by compatible data
-                clickBoardSelection = ['Select extension board']
-                
+                clickBoardList = []
                 for clickBoardBaseName, (clickBoardName, clickBoardCompatible) in self.__clickBoardFileList.items():
                     addClickBoard = False
                     boardConnCompatible = boardConnectors[conIndex].get('compatible')
@@ -1393,10 +1436,14 @@ class MainBoard:
                         addClickBoard = True
 
                     if addClickBoard == True:
-                        clickBoardSelection.append(clickBoardName)
+                        clickBoardList.append(clickBoardName)
                 
-                if len(clickBoardSelection) == 1:
-                    clickBoardSelection = ['No extension board available']
+                if len(clickBoardList) == 1:
+                    clickBoardList = ['No extension board available']
+                else:
+                    clickBoardList.sort()
+                
+                clickBoardSelection = ['Select extension board'] + clickBoardList
                 
                 connectorSymbolName = self.getConnectorSymbolName(conName)
                 # self.__log.writeInfoMessage("SHD >> createMenuSymbol: {}".format(connectorSymbolName))

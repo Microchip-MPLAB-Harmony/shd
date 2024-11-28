@@ -1,0 +1,46 @@
+name: RNBD350 add on board
+description: >
+  The RNBD350 Add-on Board is an efficient low-cost development platform 
+  to evaluate and demonstrate the features, capabilities and interfaces of 
+  our Bluetooth LE module, RNBD350PE.
+documentation: https://www.microchip.com/en-us/development-tool/EV65D15A
+compatible: mikrobus
+dependencies: [[RNBD_Dependency, uart]]
+supported:
+  an:
+    name: RNBD350_MODE_SWITCH
+    function: GPIO
+    direction: out
+    latch: low
+  rst:
+    name: RNBD350_NMCLR
+    function: GPIO
+    direction: out
+    latch: low
+  spi:
+    cs:
+      name: RNBD350_PIN_UNUSED
+      description: Unused signal
+      function: unused
+    sck:
+      name: RNBD350_BT_STATUS_IND1
+      function: GPIO
+      direction: in
+    miso:
+      name: RNBD350_BT_STATUS_IND2
+      function: GPIO
+      direction: in
+    mosi:
+      name: RNBD350_UART_TX_IND
+      function: GPIO
+      direction: in
+  pwm:
+    name: RNBD350_UART_RX_IND
+    function: GPIO
+    direction: out
+    latch: high
+  uart:
+    tx:
+      name: RNBD350_UART_TX
+    rx:
+      name: RNBD350_UART_RX

@@ -1,0 +1,46 @@
+name: RNBD451 add on board
+description: >
+  The RNBD451 Add-on Board is an efficient low-cost development platform 
+  to evaluate and demonstrate the features, capabilities and interfaces 
+  of our Bluetooth LE module, RNBD451PE.
+documentation: https://www.microchip.com/en-us/development-tool/EV25F14A
+compatible: mikrobus
+dependencies: [[RNBD_Dependency, uart]]
+supported:
+  an:
+    name: RNBD451_MODE_SWITCH
+    function: GPIO
+    direction: out
+    latch: low
+  rst:
+    name: RNBD451_NMCLR
+    function: GPIO
+    direction: out
+    latch: low
+  spi:
+    cs:
+      name: RNBD451_PIN_UNUSED
+      description: Unused signal
+      function: unused
+    sck:
+      name: RNBD451_BT_STATUS_IND1
+      function: GPIO
+      direction: in
+    miso:
+      name: RNBD451_BT_STATUS_IND2
+      function: GPIO
+      direction: in
+    mosi:
+      name: RNBD451_UART_TX_IND
+      function: GPIO
+      direction: in
+  pwm:
+    name: RNBD451_UART_RX_IND
+    function: GPIO
+    direction: out
+    latch: high
+  uart:
+    tx:
+      name: RNBD451_UART_TX
+    rx:
+      name: RNBD451_UART_RX

@@ -1,0 +1,14 @@
+name: RNWF02 add on board
+description: >
+  The RNWF02 Add-on Board is an efficient low-cost development platform to evaluate 
+  and demonstrate the features, capabilities and interfaces of our plug-and-play 
+  Wi-Fi module, RNWF02PC.
+documentation: https://www.microchip.com/en-us/development-tool/ev72e72a
+compatible: mikrobus
+dependencies: [[sysWifiRNWF, uart]]
+supported:
+  uart:
+    tx:
+      name: RMWF02_UART_TX
+    rx:
+      name: RMWF02_UART_RX

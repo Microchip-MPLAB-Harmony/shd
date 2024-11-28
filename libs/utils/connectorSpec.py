@@ -171,6 +171,74 @@ __connectorSpec = {
         },
         'nint': 21,
         'nrst': 22
+    },
+    'rgmii': {
+        'ethphy': {
+            'gmdc': 45,
+            'gmdio': 47,
+            'g125ck': 62,
+            'gtxen': 93,
+            'gtxck': 97,
+            'gtx0': 101,
+            'gtx1': 105,
+            'gtx2': 109,
+            'gtx3': 113,
+            'grxdv': 117,
+            'grxck': 121,
+            'grx0': 125,
+            'grx1': 129,
+            'grx2': 133,
+            'grx3': 137,
+        },
+        'spi': {
+            'miso': 31,
+            'mosi': 33,
+            'sck': 35,
+            'cs': 38,
+        },
+        'i2c': {
+            'scl': 39,
+            'sda': 41,
+        },
+        'nrst': 42,
+        'nint': 49,
+    },
+    'm.2': {
+        'spi': {
+            'sck': 11,
+            'miso': 13,
+            'cs': 15,
+            'mosi': 17
+        },
+        'sdio': {
+            'ck': 9,
+            'cmd': 11,
+            'dat0': 13,
+            'dat1': 15,
+            'dat2': 17,
+        },
+        'irqn': 21,
+        'usart': {
+            'rx': 22,
+            'tx': 32,
+            'cts': 34,
+            'rts': 36
+        },
+        'modsel1': 38,
+        'wireless_wake': 40,
+        'modsel2': 42,
+        'mbus': {
+            'pta_bt_prio': 44,
+            'pta_wlan_active': 46,
+            'pta_bt_active': 48
+        },
+        'xin32k': 50,
+        'nrst': 54,
+        'i2c': {
+            'sda': 58,
+            'scl': 60
+        },
+        'int': 62
     }
 }
 

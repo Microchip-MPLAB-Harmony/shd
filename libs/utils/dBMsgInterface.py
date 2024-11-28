@@ -22,9 +22,11 @@ __drvDependencies = {
     'le_gfx_lcdc': 'LCDC',
     'drvPic32mEthmac': 'PHY',
     'ethmac': 'PHY',
+    'drvEmac': 'PHY',
     'le_gfx_slcdc': 'SLCDC',
     'ptc': 'ADC',
-    'drvWifiWincS02': 'SPI'
+    'drvWifiWincS02': 'SPI',
+    'RNBD_Dependency' : 'UART'
 }
 
 def __checkSubstringList(substringList, string):
@@ -785,6 +787,27 @@ def __getConfigDatabaseDrvWINCS02(settings):
     
     return configDB
 
+def __getConfigDatabaseWirelessRNWF(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+    plib = functionValue.split("_")[0]
+    addon = nameValue.split("_")[0]
+    configDB.setdefault('msgID', 'WIRELESS_RNWF_CONFIG_HW_IO')
+    configDB.setdefault('config', (addon, plib, enable))
+    
+    return configDB
+
+def __getConfigDatabaseWirelessRNBD(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+    plib = functionValue.split("_")[0]
+    configDB.setdefault('msgID', 'WIRELESS_RNBD_CONFIG_HW_IO')
+    configDB.setdefault('config', (pinId, nameValue, plib, enable))
+    
+    return configDB
+
 def getDBMsgDriverConfiguration(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
     
@@ -806,6 +829,10 @@ def getDBMsgDriverConfiguration(settings):
         configDB = __getConfigDatabaseDrvAT25DF(settings)
     elif driver == 'drvWifiWincS02':
         configDB = __getConfigDatabaseDrvWINCS02(settings)
+    elif driver == 'sysWifiRNWF':
+        configDB = __getConfigDatabaseWirelessRNWF(settings)
+    elif driver == 'RNBD_Dependency':
+        configDB = __getConfigDatabaseWirelessRNBD(settings)
     # else:
     #     print("SHD >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
         
@@ -827,11 +854,15 @@ def getAutoconnectTable(family, idDependency, idCapability):
         for depId, capId in __drvDependencies.items():
             exception = False
             depToCheck = idDependency
-            
-            # Remove instance number if needed from dep to check
-            idDepSplit = idDependency.split("_")
-            if idDepSplit[-1].isdigit():
-                depToCheck = "_".join(idDepSplit[:-1])
+
+            # Handle exceptions in drv instance numbers designators
+            if "drvEmac" in idDependency: #drvEmac0
+                depToCheck = "drvEmac"
+            else:
+                # Remove instance number if needed from dep to check
+                idDepSplit = idDependency.split("_")
+                if idDepSplit[-1].isdigit():
+                    depToCheck = "_".join(idDepSplit[:-1])
 
             # print("SHD >> getAutoconnectTable depId:{} depToCheck:{}".format(depId, depToCheck)) 
             if depId == depToCheck:
@@ -898,6 +929,9 @@ def getAutoconnectTable(family, idDependency, idCapability):
                     depType = depId
                     if 'spi' in idCapability:
                         capId = "SPI"
+                elif 'RNBD_Dependency' == depId:
+                    exception = True
+                    depType = "RNBD_USART_Dependency"
                 else:
                     depType = depId
 

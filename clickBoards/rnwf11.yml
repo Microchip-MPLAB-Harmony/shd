@@ -1,0 +1,13 @@
+name: RNWF11 add on board
+description: >
+  The RNWF11 UART to Cloud Add-on Board is a compact and easy-to-use development 
+  board to evaluate the easy cloud connection with RMWF11 module.
+documentation: https://www.microchip.com/en-us/development-tool/EV12H55A
+compatible: mikrobus
+dependencies: [[sysWifiRNWF, uart]]
+supported:
+  uart:
+    tx:
+      name: RMWF11_UART_TX
+    rx:
+      name: RMWF11_UART_RX
