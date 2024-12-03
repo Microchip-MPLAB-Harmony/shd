@@ -169,34 +169,34 @@ interfaces:
         pinctrl:
           etxen:
             pinId: RD6
-            function: EETHMAC_ETXEN
+            function: ETHMAC_ETXEN
           erefclk:
             pinId: RJ11
-            function: EETHMAC_EREF_CLK
+            function: ETHMAC_EREF_CLK
           etxd0:
             pinId: RJ8
-            function: EETHMAC_ETXD0
+            function: ETHMAC_ETXD0
           etxd1:
             pinId: RJ9
-            function: EEETHMAC_TXD1
+            function: ETHMAC_TXD1
           erxerr:
             pinId: RH4
-            function: EETHMAC_ERXERR
+            function: ETHMAC_ERXERR
           erxd0:
             pinId: RH8
-            function: EETHMAC_ERXD0
+            function: ETHMAC_ERXD0
           erxd1:
             pinId: RH5
-            function: EETHMAC_ERXD1
+            function: ETHMAC_ERXD1
           ecrsdv:
             pinId: RH13
-            function: EETHMAC_ECRSDV
+            function: ETHMAC_ECRSDV
           emdc:
             pinId: RD11
-            function: EETHMAC_EMDC
+            function: ETHMAC_EMDC
           emdio:
             pinId: RJ1
-            function: EETHMAC_EMDIO
+            function: ETHMAC_EMDIO
       - name: Ethernet SPI interface
         description: Ethernet SPI3 configuration
         pinctrl:

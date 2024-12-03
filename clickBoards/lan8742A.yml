@@ -1,0 +1,30 @@
+name: LAN8770 Phy Board
+description: >
+  The EVB-LAN8770_RMII board is a 100BASE-T1 Ethernet PHY plug-in card for 
+  the SAMS70/E70/V70/V71 Xplained Ultra board. Together, the two boards enable 
+  the evaluation of the LAN8770 PHY, including the low power SLEEP feature.
+documentation: https://www.microchip.com/en-us/development-tool/EV48S68A
+compatible: rmii
+dependencies: [[drvExtPhyLan8770, ethphy]]
+supported:
+  ethphy:
+    txen:
+      name: PHY_DB_RMII_TXEN
+    txd0:
+      name: PHY_DB_RMII_TXD0
+    txd1:
+      name: PHY_DB_RMII_TXD1
+    refck:
+      name: PHY_DB_RMII_REFCK
+    rxd1:
+      name: PHY_DB_RMII_RXD1
+    rxd0:
+      name: PHY_DB_RMII_RXDO
+    rxer:
+      name: PHY_DB_RMII_RXER
+    rxdv:
+      name: PHY_DB_RMII_RXDV
+    mdc:
+      name: PHY_DB_RMII_MDC
+    mdio:
+      name: PHY_DB_RMII_MDIO

@@ -1,5 +1,5 @@
-name: sam-a7g54-ek
-config: sam_a7g54_ek.py
+name: sama7g54-ek
+config: sama7g54_ek.py
 documentation: https://www.microchip.com/en-us/development-tool/EV21H18A
 processor:
   name: SAMA7G54

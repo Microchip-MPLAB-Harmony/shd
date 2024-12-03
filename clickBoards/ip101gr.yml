@@ -1,0 +1,31 @@
+name: IP101GR Phy Board
+description: >
+  The IC Plus IP101G PHY Daughter Board is populated with the IEE 802.3/802.3u 
+  compliant single port Fast 10/100Mbps Ethernet Transceiver with support for 
+  Auto MDI/MDIX function, hardware interrupt and duplex status change 
+  IP101G Ethernet PHY
+documentation: https://www.microchip.com/en-us/development-tool/AC320004-2
+compatible: rmii
+dependencies: [[drvExtPhyIp101gr, ethphy]]
+supported:
+  ethphy:
+    txen:
+      name: PHY_DB_RMII_TXEN
+    txd0:
+      name: PHY_DB_RMII_TXD0
+    txd1:
+      name: PHY_DB_RMII_TXD1
+    refck:
+      name: PHY_DB_RMII_REFCK
+    rxd1:
+      name: PHY_DB_RMII_RXD1
+    rxd0:
+      name: PHY_DB_RMII_RXDO
+    rxer:
+      name: PHY_DB_RMII_RXER
+    rxdv:
+      name: PHY_DB_RMII_RXDV
+    mdc:
+      name: PHY_DB_RMII_MDC
+    mdio:
+      name: PHY_DB_RMII_MDIO

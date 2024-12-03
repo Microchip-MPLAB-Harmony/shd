@@ -14,10 +14,12 @@ class MainBoard:
     def __init__(self, context):
         self.__currentConfig = {}
         for item in sys.path:
-            if "shd\\boards" in item:
+            pathToCheck = path.join("shd", "boards")
+            if pathToCheck in item:
                 boardYamlFile = path.join(item, context["configuration"])
-                
-            if "shd\\clickBoards" in item:
+
+            pathToCheck = path.join("shd", "clickBoards")
+            if pathToCheck in item:
                 clickBoardsPath = item
 
         if not path.isfile(boardYamlFile):
@@ -387,35 +389,41 @@ class MainBoard:
             return int(str(idActiveList).count(driver + "_"))
 
     def __overlapDependencies(self, dependencies, connectorName):
+        # self.__log.writeInfoMessage("SHD >> __overlapDependencies {}: {}".format(connectorName, dependencies))
         newDeps = {}
-
         for depId, capId in dependencies.items():
-            if capId == "":
-                newDeps.setdefault(depId, capId)
-                continue
-
-            # Only for dependencies on Connectors (click Boards)
+            newDeps.setdefault(depId, capId)
+            # self.__log.writeInfoMessage("SHD >> __overlapDependencies new dep ({},{})".format(depId, capId))
+            
+            # Only for dependencies from Connectors (click Boards)
             bindings = self.__depBindings.get(connectorName)
-            # self.__log.writeInfoMessage("SHD >> __overlapDependencies ({},{}): {}".format(depId, capId, bindings))
+            # self.__log.writeInfoMessage("SHD >> __overlapDependencies bindings: {}".format(bindings))
             if bindings != None:
                 for binding in bindings:
+                    # self.__log.writeInfoMessage("SHD >> __overlapDependencies check binding: {}".format(binding))
                     if len(binding) == 1:
+                        # Add only one driver without any PLIB connection
                         depId = binding[0]
                         capId = ""
+                        newDeps[depId] = capId
                     elif len(binding) == 2:
                         driver, signal = binding
                         # Check if Plib supports the signal in bindings
                         if checkPlibFromSignalConnector(capId, signal) == True:
+                            # Replace driver when signal = plib
+                            del newDeps[depId]
                             depId = driver
-                            # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:PLIB {} {}".format(depId, capId))
+                            # self.__log.writeInfoMessage("SHD >> __overlapDependencies add checkPlibFromSignalConnector:PLIB {} {}".format(depId, capId))
+                            newDeps[depId] = capId
                         elif 'drvExtPhy' in signal:
-                            # RMII connector
-                            depId = capId
+                            del newDeps[depId]
+                            # Replace connection for RMII
                             capId = signal
                             # self.__log.writeInfoMessage("SHD >> __overlapDependencies checkPlibFromSignalConnector:RMII {} {}".format(depId, capId))
-                    
-            newDeps.setdefault(depId, capId)
+                            if depId != "":
+                                newDeps[depId] = capId
 
+        # self.__log.writeInfoMessage("SHD >> __overlapDependencies newDeps: {}".format(newDeps))
         return newDeps
 
     def __configureDriverSettings(self, enabledPinIdList, disabledPinIdList):
@@ -649,16 +657,14 @@ class MainBoard:
                 # Extract DRIVER dependencies from Pin Name
                 pinName = pinCtrl.get('name')
                 if pinName != None:
-                    newDep = getDriverDependencyFromPin(pinName, pinFunction);
+                    newDep = getDriverDependencyFromPin(pinName, pinFunction)
                     if (newDep != ""):
                         depId = newDep
                     
                 # Extract PLIB capabilities from Pin Function
                 if pinFunction != None and pinFunction != 'GPIO':
                     newCap = pinFunction.upper().split('_')[0].lower()
-                    # Check exceptions
-                    if newCap not in ['gmac']:
-                        capId = newCap
+                    capId = newCap
 
                 # GPIOs don't have dependencies, except I2C_BB
                 # Extract PLIB capabilities from Pin Name (I2C_BB)
@@ -791,7 +797,7 @@ class MainBoard:
                     # Check if XplainPro to mikroBUS adapator board is needed
                     connectorAdaptorSymbol = self.__connectorAdaptorSymbols.get(connectorName)
                     useHWAdaptor = False
-                    if connectorAdaptorSymbol != None:            
+                    if connectorAdaptorSymbol != None:
                         if self.__checkConnectorAdaptor(connectorName, clickBoardCompatible) == True:
                             # self.__log.writeInfoMessage("SHD >> __connectClickBoard WITH ADAPTOR - {}".format(connectorAdaptorSymbol))
                             connectorAdaptorSymbol.setVisible(True)
@@ -1063,11 +1069,13 @@ class MainBoard:
         for signal, newConfig in newPinControl.items():
             if newConfig.get('name') != None:
                 # Single Pin
-                pinControlCurrent[signal] = self.__updatePinConfiguration(pinControlCurrent[signal], newConfig)
+                if pinControlCurrent.get(signal) != None:
+                    pinControlCurrent[signal] = self.__updatePinConfiguration(pinControlCurrent[signal], newConfig)
             else:
                 # Multi Pin
                 for subSignal, newSubConfig in newConfig.items():
-                    pinControlCurrent[signal][subSignal] = self.__updatePinConfiguration(pinControlCurrent[signal][subSignal], newSubConfig)
+                    if pinControlCurrent.get(signal) != None and pinControlCurrent[signal][subSignal] != None:
+                        pinControlCurrent[signal][subSignal] = self.__updatePinConfiguration(pinControlCurrent[signal][subSignal], newSubConfig)
                     
         # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
 

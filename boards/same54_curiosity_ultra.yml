@@ -143,40 +143,6 @@ interfaces:
   - name: Ethernet interface
     description: Modular Ethernet PHY system
     options:
-      - name: Ethernet RMII interface
-        description: Ethernet GMAC configuration
-        dependencies: [[drvGmac, drvExtPhyKsz8091]]
-        pinctrl:
-          gtxen:
-            pinId: PA17
-            function: GMAC_GTXEN
-          gtxck:
-            pinId: PA14
-            function: GMAC_GTXCK
-          gtx0:
-            pinId: PA18
-            function: GMAC_GTX0
-          gtx1:
-            pinId: PA19
-            function: GMAC_GTX1
-          grxer:
-            pinId: PA15
-            function: GMAC_GRXER
-          grx0:
-            pinId: PA13
-            function: GMAC_GRX0
-          grx1:
-            pinId: PA12
-            function: GMAC_GRX1
-          grxdv:
-            pinId: PC20
-            function: GMAC_GRXDV
-          gmdc:
-            pinId: PC22
-            function: GMAC_GMDC
-          gmdio:
-            pinId: PC23
-            function: GMAC_GMDIO
       - name: Ethernet SPI interface
         description: Ethernet SPI configuration
         pinctrl:
@@ -959,3 +925,55 @@ connectors:
         name: Arduino_D9
         function: GPIO
         direction: in/out
+
+  - compatible: rmii
+    name: Ethernet PHY Header
+    description: Ethernet PHY Header configurations
+    pinctrl:
+      ethphy:
+        txen:
+          pinId: PA17
+          name: RMII_TX_EN
+          function: GMAC_GTXEN
+        txd0:
+          pinId: PA18
+          name: RMII_TXD0
+          function: GMAC_GTX0
+        txd1:
+          pinId: PA19
+          name: RMII_TXD1
+          function: GMAC_GTX1
+        refck:
+          pinId: PA14
+          name: RMII_CLK_OUT
+          function: GMAC_GTXCK
+        rxd1:
+          pinId: PA12
+          name: RMII_RXD1
+          function: GMAC_GRX1
+        rxd0:
+          pinId: PA13
+          name: RMII_RXDO
+          function: GMAC_GRX0
+        rxer:
+          pinId: PA15
+          name: RMII_RX_ER
+          function: GMAC_GRXER
+        rxdv:
+          pinId: PC20
+          name: RMII_CRS_DV
+          function: GMAC_GRXDV
+        mdc:
+          pinId: PC22
+          name: RMII_MDC
+          function: GMAC_GMDC
+        mdio:
+          pinId: PC23
+          name: RMII_MDIO
+          function: GMAC_GMDIO
+      nrst:
+        pinId: PC18
+        name: RMII_NRST
+        function: GPIO
+        direction: out
+        latch: low

@@ -140,56 +140,59 @@ interfaces:
             pinId: RA7
             function: SQI1_SQID3
 
-  - name: Ethernet interface
-    description: Modular Ethernet PHY system
-    options:
-      - name: Ethernet RMII interface
-        description: LAN8740A PHY Daugther board
-        dependencies: [[drvPic32mEthmac, drvExtPhyLan8740]]
-        pinctrl:
-          etxen:
-            pinId: RD6
-            function: EETHMAC_ETXEN
-          erefclk:
-            pinId: RJ11
-            function: EETHMAC_EREF_CLK
-          etxd0:
-            pinId: RJ8
-            function: EETHMAC_ETXD0
-          etxd1:
-            pinId: RJ9
-            function: EEETHMAC_TXD1
-          erxerr:
-            pinId: RH4
-            function: EETHMAC_ERXERR
-          erxd0:
-            pinId: RH8
-            function: EETHMAC_ERXD0
-          erxd1:
-            pinId: RH5
-            function: EETHMAC_ERXD1
-          ecrsdv:
-            pinId: RH13
-            function: EETHMAC_ECRSDV
-          emdc:
-            pinId: RD11
-            function: EETHMAC_EMDC
-          emdio:
-            pinId: RJ1
-            function: EETHMAC_EMDIO
-      - name: Ethernet nIRQ interface
-        description: Ethernet nIRQ interface
-        pinctrl:
-          nirq:
-            pinId: RC13
-            name: ETH_nIRQ
-            function: INT4
-      - name: Ethernet nRST interface
-        description: Ethernet nRST configuration
-        pinctrl:
-          nreset:
-            pinId: RH11
-            name: ETH_nRESET
-            function: GPIO
-            direction: out
-            latch: high
+connectors:
+  - compatible: rmii
+    name: Ethernet PHY Header
+    description: Ethernet PHY Header configurations
+    pinctrl:
+      ethphy:
+        txen:
+          pinId: RD6
+          name: RMII_TX_EN
+          function: ETHMAC_ETXEN
+        txd0:
+          pinId: RJ8
+          name: RMII_TXD0
+          function: ETHMAC_ETXD0
+        txd1:
+          pinId: RJ9
+          name: RMII_TXD1
+          function: EEETHMAC_ETXD1
+        refck:
+          pinId: RJ11
+          name: RMII_CLK_OUT
+          function: ETHMAC_EREF_CLK
+        rxd1:
+          pinId: RH5
+          name: RMII_RXD1
+          function: ETHMAC_ERXD1
+        rxd0:
+          pinId: RH8
+          name: RMII_RXDO
+          function: ETHMAC_ERXD0
+        rxer:
+          pinId: RH4
+          name: RMII_RX_ER
+          function: ETHMAC_ERXERR
+        rxdv:
+          pinId: RH13
+          name: RMII_CRS_DV
+          function: ETHMAC_ECRSDV
+        mdc:
+          pinId: RD11
+          name: RMII_MDC
+          function: ETHMAC_EMDC
+        mdio:
+          pinId: RJ1
+          name: RMII_MDIO
+          function: ETHMAC_EMDIO
+      nint:
+        pinId: RC13
+        name: RMII_NINT
+        function: INT_INT4
+      nrst:
+        pinId: RH11
+        name: RMII_NRST
+        function: GPIO
+        direction: out
+        latch: low

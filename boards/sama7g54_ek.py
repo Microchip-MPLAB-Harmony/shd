@@ -33,7 +33,7 @@ def instantiateComponent(boardComponent):
 
     # Create new instance of the SHD mainBoard
     context = dict()
-    context["configuration"] = "sam_a7g54_ek.yml"
+    context["configuration"] = "sama7g54_ek.yml"
     context["database"] = Database
     context["atdf"] = ATDF
     context["log"] = Log

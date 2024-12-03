@@ -138,40 +138,6 @@ interfaces:
   - name: Ethernet interface
     description: Modular Ethernet PHY system
     options:
-      - name: Ethernet RMII interface
-        description: Ethernet GMAC configuration
-        dependencies: [[drvGmac, drvExtPhyLan8740]]
-        pinctrl:
-          gtxen:
-            pinId: PD1
-            function: GMAC_GTXEN
-          gtxck:
-            pinId: PD0
-            function: GMAC_GTXCK
-          gtx0:
-            pinId: PD2
-            function: GMAC_GTX0
-          gtx1:
-            pinId: PD3
-            function: GMAC_GTX1
-          grxer:
-            pinId: PD7
-            function: GMAC_GRXER
-          grx0:
-            pinId: PD5
-            function: GMAC_GRX0
-          grx1:
-            pinId: PD6
-            function: GMAC_GRX1
-          grxdv:
-            pinId: PD4
-            function: GMAC_GRXDV
-          gmdc:
-            pinId: PD8
-            function: GMAC_GMDC
-          gmdio:
-            pinId: PD9
-            function: GMAC_GMDIO
       - name: Ethernet SPI interface
         description: Ethernet SPI configuration
         pinctrl:
@@ -986,3 +952,61 @@ connectors:
           pinId: PA4
           name: MikroBUS_I2C_SCL
           function: TWIHS0_TWCK0
+
+  - compatible: rmii
+    name: Ethernet PHY Header
+    description: Ethernet PHY Header configurations
+    pinctrl:
+      ethphy:
+        txen:
+          pinId: PD1
+          name: RMII_TX_EN
+          function: GMAC_GTXEN
+        txd0:
+          pinId: PD2
+          name: RMII_TXD0
+          function: GMAC_GTX0
+        txd1:
+          pinId: PD3
+          name: RMII_TXD1
+          function: GMAC_GTX1
+        refck:
+          pinId: PD0
+          name: RMII_CLK_OUT
+          function: GMAC_GTXCK
+        rxd1:
+          pinId: PD6
+          name: RMII_RXD1
+          function: GMAC_GRX1
+        rxd0:
+          pinId: PD5
+          name: RMII_RXDO
+          function: GMAC_GRX0
+        rxer:
+          pinId: PD7
+          name: RMII_RX_ER
+          function: GMAC_GRXER
+        rxdv:
+          pinId: PD4
+          name: RMII_CRS_DV
+          function: GMAC_GRXDV
+        mdc:
+          pinId: PD8
+          name: RMII_MDC
+          function: GMAC_GMDC
+        mdio:
+          pinId: PD9
+          name: RMII_MDIO
+          function: GMAC_GMDIO
+      nint:
+        pinId: PA29
+        name: RMII_NINT
+        function: GPIO
+        direction: in
+        interrupt: falling edge
+      nrst:
+        pinId: PC10
+        name: RMII_NRST
+        function: GPIO
+        direction: out
+        latch: low

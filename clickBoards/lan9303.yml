@@ -1,0 +1,31 @@
+name: LAN9303 Phy Board
+description: >
+  Microchips LAN9303 Switch PHY Daughter Board is populated with a high-performance, 
+  small-footprint, full-featured 3-port managed LAN9303 Ethernet switch and 
+  a 2 port Base-TX MAGJACK connector. It is designed for easy development of 
+  RMII Ethernet control applications when plugged into the PIC32 compatible Starter Kits.
+documentation: https://www.microchip.com/en-us/development-tool/AC320004-4
+compatible: rmii
+dependencies: [[drvExtPhyLan9303, ethphy]]
+supported:
+  ethphy:
+    txen:
+      name: PHY_DB_RMII_TXEN
+    txd0:
+      name: PHY_DB_RMII_TXD0
+    txd1:
+      name: PHY_DB_RMII_TXD1
+    refck:
+      name: PHY_DB_RMII_REFCK
+    rxd1:
+      name: PHY_DB_RMII_RXD1
+    rxd0:
+      name: PHY_DB_RMII_RXDO
+    rxer:
+      name: PHY_DB_RMII_RXER
+    rxdv:
+      name: PHY_DB_RMII_RXDV
+    mdc:
+      name: PHY_DB_RMII_MDC
+    mdio:
+      name: PHY_DB_RMII_MDIO

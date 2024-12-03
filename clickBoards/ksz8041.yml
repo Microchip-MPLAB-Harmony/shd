@@ -1,0 +1,31 @@
+name: KSZ8041 Phy Board
+description: >
+  The KSZ8041 PHY Daughter Board (AC320004-5) enables Ethernet communication with 
+  a variety of Microchip starter kits. This daughter board is designed specifically 
+  to be used with the PIC32 Ethernet Starter Kit II (DM320004-2) or the 
+  PIC32MZ Embedded Connectivity with Floating Point Unit(EF) Starter Kit (DM320007)
+documentation: https://www.microchip.com/en-us/development-tool/AC320004-5
+compatible: rmii
+dependencies: [[drvExtPhyKsz8041, ethphy]]
+supported:
+  ethphy:
+    txen:
+      name: PHY_DB_RMII_TXEN
+    txd0:
+      name: PHY_DB_RMII_TXD0
+    txd1:
+      name: PHY_DB_RMII_TXD1
+    refck:
+      name: PHY_DB_RMII_REFCK
+    rxd1:
+      name: PHY_DB_RMII_RXD1
+    rxd0:
+      name: PHY_DB_RMII_RXDO
+    rxer:
+      name: PHY_DB_RMII_RXER
+    rxdv:
+      name: PHY_DB_RMII_RXDV
+    mdc:
+      name: PHY_DB_RMII_MDC
+    mdio:
+      name: PHY_DB_RMII_MDIO

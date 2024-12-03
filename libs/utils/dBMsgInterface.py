@@ -18,11 +18,12 @@ __drvDependencies = {
     'sys_console': 'UART',
     'X2CScope': 'UART',
     'pmsm_foc': 'ADC',
-    'drvGmac': 'PHY',
     'le_gfx_lcdc': 'LCDC',
     'drvPic32mEthmac': 'PHY',
     'ethmac': 'PHY',
+    'gmac': 'PHY',
     'drvEmac': 'PHY',
+    'drvGmac': 'PHY',
     'le_gfx_slcdc': 'SLCDC',
     'ptc': 'ADC',
     'drvWifiWincS02': 'SPI',
@@ -858,6 +859,8 @@ def getAutoconnectTable(family, idDependency, idCapability):
             # Handle exceptions in drv instance numbers designators
             if "drvEmac" in idDependency: #drvEmac0
                 depToCheck = "drvEmac"
+            elif "drvGmac" in idDependency: #drvGmac0
+                depToCheck = "drvGmac"
             else:
                 # Remove instance number if needed from dep to check
                 idDepSplit = idDependency.split("_")
@@ -898,10 +901,10 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 elif 'drvGmac' == depId:
                     exception = True
                     # print("SHD >> getAutoconnectTable drvGmac: family:{} - depId:{}".format(family, depId)) 
-                    if family == "SAMA":
+                    if "SAMA" in family:
                         instance = "".join(filter(lambda x: x.isdigit(), idDependency))
                         depType = "GMAC{}_PHY_Dependency".format(instance)
-                    if family == "SAME" or family == "SAMV" or family == "SAMS":
+                    elif family == "SAME" or family == "SAMV" or family == "SAMS":
                         depType = "GMAC_PHY_Dependency"
                     else:
                         depType = "ETH_PHY_Dependency"
@@ -995,6 +998,10 @@ def getDriverDependencyFromPin(pinName, pinFunction):
         string = pinFunction.upper()
         if __checkSubstringList(['SDMMC'], string) == True:
             dep = "drv_sdmmc"
+        elif __checkSubstringList(['GMAC'], string) == True:
+            dep = "drvGmac"
+        elif __checkSubstringList(['ETHMAC'], string) == True:
+            dep = "drvPic32mEthmac"
         
     return dep
 

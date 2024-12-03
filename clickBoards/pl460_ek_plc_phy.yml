@@ -21,7 +21,7 @@ supported:
     description: PL460 Enable
     function: GPIO
     direction: out
-    latch: low
+    latch: high
   irq:
     name: PL460_EXTINT
     description: PL460 External Interrupt (IRQ)
@@ -30,7 +30,7 @@ supported:
     description: PL460 Thermal Monitor Warning 0
     function: GPIO
     direction: in
-    pull up: False
+    pull up: True
   i2c:
     sda:
       name: PL460_STBY
