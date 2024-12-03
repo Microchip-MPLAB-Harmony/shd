@@ -1,0 +1,209 @@
+name: wfi32e-iot-db
+config: wfi32e_iot_db.py
+documentation: https://www.microchip.com/en-us/development-tool/EV36W50A
+part number: EV36W50A
+processor:
+  name: PIC32MZ2051W104132
+  architecture: MIPS
+  family: PIC32MZW
+  series: PIC32MZW
+
+interfaces:
+  - name: Digital interface
+    description: LEDs and Button configurations
+    options:
+      - name: Red LED
+        description: Red LED (RPK12) - Active high - D400
+        pinctrl:
+          gpio:
+            pinId: RK12
+            name: LED_RED
+            function: GPIO
+            direction: out
+            latch: high
+            
+      - name: Yellow LED
+        description: Green LED (RPK13)- Active high - D401
+        pinctrl:
+          gpio:
+            pinId: RK13
+            name: LED_YELLOW
+            function: GPIO
+            direction: out
+            latch: high
+            
+      - name: Green LED
+        description: Green LED (RPK14)- Active high - D402
+        pinctrl:
+          gpio:
+            pinId: RK14
+            name: LED_GREEN
+            function: GPIO
+            direction: out
+            latch: high
+            
+      - name: Blue LED
+        description: blue LED (RPC9)- Active high - D403
+        pinctrl:
+          gpio:
+            pinId: RC9
+            name: LED_BLUE
+            function: GPIO
+            direction: out
+            latch: high
+            
+      - name: User Button 1
+        description: User Button (RPB8) - SW400 - Ensure J400 jumper is mounted on pins 1-2
+        pinctrl:
+          gpio:
+            pinId: RB8
+            name: USER_SW1
+            function: GPIO
+            direction: in
+            pull up: True
+            
+      - name: User Button 2
+        description: User Button (RPA10) - SW401 - Ensure J400 jumper is mounted on pins 1-2
+        pinctrl:
+          gpio:
+            pinId: RA10
+            name: USER_SW2
+            function: GPIO
+            direction: in
+            pull up: True
+            
+  - name: Storage interface
+    description: Storage interface configuration - U403
+    options:
+      - name: SST26VF032B interface
+        description: SST26VF032B QSPI flash memory
+        dependencies: [[drv_sst26, spi1]]
+        pinctrl:
+          cs:
+            pinId: RA1
+            name: SST26_SPI_CS1
+            function: SPI1_SS1
+          sdo:
+            pinId: RC8
+            name: SST26_SPI_SDO1
+            function: SPI1_SDO1
+          sdi:
+            pinId: RC7
+            name: SST26_SPI_SDI1
+            function: SPI1_SDI1
+          sck:
+            pinId: RC6
+            name: SST26_SPI_SCK1
+            function: SPI1_SCK1
+            
+  - name: Temperature sensor interface
+    description: Temperature sensor configuration - U402
+    options:
+      - name: MCP9808 interface
+        description: Digital Temperature Sensor MCP9808
+        pinctrl:
+          sda:
+            pinId: RA5
+            name: TEMPSENSOR_SDA
+            function: I2C1_SDA1
+          scl:
+            pinId: RA4
+            name: TEMPSENSOR_SCL
+            function: I2C1_SCL1
+          int:
+            pinId: RB7
+            name: TEMPSENSOR_INT
+            function: INT1
+            
+  - name: Ambient light sensor interface
+    description: Ambient light sensor configuration - U401
+    options:
+      - name: OPT3001 interface
+        description: Digital Temperature Sensor OPT3001
+        pinctrl:
+          sda:
+            pinId: RA5
+            name: AMBIENT_SDA
+            function: I2C1_SDA1
+          scl:
+            pinId: RA4
+            name: AMBIENT_SCL
+            function: I2C1_SCL1
+          int:
+            pinId: RB6
+            name: AMBIENT_INT
+            function: INT1
+            
+  - name: Virtual COM Port interface
+    description: Serial Debug Console UART3 configuration
+    dependencies: [[sys_console, uart3]]
+    pinctrl:
+      tx:
+        pinId: RC14
+        name: PKOB4_UART_TX
+        function: UART3_U3TX
+      rx:
+        pinId: RC13
+        name: PKOB4_UART_RX
+        function: UART3_U3RX
+            
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS Header
+    description: MikroBUS header configuration - J402
+    pinctrl:
+      an:
+        pinId: RA14
+        name: MikroBUS_AN
+        function: ADCHS_AN14
+      rst:
+        pinId: RC12
+        name: MikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RC15
+          name: MikroBUS_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RA11
+          name: MikroBUS_SPI_SCK
+          function: SPI2_SCK2
+        miso:
+          pinId: RK5
+          name: MikroBUS_SPI_MISO
+          function: SPI2_SDI2
+        mosi:
+          pinId: RK4
+          name: MikroBUS_SPI_MOSI
+          function: SPI2_SDO2
+      pwm:
+        pinId: RB12
+        name: MikroBUS_PWM
+        function: OCMP1_OC1
+      int:
+        pinId: RA13
+        name: MikroBUS_INT
+        function: INT_INT3
+      uart:
+        tx:
+          pinId: RK7
+          name: MikroBUS_UART_TX
+          function: UART2_U2TX
+        rx:
+          pinId: RB9
+          name: MikroBUS_UART_RX
+          function: UART2_U2RX
+      i2c:
+        sda:
+          pinId: RA5
+          name: MikroBUS_I2C_SDA
+          function: I2C1_SDA1
+        scl:
+          pinId: RA4
+          name: MikroBUS_I2C_SCL
+          function: I2C1_SCL1
