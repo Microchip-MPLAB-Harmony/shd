@@ -162,7 +162,7 @@ interfaces:
     options:
       - name: Ethernet RMII interface
         description: Ethernet GMAC configuration
-        dependencies: [[drvGmac1, drvExtPhyKsz8081]]
+        dependencies: [[drvGmac, drvExtPhyKsz8081]]
         pinctrl:
           gtxen:
             pinId: PB15
@@ -206,7 +206,6 @@ interfaces:
             function: GMAC_GMDIO
       - name: Ethernet interrupt interface
         description: Ethernet interrupt configuration
-        dependencies: [[drvGmac1, drvExtPhyKsz8081]]
         pinctrl:
           irq:
             pinId: PB24
@@ -548,6 +547,25 @@ interfaces:
   - name: Debugging interface
     description: Debugging interface
     options:
+      - name: ARM JTAG interface
+        description: ARM JTAG connector (20-pin, J25)
+        pinctrl:
+          tdi:
+            pinId: PD28
+            name: JTAG_TDI
+            function: ICE_TDI
+          tck:
+            pinId: PD27
+            name: JTAG_TCK
+            function: ICE_TCK
+          tdo:
+            pinId: PD29
+            name: JTAG_TDO
+            function: ICE_TDO
+          tms:
+            pinId: PD30
+            name: JTAG_TMS
+            function: ICE_TMS
       - name: Serial Debug interface
         description: Serial Debug Com Port (FTDI, J26)
         dependencies: [[sys_console, uart0]]
