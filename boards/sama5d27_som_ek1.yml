@@ -85,7 +85,7 @@ interfaces:
             pinId: PD22
             name: EEPROM_I2C_SCL
             function: FLEXCOM4_IO1
-      - name: SDMMC0 interface
+      - name: SDMMC0 interface (8-bit)
         description: Secure Digital Multimedia Card 0 (SDMMC0)
         dependencies: [[drv_sdmmc, sdmmc0]]
         pinctrl:
@@ -131,7 +131,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: SDMMC1 interface
+      - name: SDMMC1 interface (4-bit)
         description: Secure Digital Multimedia Card 1 (SDMMC1)
         dependencies: [[drv_sdmmc, sdmmc1]]
         pinctrl:
@@ -165,7 +165,7 @@ interfaces:
         pinctrl:
           gpio:
             pinId: PD20
-            name: VBUSA_DETECT
+            name: USBA_VBUS_DET
             function: GPIO
             direction: in
             pulld down: True
@@ -214,7 +214,7 @@ interfaces:
     options:
       - name: Ethernet RMII interface
         description: Ethernet GMAC configuration
-        dependencies: [[drvGmac1, drvExtPhyKsz8081]]
+        dependencies: [[drvGmac, drvExtPhyKsz8081]]
         pinctrl:
           gtxen:
             pinId: PD10
@@ -261,6 +261,7 @@ interfaces:
     options:
       - name: LCD data
         description: LCD 24-bit data bus
+        dependencies: [[le_gfx_lcdc, lcdc]]
         pinctrl:
           lcdd0:
             pinId: PB11
@@ -268,162 +269,163 @@ interfaces:
             function: LCDC_LCDDAT0
           lcdd1:
             pinId: PB12
-            name: LCD_PIN_D1
+            name: LCD_DATA1
             function: LCDC_LCDDAT1
           lcdd2:
             pinId: PB13
-            name: LCD_PIN_D2
+            name: LCD_DATA2
             function: LCDC_LCDDAT2
           lcdd3:
             pinId: PB14
-            name: LCD_PIN_D3
+            name: LCD_DATA3
             function: LCDC_LCDDAT3
           lcdd4:
             pinId: PB15
-            name: LCD_PIN_D4
+            name: LCD_DATA4
             function: LCDC_LCDDAT4
           lcdd5:
             pinId: PB16
-            name: LCD_PIN_D5
+            name: LCD_DATA5
             function: LCDC_LCDDAT5
           lcdd6:
             pinId: PB17
-            name: LCD_PIN_D6
+            name: LCD_DATA6
             function: LCDC_LCDDAT6
           lcdd7:
             pinId: PB18
-            name: LCD_PIN_D7
+            name: LCD_DATA7
             function: LCDC_LCDDAT7
           lcdd8:
             pinId: PB19
-            name: LCD_PIN_D8
+            name: LCD_DATA8
             function: LCDC_LCDDAT8
           lcdd9:
             pinId: PB20
-            name: LCD_PIN_D9
+            name: LCD_DATA9
             function: LCDC_LCDDAT9
           lcdd10:
             pinId: PB21
-            name: LCD_PIN_D10
+            name: LCD_DATA10
             function: LCDC_LCDDAT10
           lcdd11:
             pinId: PB22
-            name: LCD_PIN_D11
+            name: LCD_DATA11
             function: LCDC_LCDDAT11
           lcdd12:
             pinId: PB23
-            name: LCD_PIN_D12
+            name: LCD_DATA12
             function: LCDC_LCDDAT12
           lcdd13:
             pinId: PB24
-            name: LCD_PIN_D13
+            name: LCD_DATA13
             function: LCDC_LCDDAT13
           lcdd14:
             pinId: PB25
-            name: LCD_PIN_D14
+            name: LCD_DATA14
             function: LCDC_LCDDAT14
           lcdd15:
             pinId: PB26
-            name: LCD_PIN_D15
+            name: LCD_DATA15
             function: LCDC_LCDDAT15
           lcdd16:
             pinId: PB27
-            name: LCD_PIN_D16
+            name: LCD_DATA16
             function: LCDC_LCDDAT16
           lcdd17:
             pinId: PB28
-            name: LCD_PIN_D17
+            name: LCD_DATA17
             function: LCDC_LCDDAT17
           lcdd18:
             pinId: PB29
-            name: LCD_PIN_D18
+            name: LCD_DATA18
             function: LCDC_LCDDAT18
           lcdd19:
             pinId: PB30
-            name: LCD_PIN_D19
+            name: LCD_DATA19
             function: LCDC_LCDDAT19
           lcdd20:
             pinId: PB31
-            name: LCD_PIN_D20
+            name: LCD_DATA20
             function: LCDC_LCDDAT20
           lcdd21:
             pinId: PC0
-            name: LCD_PIN_D21
+            name: LCD_DATA21
             function: LCDC_LCDDAT21
           lcdd22:
             pinId: PC1
-            name: LCD_PIN_D22
+            name: LCD_DATA22
             function: LCDC_LCDDAT22
           lcdd23:
             pinId: PC2
-            name: LCD_PIN_D23
+            name: LCD_DATA23
             function: LCDC_LCDDAT23
       - name: LCD Control
         description: LCD control configuration
+        dependencies: [[le_gfx_lcdc, lcdc]]
         pinctrl:
           lcdhsync:
             pinId: PC6
-            name: LCD_PIN_HSYNC
+            name: LCD_HSYNC
             function: LCDC_LCDHSYNC
           lcdvsync:
             pinId: PC5
-            name: LCD_PIN_VSYNC
+            name: LCD_VSYNC
             function: LCDC_LCDVSYNC
           lcdpclk:
             pinId: PC7
-            name: LCD_PIN_CLK
+            name: LCD_CLK
             function: LCDC_LCDPCK
           lcden:
             pinId: PC8
-            name: LCD_PIN_DATAEN
+            name: LCD_DATAENABLE
             function: LCDC_LCDDEN
           lcddisp:
             pinId: PC4
-            name: LCD_PIN_DISPEN
+            name: LCD_DISPENABLE
             function: LCDC_LCDDISP
       - name: SPI interface
         description: LCD SPI interface configuration
         pinctrl:
           cs:
             pinId: PA17
-            name: LCD_PIN_SPI_CS
+            name: LCD_SPI_CS
             function: FLEXCOM3_IO4
           sck:
             pinId: PA14
-            name: LCD_PIN_SPI_SCK
+            name: LCD_SPI_SCK
             function: FLEXCOM3_IO2
           miso:
             pinId: PA16
-            name: LCD_PIN_SPI_MISO
+            name: LCD_SPI_MISO
             function: FLEXCOM3_IO3
           mosi:
             pinId: PA15
-            name: LCD_PIN_SPI_MOSI
+            name: LCD_SPI_MOSI
             function: FLEXCOM3_IO0
       - name: I2C interface
         description: LCD I2C interface configuration
         pinctrl:
           sda:
             pinId: PD4
-            name: LCD_PIN_I2C_SDA
+            name: LCD_I2C_SDA
             function: TWIHS1_TWD1
           scl:
             pinId: PD5
-            name: LCD_PIN_I2C_SCL
+            name: LCD_I2C_SCL
             function: TWIHS1_TWCK1
       - name: IRQ interface
         description: LCD IRQ interface configuration
         pinctrl:
           irq1:
             pinId: PC25
-            name: LCD_PIN_MAXTOUCH
+            name: LCD_MAXTOUCH
             function: GPIO
             direction: in
             interrupt: falling edge
             pull up: True
           irq2:
             pinId: PD5
-            name: LCD_PIN_INTERRUPT
+            name: LCD_INTERRUPT
             function: GPIO
             direction: in
             interrupt: falling edge
@@ -433,7 +435,7 @@ interfaces:
         pinctrl:
           pwm:
             pinId: PC3
-            name: LCD_PIN_BACKLIGHT
+            name: LCD_BACKLIGHT
             function: LCLDC_LCDPWM
 
   - name: ISC connector interface
@@ -468,13 +470,6 @@ interfaces:
             pinId: PD5
             name: ISC_I2C_SCL
             function: TWIHS1_TWCK1
-      - name: MCK Control
-        description: Camera MCK control
-        pinctrl:
-          mck:
-            pinId: PC24
-            name: ISC_MCK
-            function: ISC_MCK
       - name: Image Sensor Interface (ISI)
         description: Image Sensor Interface configuration
         pinctrl:
@@ -486,6 +481,10 @@ interfaces:
             pinId: PC23
             name: ISC_HSYNC
             function: ISC_HSYNC
+          mck:
+            pinId: PC24
+            name: ISC_MCK
+            function: ISC_MCK
           pck:
             pinId: PC21
             name: ISC_PCK
@@ -542,6 +541,25 @@ interfaces:
   - name: Debugging interface
     description: Debugging interface
     options:
+      - name: ARM JTAG interface
+        description: ARM JTAG connector (20-pin, J25)
+        pinctrl:
+          tdi:
+            pinId: PD28
+            name: JTAG_TDI
+            function: ICE_TDI
+          tck:
+            pinId: PD27
+            name: JTAG_TCK
+            function: ICE_TCK
+          tdo:
+            pinId: PD29
+            name: JTAG_TDO
+            function: ICE_TDO
+          tms:
+            pinId: PD30
+            name: JTAG_TMS
+            function: ICE_TMS
       - name: Serial Debug interface
         description: Serial Debug Com Port (microUSB, J10)
         dependencies: [[sys_console, uart1]]
