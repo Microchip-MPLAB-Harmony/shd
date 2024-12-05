@@ -157,7 +157,7 @@ connectors:
         txd1:
           pinId: RJ9
           name: RMII_TXD1
-          function: EEETHMAC_ETXD1
+          function: ETHMAC_ETXD1
         refck:
           pinId: RJ11
           name: RMII_CLK_OUT

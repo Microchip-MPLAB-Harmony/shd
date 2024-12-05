@@ -20,9 +20,13 @@ def loadModule():
     mainBoardCompatibleList = []
     mainBoardFileList = glob.glob(path.join(boardPath, '*.yml'))
     for mainBoardFile in mainBoardFileList:
-        mainBoardYaml = yaml.safe_load(open(mainBoardFile, 'r'))
-        if mainBoardYaml['processor']['name'] == processor:
-            mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'))) 
+        try:
+            mainBoardYaml = yaml.safe_load(open(mainBoardFile, 'r'))
+            if mainBoardYaml['processor']['name'] == processor:
+                mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'))) 
+        except Exception as error:
+            print("SHD >> ERROR loading main board : {}".format(mainBoardFile))
+            continue
     
     for mainBoard in mainBoardCompatibleList:
         boardName, config = mainBoard

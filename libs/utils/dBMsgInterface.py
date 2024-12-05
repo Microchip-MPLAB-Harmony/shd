@@ -856,9 +856,17 @@ def getAutoconnectTable(family, idDependency, idCapability):
             exception = False
             depToCheck = idDependency
 
-            # Handle exceptions in drv instance numbers designators
+            # Handle exceptions in drv instance numbers designators and RMII connections
             if "drvEmac" in idDependency: #drvEmac0
-                depToCheck = "drvEmac"
+                if "drvExtPhy" in idCapability:
+                    depToCheck = "drvEmac"
+                else:
+                    continue
+            elif "drvGmac" in idDependency: #drvGmac0
+                if "drvExtPhy" in idCapability:
+                    depToCheck = "drvGmac"
+                else:
+                    continue
             elif "drvGmac" in idDependency: #drvGmac0
                 depToCheck = "drvGmac"
             else:
