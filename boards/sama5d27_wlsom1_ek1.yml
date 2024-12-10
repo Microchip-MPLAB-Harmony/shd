@@ -442,7 +442,7 @@ interfaces:
           pwm:
             pinId: PC28
             name: LCD_BACKLIGHT
-            function: LCLDC_LCDPWM
+            function: LCDC_LCDPWM
 
   - name: ISC connector interface
     description: Image Sensor Controller (ISC) configuration
