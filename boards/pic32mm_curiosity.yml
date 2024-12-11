@@ -1,0 +1,246 @@
+name: pic32mm-curiosity
+config: pic32mm_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/DM320101
+processor:
+  name: PIC32MM0064GPL036
+  architecture: MIPS
+  family: PIC32MM1324
+  series: PIC32MM
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User LED 1 (Red)
+        description: User LED 1 (Red)
+        pinctrl:
+          gpio:
+            pinId: RA0
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User LED 2 (Red)
+        description: User LED 2 (Red)
+        pinctrl:
+          gpio:
+            pinId: RC9
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED 3 (Red)
+        description: RGB LED 3 (Red)
+        pinctrl:
+          gpio:
+            pinId: RA3
+            name: RGB_LED_RED
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED 3 (Green)
+        description: RGB LED 3 (Green)
+        pinctrl:
+          gpio:
+            pinId: RB12
+            name: RGB_LED_GREEN
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED 3 (Blue)
+        description: RGB LED 3 (Blue)
+        pinctrl:
+          gpio:
+            pinId: RA2
+            name: RGB_LED_BLUE
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED 3 (Red) - PWM
+        description: RGB LED 3 (Red) - PWM
+        pinctrl:
+          pwm:
+            pinId: RA3
+            name: RGB_PWM_LED_RED
+            function: CCP1_OCM1D
+      - name: RGB LED 3 (Green) - PWM
+        description: RGB LED 3 (Green) - PWM
+        pinctrl:
+          pwm:
+            pinId: RB12
+            name: RGB_PWM_LED_GREEN
+            function: CCP2_OCM2
+      - name: RGB LED 3 (Blue) - PWM
+        description: RGB LED 3 (Blue) - PWM
+        pinctrl:
+          pwm:
+            pinId: RA2
+            name: RGB_PWM_LED_BLUE
+            function: CCP3_OCM3
+      - name: User Switch 1
+        description: User Switch 1
+        pinctrl:
+          gpio:
+            pinId: RB7
+            name: USER_SWITCH1
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Switch 2
+        description: User Switch 2
+        pinctrl:
+          gpio:
+            pinId: RB13
+            name: USER_SWITCH2
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Sensors interface
+    description: On-board sensors configurations
+    options:
+      - name: Potentiometer
+        description: Potentiometer
+        pinctrl:
+          an:
+            pinId: RB3
+            name: POT
+            function: ADC_AN11
+
+  - name: Bluetooth BM71 interface
+    description: Bluetooth BM71BLES1FC2 module interface
+    options:
+      - name: BM71 UART interface
+        description: Bluetooth BM71 UART interface
+        pinctrl:
+          tx:
+            pinId: RB10
+            name: BM71_UART_TX
+            function: UART2_U2TX
+          rx:
+            pinId: RB11
+            name: BM71_UART_RX
+            function: UART2_U2RX
+      - name: BM71 I2C interface
+        description: Bluetooth BM71 I2C interface
+        dependencies: [[drv_i2c, i2c_bb]]
+        pinctrl:
+          sda:
+            pinId: RC2
+            name: BM71_I2C_BB_SDA
+            function: GPIO
+            direction: in
+            open drain: True
+          scl:
+            pinId: RC1
+            name: BM71_I2C_BB_SCL
+            function: GPIO
+            direction: in
+            open drain: True
+      - name: BM71 Reset Signal
+        description: BM71 Reset Signal
+        pinctrl:
+          rst:
+            pinId: RB1
+            name: BM71_RSTN
+            function: GPIO
+            direction: out
+            latch: high
+      - name: BM71 GPIO interface
+        description: BM71 GPIO Control
+        pinctrl:
+          gpio1:
+            pinId: RC3
+            name: BM71_BT_P2_0
+            function: GPIO
+            direction: out
+            latch: high
+          gpio2:
+            pinId: RC0
+            name: BM71_BT_P0_0
+            function: GPIO
+            direction: out
+            latch: high
+          gpio3:
+            pinId: RC9
+            name: BM71_BT_P0_2
+            function: GPIO
+            direction: out
+            latch: high
+          gpio4:
+            pinId: RC8
+            name: BM71_BT_P2_7
+            function: GPIO
+            direction: out
+            latch: high
+          gpio5:
+            pinId: RA9
+            name: BM71_BT_P3_6
+            function: GPIO
+            direction: out
+            latch: high
+
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS Header
+    description: MikroBUS Standard Extension Header
+    pinctrl:
+      an:
+        pinId: RB2
+        name: MikroBUS_AN
+        function: ADC_AN4
+      rst:
+        pinId: RB1
+        name: MikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RB0
+          name: MikroBUS_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RB8
+          name: MikroBUS_SPI_SCK
+          function: SPI1_SCK1
+        miso:
+          pinId: RB14
+          name: MikroBUS_SPI_MISO
+          function: SPI1_SDI1
+        mosi:
+          pinId: RB9
+          name: MikroBUS_SPI_MOSI
+          function: SPI1_SDO1
+      pwm:
+        pinId: RB15
+        name: MikroBUS_PWM
+        function: CCP2_OCM2
+      int:
+        pinId: RA1
+        name: MikroBUS_INT
+        function: INT_INT4
+      uart:
+        tx:
+          pinId: RB11
+          name: MikroBUS_UART_TX
+          function: UART2_U2TX
+        rx:
+          pinId: RB10
+          name: MikroBUS_UART_RX
+          function: UART2_U2RX
+      i2c:
+        sda:
+          pinId: RC2
+          name: MikroBUS_I2C_BB_SDA
+          function: GPIO
+          direction: in/out
+          open drain: True
+        scl:
+          pinId: RC1
+          name: MikroBUS_I2C_BB_SCL
+          function: GPIO
+          direction: in/out
+          open drain: True
