@@ -1,0 +1,485 @@
+name: pic32mm-usb-curiosity
+config: pic32mm_usb_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/DM320107
+processor:
+  name: PIC32MM0256GPM064
+  architecture: MIPS
+  family: PIC32MM1324
+  series: PIC32MM
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User LED 1 (Red)
+        description: User LED 1 (Red)
+        pinctrl:
+          gpio:
+            pinId: RD3
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User LED 2 (Red)
+        description: User LED 2 (Red)
+        pinctrl:
+          gpio:
+            pinId: RC13
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED 3 (Red)
+        description: RGB LED 3 (Red)
+        pinctrl:
+          gpio:
+            pinId: RD1
+            name: RGB_LED_RED
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED 3 (Green)
+        description: RGB LED 3 (Green)
+        pinctrl:
+          gpio:
+            pinId: RC3
+            name: RGB_LED_GREEN
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED 3 (Blue)
+        description: RGB LED 3 (Blue)
+        pinctrl:
+          gpio:
+            pinId: RC15
+            name: RGB_LED_BLUE
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED 3 (Red) - PWM
+        description: RGB LED 3 (Red) - PWM
+        pinctrl:
+          pwm:
+            pinId: RD1
+            name: RGB_PWM_LED_RED
+            function: CCP1_OCM1B
+      - name: RGB LED 3 (Green) - PWM
+        description: RGB LED 3 (Green) - PWM
+        pinctrl:
+          pwm:
+            pinId: RC3
+            name: RGB_PWM_LED_GREEN
+            function: CCP2_OCM2B
+      - name: RGB LED 3 (Blue) - PWM
+        description: RGB LED 3 (Blue) - PWM
+        pinctrl:
+          pwm:
+            pinId: RC15
+            name: RGB_PWM_LED_BLUE
+            function: CCP3_OCM3E
+      - name: User Switch 1
+        description: User Switch 1
+        pinctrl:
+          gpio:
+            pinId: RB9
+            name: USER_SWITCH1
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Switch 2
+        description: User Switch 2
+        pinctrl:
+          gpio:
+            pinId: RC10
+            name: USER_SWITCH2
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Switch 3
+        description: User Switch 3
+        pinctrl:
+          gpio:
+            pinId: RC4
+            name: USER_SWITCH3
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Sensors interface
+    description: On-board sensors configurations
+    options:
+      - name: Potentiometer
+        description: Potentiometer
+        pinctrl:
+          an:
+            pinId: RC8
+            name: POT
+            function: ADC_AN14
+
+  - name: X32 Audio A interface
+    description: X32 Audio A Signal configuration
+    options:
+      - name: USART interface
+        description: Audio USART interface
+        pinctrl:
+          tx:
+            pinId: RC6
+            name: X32-A_USART_TX
+            function: UART2_U2TX
+          rx:
+            pinId: RC7
+            name: X32-A_USART_RX
+            function: UART2_U2RX
+          rts:
+            pinId: RC2
+            name: X32-A_USART_RTS
+            function: UART2_U2RTS
+          cts:
+            pinId: RB1
+            name: X32-A_USART_CTS
+            function: UART2_U2CTS
+      - name: I2C interface
+        description: Audio I2C interface
+        pinctrl:
+          sda:
+            pinId: RB7
+            name: X32-A_I2C_SDA
+            function: I2C3_SDA3
+          scl:
+            pinId: RB13
+            name: X32-A_I2C_SCL
+            function: I2C3_SCL3
+      - name: SPI interface
+        description: Audio SPI interface 1
+        pinctrl:
+          cs:
+            pinId: RB2
+            name: X32-A_SPI-1_CS
+            function: SPI2_SS2OUT
+          sck:
+            pinId: RB8
+            name: X32-A_SPI-1_SCK
+            function: SPI2_SCK2OUT
+          miso:
+            pinId: RA9
+            name: X32-A_SPI-1_MISO
+            function: SPI2_SDI2
+          mosi:
+            pinId: RB3
+            name: X32-A_SPI-1_MOSI
+            function: SPI2_SDO2
+      - name: X32 StandBy / Reset
+        description: StandBy / Reset control signal
+        pinctrl:
+          stbyrst:
+            pinId: RC14
+            name: X32-A_STBYRST
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Clock Reference
+        description: Clock Reference
+        pinctrl:
+          gpio:
+            pinId: RB15
+            name: X32-A_REFCLK
+            function: REFCLKO
+      - name: SPI interface
+        description: Audio SPI interface 2
+        pinctrl:
+          cs:
+            pinId: RC11
+            name: X32-A_SPI-2_CS
+            function: SPI3_SS3
+          sck:
+            pinId: RA10
+            name: X32-A_SPI-2_SCK
+            function: SPI3_SCK3
+          miso:
+            pinId: RA7
+            name: X32-A_SPI-2_MISO
+            function: SPI3_SDI3
+          mosi:
+            pinId: RA8
+            name: X32-A_SPI-2_MOSI
+            function: SPI3_SDO3
+      - name: GPIO interface
+        description: Audio GPIO interface 2
+        pinctrl:
+          gpio1:
+            pinId: RB14
+            name: X32-A_GPIO1
+            function: ADC_AN9
+          gpio2:
+            pinId: RC1
+            name: X32-A_GPIO2
+            function: ADC_AN13
+          gpio3:
+            pinId: RA14
+            name: X32-A_GPIO3
+            function: GPIO
+            direction: out
+          gpio4:
+            pinId: RC0
+            name: X32-A_GPIO4
+            function: ADC_AN12
+          gpio5:
+            pinId: RA15
+            name: X32-A_GPIO5
+            function: GPIO
+            direction: out
+          gpio6:
+            pinId: RD4
+            name: X32-A_GPIO6
+            function: GPIO
+            direction: out
+
+  - name: X32 Audio B interface
+    description: X32 Audio B Signal configuration
+    options:
+      - name: USART interface
+        description: Audio USART interface
+        pinctrl:
+          tx:
+            pinId: RC12
+            name: X32-B_USART_TX
+            function: UART1_U1TX
+          rx:
+            pinId: RA6
+            name: X32-B_USART_RX
+            function: UART1_U1RX
+          rts:
+            pinId: RD0
+            name: X32-B_USART_RTS
+            function: UART1_U1RTS
+          cts:
+            pinId: RA13
+            name: X32-B_USART_CTS
+            function: UART1_U1CTS
+      - name: I2C interface
+        description: Audio I2C interface
+        pinctrl:
+          sda:
+            pinId: RB5
+            name: X32-B_I2C_SDA
+            function: I2C3_SDA3
+          scl:
+            pinId: RC9
+            name: X32-B_I2C_SCL
+            function: I2C3_SCL3
+      - name: SPI interface
+        description: Audio SPI interface 1
+        pinctrl:
+          cs:
+            pinId: RC11
+            name: X32-B_SPI-1_CS
+            function: SPI2_SS3
+          sck:
+            pinId: RA10
+            name: X32-B_SPI-1_SCK
+            function: SPI3_SCK3
+          miso:
+            pinId: RA7
+            name: X32-B_SPI-1_MISO
+            function: SPI3_SDI3
+          mosi:
+            pinId: RA8
+            name: X32-B_SPI-1_MOSI
+            function: SPI3_SDO3
+      - name: X32 StandBy / Reset
+        description: StandBy / Reset control signal
+        pinctrl:
+          stbyrst:
+            pinId: RC14
+            name: X32-B_STBYRST
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Clock Reference
+        description: Clock Reference
+        pinctrl:
+          gpio:
+            pinId: RB15
+            name: X32-B_REFCLK
+            function: REFCLKO
+      - name: SPI interface
+        description: Audio SPI interface 2
+        pinctrl:
+          cs:
+            pinId: RB2
+            name: X32-B_SPI-2_CS
+            function: SPI2_SS2OUT
+          sck:
+            pinId: RB8
+            name: X32-B_SPI-2_SCK
+            function: SPI2_SCK2OUT
+          miso:
+            pinId: RA9
+            name: X32-B_SPI-2_MISO
+            function: SPI2_SDI2
+          mosi:
+            pinId: RB3
+            name: X32-B_SPI-2_MOSI
+            function: SPI2_SDO2
+      - name: GPIO interface
+        description: Audio GPIO interface 2
+        pinctrl:
+          gpio1:
+            pinId: RA12
+            name: X32-B_GPIO1
+            function: ADC_AN17
+          gpio2:
+            pinId: RA11
+            name: X32-B_GPIO2
+            function: ADC_AN18
+          gpio3:
+            pinId: RD2
+            name: X32-B_GPIO3
+            function: GPIO
+            direction: out
+          gpio4:
+            pinId: RC5
+            name: X32-B_GPIO4
+            function: ADC_AN15
+          gpio5:
+            pinId: RA5
+            name: X32-B_GPIO5
+            function: GPIO
+            direction: out
+          gpio6:
+            pinId: RB0
+            name: X32-B_GPIO6
+            function: GPIO
+            direction: out
+
+  - name: USB interface
+    description: USB Port configuration
+    pinctrl:
+      gpio:
+        pinId: RB6
+        name: USB_VBUS_DET
+        function: VBUS
+        pulld down: True
+
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS Header A
+    description: MikroBUS Standard Extension Header A
+    pinctrl:
+      an:
+        pinId: RC0
+        name: MikroBUSA_AN
+        function: ADC_AN12
+      rst:
+        pinId: RC2
+        name: MikroBUSA_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RB2
+          name: MikroBUSA_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RB8
+          name: MikroBUSA_SPI_SCK
+          function: SPI2_SCK2OUT
+        miso:
+          pinId: RA9
+          name: MikroBUSA_SPI_MISO
+          function: SPI2_SDI2
+        mosi:
+          pinId: RB3
+          name: MikroBUSA_SPI_MOSI
+          function: SPI2_SDO2
+      pwm:
+        pinId: RB15
+        name: MikroBUSA_PWM
+        function: CCP4_OCM4
+      int:
+        pinId: RB1
+        name: MikroBUSA_INT
+        function: INT_INT4
+      uart:
+        tx:
+          pinId: RC6
+          name: MikroBUSA_UART_TX
+          function: UART2_U2TX
+        rx:
+          pinId: RC7
+          name: MikroBUSA_UART_RX
+          function: UART2_U2RX
+      i2c:
+        sda:
+          pinId: RB7
+          name: MikroBUSA_I2C_SDA
+          function: I2C3_SDA3
+        scl:
+          pinId: RB13
+          name: MikroBUSA_I2C_SCL
+          function: I2C3_SCL3
+
+  - compatible: mikrobus
+    name: MikroBUS Header B
+    description: MikroBUS Standard Extension Header B
+    pinctrl:
+      an:
+        pinId: RA12
+        name: MikroBUSB_AN
+        function: ADC_AN17
+      rst:
+        pinId: RC14
+        name: MikroBUSB_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RC11
+          name: MikroBUSB_SPI_CS
+          function: SPI3_SS3
+        sck:
+          pinId: RA10
+          name: MikroBUSB_SPI_SCK
+          function: SPI3_SCK3
+        miso:
+          pinId: RA7
+          name: MikroBUSB_SPI_MISO
+          function: SPI2_SDI3
+        mosi:
+          pinId: RA8
+          name: MikroBUSB_SPI_MOSI
+          function: SPI2_SDO3
+      pwm:
+        pinId: RB0
+        name: MikroBUSB_PWM
+        function: CCP4_OCM4
+      int:
+        pinId: RD2
+        name: MikroBUSB_INT
+        function: INT_INT0
+      uart:
+        tx:
+          pinId: RC12
+          name: MikroBUSB_UART_TX
+          function: UART1_U1TX
+        rx:
+          pinId: RA6
+          name: MikroBUSB_UART_RX
+          function: UART1_U1RX
+      i2c:
+        sda:
+          pinId: RB5
+          name: MikroBUSB_I2C_BB_SDA
+          function: GPIO
+          direction: in
+          open drain: True
+        scl:
+          pinId: RC9
+          name: MikroBUSB_I2C_BB_SCL
+          function: GPIO
+          direction: in
+          open drain: True
