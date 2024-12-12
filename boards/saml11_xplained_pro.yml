@@ -7,25 +7,6 @@ processor:
   family: SAML
   series: SAML11
 
-settings:
-  - name: MCU Current Measurement
-    description: Use the MCU Current Measurement Jumper to select measure or bypass mode.
-    type: keyValue
-    keyValues:
-      - key: MCU_CURRENT_MEASURE
-        description: MCU Current Measurement activated
-      - key: MCU_CURRENT_BYPASS
-        description: MCU Current Measurement bypassed
-
-  - name: I/O Current Measurement
-    description: Use the I/O Current Measurement Jumper to select measure or bypass mode.
-    type: keyValue
-    keyValues:
-      - key: IO_CURRENT_MEASURE
-        description: I/O Current Measurement activated
-      - key: IO_CURRENT_BYPASS
-        description: I/O Current Measurement bypassed
-
 interfaces:
   - name: Digital interface
     description: Button and Led configurations
