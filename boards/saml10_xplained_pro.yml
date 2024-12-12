@@ -47,6 +47,7 @@ interfaces:
     options:
       - name: ATECC508A
         description: ATECC508A configuration
+        dependencies: [[atecc508a, sercom1]]
         pinctrl:
           sda:
             pinId: PA16
