@@ -1,11 +1,11 @@
-name: saml11-xplained-pro
-config: saml11_xplained_pro.py
-documentation: https://www.microchip.com/en-us/development-tool/DM320205
+name: saml10-xplained-pro
+config: saml10_xplained_pro.py
+documentation: https://www.microchip.com/en-us/development-tool/DM320204
 processor:
-  name: ATSAML11E16A
+  name: ATSAML10E16A
   architecture: CORTEX-M23
   family: SAML
-  series: SAML11
+  series: SAML10
 
 settings:
   - name: MCU Current Measurement
