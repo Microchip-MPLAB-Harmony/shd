@@ -261,12 +261,16 @@ interfaces:
         pinctrl:
           sda:
             pinId: RB5
-            name: X32-B_I2C_SDA
-            function: I2C3_SDA3
+            name: X32-B_I2C_BB_SDA
+            function: GPIO
+            direction: in
+            open drain: True
           scl:
             pinId: RC9
-            name: X32-B_I2C_SCL
-            function: I2C3_SCL3
+            name: X32-B_I2C_BB_SCL
+            function: GPIO
+            direction: in
+            open drain: True
       - name: SPI interface
         description: Audio SPI interface 1
         pinctrl:
