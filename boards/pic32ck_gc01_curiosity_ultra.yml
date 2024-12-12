@@ -485,9 +485,9 @@ connectors:
     description: MikroBUS Standard Extension Header
     pinctrl:
       an:
-        pinId: PB11
+        pinId: PA10
         name: MikroBUS_AN
-        function: ADC_VINP10
+        function: ADC_VINP6
       rst:
         pinId: PD21
         name: MikroBUS_RST
@@ -514,9 +514,9 @@ connectors:
           name: MikroBUS_SPI_MOSI
           function: SERCOM2_PAD0
       pwm:
-        pinId: PB12
+        pinId: PC01
         name: MikroBUS_PWM
-        function: TCC4_WO0
+        function: TCC0_WO2
       int:
         pinId: PD18
         name: MikroBUS_INT
@@ -550,7 +550,7 @@ connectors:
         function: ADC_VINP0
       adc minus:
         pinId: PA05
-        name: EXT1_ADC_PLUS2
+        name: EXT1_ADC_MINUS
         function: ADC_VINM0
       gpio1:
         pinId: PD18
@@ -627,7 +627,7 @@ connectors:
         function: ADC_VINP2
       adc minus:
         pinId: PA07
-        name: EXT2_ADC_PLUS2
+        name: EXT2_ADC_MINUS
         function: ADC_VINM2
       gpio1:
         pinId: PC27

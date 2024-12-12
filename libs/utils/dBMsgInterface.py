@@ -27,7 +27,16 @@ __drvDependencies = {
     'le_gfx_slcdc': 'SLCDC',
     'ptc': 'ADC',
     'drvWifiWincS02': 'SPI',
-    'RNBD_Dependency' : 'UART'
+    'RNBD_Dependency' : 'UART',
+    'atecc108a': 'I2C',
+    'atecc508a': 'I2C',
+    'atecc608': 'I2C',
+    'atsha204a': 'I2C',
+    'atsha206a': 'SWI',
+    'ecc204': 'I2C',
+    'sha104': 'I2C',
+    'sha105': 'I2C',
+    'ta010': 'I2C'
 }
 
 def __checkSubstringList(substringList, string):
@@ -387,7 +396,7 @@ def __getConfigDatabaseEIC(periphID, settings):
         channel = "".join(filter(lambda x: x.isdigit(), setting))
         configDB.setdefault('config', (channel, enable))
 
-    elif periphID == 'EIC_U2217' or periphID == 'EIC_U2804':
+    elif periphID == 'EIC_U2217' or periphID == 'EIC_U2804' or periphID == 'EIC_03706':
         channel = "".join(filter(lambda x: x.isdigit(), setting))
         configDB.setdefault('config', (channel, enable))
         
@@ -943,6 +952,9 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 elif 'RNBD_Dependency' == depId:
                     exception = True
                     depType = "RNBD_USART_Dependency"
+                elif 'ecc' in depId or 'sha' in depId or 'ta010' == depId:
+                    exception = True
+                    depType = "{}_DEP_PLIB_{}".format(depId.upper(), capId.upper())
                 else:
                     depType = depId
 
@@ -958,7 +970,7 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 if idCapability == "i2c_bb":
                     idCapability = "I2C"
                     exception = True
-                if idCapability == "gfx_disp_slcd1-PIC32CXMT":
+                elif "gfx_disp_slcd1-" in idCapability:
                     idCapability = "slcd_display"
                     exception = True
                 elif family == "PIC32MX":
@@ -966,6 +978,8 @@ def getAutoconnectTable(family, idDependency, idCapability):
                         instance = idCapability[-1]
                         idCapability = "I2S{}_I2S".format(instance)
                         exception = True
+                elif capId == "SWI":
+                    capId = "UART"
                 else:
                     if idCapability[:2] == 'a_':
                         idCapability = idCapability.replace("a_", "")
@@ -994,7 +1008,7 @@ def getDriverDependencyFromPin(pinName, pinFunction):
         else:
             dep = "drv_i2c"
     elif __checkSubstringList(['SPI', 'MISO', 'MOSI', 'CS', 'SCK'], string) == True:
-        if __checkSubstringList(['LIN' ,'GFX_DISP'], string) == True:
+        if __checkSubstringList(['LIN' ,'GFX_DISP' ,'X32', 'I2S'], string) == True:
             dep = ""
         elif __checkSubstringList(['USART'], string) == True:
             dep = "drv_usart"
@@ -1010,7 +1024,7 @@ def getDriverDependencyFromPin(pinName, pinFunction):
             dep = "drvGmac"
         elif __checkSubstringList(['ETHMAC'], string) == True:
             dep = "drvPic32mEthmac"
-        
+
     return dep
 
 def checkPlibFromSignalConnector(plib, signal):

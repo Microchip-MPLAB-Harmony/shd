@@ -8,7 +8,7 @@ from utils.dBMsgInterface import getDBMsgPLIBConfiguration, getDBMsgDriverConfig
 from clickBoard.clickBoard import ClickBoard
 
 shdMainBoardHelp = 'shdMainBoardHelpKeyword'
-shdMultiInstanceDrivers = ['drv_i2c', 'drv_spi', 'drv_usart', 'drv_sdmmc', 'a_drv_i2s', 'drv_sdspi', 'sys_console', 'RNBD_Dependency']
+shdMultiInstanceDrivers = ['drv_i2c', 'drv_spi', 'drv_usart', 'drv_sdmmc', 'a_drv_i2s', 'drv_sdspi', 'sys_console', 'RNBD_Dependency', 'atecc108a', 'atecc508a', 'atecc608', 'atsha204a', 'atsha206a', 'ecc204', 'sha104', 'sha105', 'ta010']
 
 class MainBoard:
     def __init__(self, context):
