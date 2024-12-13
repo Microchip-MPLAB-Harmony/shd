@@ -25,6 +25,7 @@ __drvDependencies = {
     'drvEmac': 'PHY',
     'drvGmac': 'PHY',
     'le_gfx_slcdc': 'SLCDC',
+    'le_gfx_slcd': 'SLCD',
     'ptc': 'ADC',
     'drvWifiWincS02': 'SPI',
     'RNBD_Dependency' : 'UART',
@@ -928,7 +929,7 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 elif 'le_gfx_lcdc' == depId:
                     exception = True
                     depType = "LCDC"
-                elif 'le_gfx_slcdc' == depId:
+                elif 'le_gfx_slcdc' == depId or 'le_gfx_slcd' == depId:
                     exception = True
                     depType = "Segmented Display"
                 elif 'drvEmac' == depId:

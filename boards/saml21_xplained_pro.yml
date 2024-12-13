@@ -7,16 +7,6 @@ processor:
   family: SAML
   series: SAML21
 
-settings:
-  - name: Backup Battery Selection
-    description: Use the VBAT SELECT Jumper to select power from battery or power from board supply.
-    type: keyValue
-    keyValues:
-      - key: VBAT_SELECT_PSUP
-        description: Power from power supply
-      - key: VBAT_SELECT_VBAT
-        description: Power from battery
-
 interfaces:
   - name: Digital interface
     description: Button and Led configurations
@@ -45,7 +35,6 @@ interfaces:
     options:
       - name: QTouch Button
         description: QTouch Button
-        dependencies: [[ptc]]
         pinctrl:
           gpio:
             pinId: PA10
