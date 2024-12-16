@@ -390,23 +390,24 @@ def __getConfigDatabaseEIC(periphID, settings):
     setting = fnValue.split('_')[-1].split('/')[0].lower()
 
     configDB = dict()
-    configDB.setdefault('msgID', 'EIC_CONFIG_HW_IO')
     
     periphID = periphID.upper()
+    channel = ""
     if periphID == 'EIC_U2254':
         channel = "".join(filter(lambda x: x.isdigit(), setting))
-        configDB.setdefault('config', (channel, enable))
 
     elif periphID == 'EIC_U2217' or periphID == 'EIC_U2804' or periphID == 'EIC_03706':
         channel = "".join(filter(lambda x: x.isdigit(), setting))
-        configDB.setdefault('config', (channel, enable))
         
     elif periphID == 'EIC_44139':
         channel = "".join(filter(lambda x: x.isdigit(), setting))
-        configDB.setdefault('config', (channel, enable))
 
     # else:
     #     print("SHD >> getConfigDatabaseEIC {} NOT FOUND!!!".format(periphID))
+
+    if channel != "":
+        configDB.setdefault('msgID', 'EIC_CONFIG_HW_IO')
+        configDB.setdefault('config', (channel, enable))
 
     return configDB
 
@@ -744,18 +745,19 @@ def __getConfigDatabaseDrvSST26(settings):
 
     configDB = dict()
 
-    fn = "".join(filter(lambda x: x.isalpha(), functionValue))
-    # print("SHD dbg >> getConfigDatabaseDrvSST26 settings: {} ".format(settings))
-    if 'SQI' in fn.upper():
-        protocol = 'SQI'
-        cs = "".join(filter(lambda x: x.isdigit(), functionValue))
-        configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
-        configDB.setdefault('config', (pinId, protocol, cs, enable))
-    elif 'SS' in fn.upper() or 'CS' in fn.upper():
-        protocol = 'SPI'
-        cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
-        configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
-        configDB.setdefault('config', (pinId, protocol, cs, enable))
+    # Pending to be integrated in Core public release
+    # fn = "".join(filter(lambda x: x.isalpha(), functionValue))
+    # # print("SHD dbg >> getConfigDatabaseDrvSST26 settings: {} ".format(settings))
+    # if 'SQI' in fn.upper():
+    #     protocol = 'SQI'
+    #     cs = "".join(filter(lambda x: x.isdigit(), functionValue))
+    #     configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
+    #     configDB.setdefault('config', (pinId, protocol, cs, enable))
+    # elif 'SS' in fn.upper() or 'CS' in fn.upper():
+    #     protocol = 'SPI'
+    #     cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
+    #     configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
+    #     configDB.setdefault('config', (pinId, protocol, cs, enable))
     
     return configDB
 

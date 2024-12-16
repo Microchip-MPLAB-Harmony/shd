@@ -1,0 +1,225 @@
+name: samd11-xplained-pro
+config: samd11_xplained_pro.py
+documentation: https://www.microchip.com/en-us/development-tool/ATSAMD11-XPRO
+processor:
+  name: ATSAMD11D14AM
+  architecture: CORTEX-M0PLUS
+  family: SAMD
+  series: SAMD11
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led
+        description: Yellow Led (PA16) - latch high
+        pinctrl:
+          gpio:
+            pinId: PA16
+            name: USER_LED0
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Button
+        description: User Button (SW0)
+        pinctrl:
+          gpio:
+            pinId: PA14
+            name: USER_BUTTON0
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: QTouch interface
+    description: QTouch Button
+    options:
+      - name: QTouch Button 1
+        description: QTouch Button 1 configuration
+        pinctrl:
+          gpio:
+            pinId: PA02
+            name: QTOUCH_BUTTON1
+            function: PTC_Y0
+      - name: QTouch Button 2
+        description: QTouch Button 2 configuration
+        pinctrl:
+          gpio:
+            pinId: PA03
+            name: QTOUCH_BUTTON2
+            function: PTC_Y1
+
+  - name: USB interface
+    description: USB configurations
+    options:
+      - name: USB
+        description: Target USB configuration
+        dependencies: [[drv_usbfs_v1]]
+        pinctrl:
+          usb_p:
+            pinId: PA25
+            function: USB_DP
+          usb_n:
+            pinId: PA24
+            function: USB_DM
+      - name: USB VBUS Detection
+        description: USB VBUS Detection
+        pinctrl:
+          gpio:
+            pinId: PA27
+            name: VBUS_DETECTION
+            function: GPIO
+            direction: in
+
+  - name: USB debugger interface
+    description: On-Board Debugger (EDBG)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[sys_console, sercom2]]
+        pinctrl:
+          tx:
+            pinId: PA10
+            name: VIRTUAL_COM_TX
+            function: SERCOM2_PAD2
+          rx:
+            pinId: PA11
+            name: VIRTUAL_COM_RX
+            function: SERCOM2_PAD3
+
+      - name: Data Gateway SPI interface
+        description: Data Gateway SPI interface
+        pinctrl:
+          cs:
+            pinId: PA27
+            name: DGI_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: PA07
+            name: DGI_SPI_SCK
+            function: SERCOM0_PAD1
+          miso:
+            pinId: PA09
+            name: DGI_SPI_MISO
+            function: SERCOM0_PAD3
+          mosi:
+            pinId: PA06
+            name: DGI_SPI_MOSI
+            function: SERCOM0_PAD0
+
+      - name: Data Gateway GPIO 0
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA16
+            name: DGI_GPIO0
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 1
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA17
+            name: DGI_GPIO1
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 2
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA14
+            name: DGI_GPIO2
+            function: GPIO
+            direction: out
+            latch: low
+
+      - name: Data Gateway GPIO 3
+        description: Data Gateway GPIO interface
+        pinctrl:
+          gpio:
+            pinId: PA15
+            name: DGI_GPIO3
+            function: GPIO
+            direction: out
+            latch: low
+
+connectors:
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header 1
+    pinctrl:
+      adc plus:
+        pinId: PA02
+        name: EXT1_ADC_PLUS
+        function: ADC_AIN0
+      adc minus:
+        pinId: PA03
+        name: EXT1_ADC_MINUS
+        function: ADC_AIN1
+      gpio1:
+        pinId: PA04
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PA05
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PA16
+        name: EXT1_PWM_PLUS
+        function: TC1_WO0
+      pwm minus:
+        pinId: PA17
+        name: EXT1_PWM_MINUS
+        function: TC1_WO1
+      irq:
+        pinId: PA14
+        name: EXT1_IRQ
+        function: EIC_NMI
+      gpio ss:
+        pinId: PA15
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PA22
+          name: EXT1_I2C_SDA
+          function: SERCOM1_PAD0
+        scl:
+          pinId: PA23
+          name: EXT1_I2C_SCL
+          function: SERCOM1_PAD1
+      uart:
+        tx:
+          pinId: PA11
+          name: EXT1_USART_TX
+          function: SERCOM2_PAD3
+        rx:
+          pinId: PA10
+          name: EXT1_USART_RX
+          function: SERCOM2_PAD2
+      spi:
+        cs:
+          pinId: PA08
+          name: EXT1_SPI_CS
+          function: SERCOM0_PAD2
+        sck:
+          pinId: PA07
+          name: EXT1_SPI_SCK
+          function: SERCOM0_PAD1
+        miso:
+          pinId: PA09
+          name: EXT1_SPI_MISO
+          function: SERCOM0_PAD3
+        mosi:
+          pinId: PA06
+          name: EXT1_SPI_MOSI
+          function: SERCOM0_PAD0
