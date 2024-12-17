@@ -949,7 +949,7 @@ def getAutoconnectTable(family, idDependency, idCapability):
                     depType = "spi_dependency"
                 elif 'drv_sst26' == depId:
                     depType = depId
-                    if 'spi' in idCapability:
+                    if 'qspi' not in idCapability:
                         capId = "SPI"
                 elif 'RNBD_Dependency' == depId:
                     exception = True

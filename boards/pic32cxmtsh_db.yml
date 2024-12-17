@@ -88,6 +88,7 @@ interfaces:
 
   - name: Debug UART interface
     description: Debugging Isolated UART interface
+    dependencies: [[sys_console, flexcom0]]
     pinctrl:
       tx:
         pinId: PA4
