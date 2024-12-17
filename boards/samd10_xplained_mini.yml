@@ -1,0 +1,152 @@
+name: samd10-xplained-mini
+config: samd10_xplained_mini.py
+documentation: https://www.microchip.com/en-us/development-tool/ATSAMD10-XMINI
+processor:
+  name: ATSAMD10D14AM
+  architecture: CORTEX-M0PLUS
+  family: SAMD
+  series: SAMD10
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led
+        description: Yellow Led (PA09) - latch high
+        pinctrl:
+          gpio:
+            pinId: PA09
+            name: USER_LED0
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Button
+        description: User Button (SW0)
+        pinctrl:
+          gpio:
+            pinId: PA25
+            name: USER_BUTTON0
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: QTouch interface
+    description: QTouch Button
+    options:
+      - name: QTouch Button
+        description: QTouch Button configuration
+        pinctrl:
+          gpio:
+            pinId: PA07
+            name: QTOUCH_BUTTON
+            function: PTC_Y5
+
+  - name: USB debugger interface
+    description: On-Board Debugger (EDBG)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[sys_console, sercom2]]
+        pinctrl:
+          tx:
+            pinId: PA10
+            name: VIRTUAL_COM_TX
+            function: SERCOM2_PAD2
+          rx:
+            pinId: PA11
+            name: VIRTUAL_COM_RX
+            function: SERCOM2_PAD3
+
+connectors:
+  - compatible: arduino
+    name: Arduino Uno Header
+    description: Arduino Uno compatible header
+    pinctrl:
+      adc0:
+        pinId: PA02
+        name: Arduino_ADC0
+        function: ADC_AIN0
+      adc1:
+        pinId: PA03
+        name: Arduino_ADC1
+        function: ADC_AIN1
+      adc2:
+        pinId: PA04
+        name: Arduino_ADC2
+        function: ADC_AIN2
+      adc3:
+        pinId: PA05
+        name: Arduino_ADC3
+        function: ADC_AIN3
+      adc4:
+        pinId: PA06
+        name: Arduino_ADC4
+        function: ADC_AIN4
+      adc5:
+        pinId: PA07
+        name: Arduino_ADC5
+        function: ADC_AIN5
+      i2c:
+        sda:
+          pinId: PA14
+          name: Arduino_D14_I2C_SDA
+          function: SERCOM0_PAD0
+        scl:
+          pinId: PA15
+          name: Arduino_D15_I2C_SCL
+          function: SERCOM0_PAD1
+      uart:
+        tx:
+          pinId: PA10
+          name: Arduino_D1_UART_TX
+          function: SERCOM2_PAD2
+        rx:
+          pinId: PA11
+          name: Arduino_D0_UART_RX
+          function: SERCOM2_PAD3
+      spi:
+        cs:
+          pinId: PA23
+          name: Arduino_D10_SPI_CS
+          function: SERCOM1_PAD1
+          direction: out
+          latch: high
+        sck:
+          pinId: PA09
+          name: Arduino_D13_SPI_SCK
+          function: SERCOM1_PAD3
+        miso:
+          pinId: PA24
+          name: Arduino_D12_SPI_MISO
+          function: SERCOM1_PAD2
+        mosi:
+          pinId: PA22
+          name: Arduino_D11_SPI_MOSI
+          function: SERCOM1_PAD0
+      d2:
+        pinId: PA16
+        name: Arduino_D2
+        function: GPIO
+        direction: in/out
+      d3:
+        pinId: PA17
+        name: Arduino_D3
+        function: TCC0_WO7
+      d4:
+        pinId: PA27
+        name: Arduino_D4
+        function: GPIO
+        direction: in/out
+      d5:
+        pinId: PA25
+        name: Arduino_D5
+        function: TCC0_WO3
+      d6:
+        pinId: PA30
+        name: Arduino_D6
+        function: TCC0_WO2
+      d7:
+        pinId: PA31
+        name: Arduino_D7
+        function: GPIO
+        direction: in/out

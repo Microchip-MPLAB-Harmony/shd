@@ -25,7 +25,7 @@
                     {% set expNameSymName = "PIN_{}_EXPORT_NAME".format(pinNumber) %}
                     {% set expName = core[expNameSymName] %}
                     {% set port = expName.split(":")[1][1] %}
-                    {% set pin = expName.split(":")[1][2:] %}
+                    {% set pin = core["PIN_{}_PORT_PIN".format(pinNumber)] %}
 /*** Macros for {{ funcName }} output pin ***/ 
 #define BSP_{{ funcName|upper() }}_PIN        {{ portRegName }}_PIN_P{{ port }}{{ pin }}
 #define BSP_{{ funcName|upper() }}_Get()      (({{ portRegName }}_REGS->GROUP[{{ group }}].PORT_IN >> {{ pin }}U) & 0x01U)
@@ -75,7 +75,7 @@
                     {% set expNameSymName = "PIN_{}_EXPORT_NAME".format(pinNumber) %}
                     {% set expName = core[expNameSymName] %}
                     {% set port = expName.split(":")[1][1] %}
-                    {% set pin = expName.split(":")[1][2:] %}
+                    {% set pin = core["PIN_{}_PORT_PIN".format(pinNumber)] %}
                     {% set pullupSymName = "PIN_{}_PU".format(pinNumber) %}
                     {% set pullup = core[pullupSymName] %}
 /*** Macros for {{ funcName }} input pin ***/ 

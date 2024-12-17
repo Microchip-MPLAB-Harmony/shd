@@ -745,19 +745,18 @@ def __getConfigDatabaseDrvSST26(settings):
 
     configDB = dict()
 
-    # Pending to be integrated in Core public release
-    # fn = "".join(filter(lambda x: x.isalpha(), functionValue))
-    # # print("SHD dbg >> getConfigDatabaseDrvSST26 settings: {} ".format(settings))
-    # if 'SQI' in fn.upper():
-    #     protocol = 'SQI'
-    #     cs = "".join(filter(lambda x: x.isdigit(), functionValue))
-    #     configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
-    #     configDB.setdefault('config', (pinId, protocol, cs, enable))
-    # elif 'SS' in fn.upper() or 'CS' in fn.upper():
-    #     protocol = 'SPI'
-    #     cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
-    #     configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
-    #     configDB.setdefault('config', (pinId, protocol, cs, enable))
+    fn = "".join(filter(lambda x: x.isalpha(), functionValue))
+    # print("SHD dbg >> getConfigDatabaseDrvSST26 settings: {} ".format(settings))
+    if 'SQI' in fn.upper():
+        protocol = 'SQI'
+        cs = "".join(filter(lambda x: x.isdigit(), functionValue))
+        configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
+        configDB.setdefault('config', (pinId, protocol, cs, enable))
+    elif 'SS' in fn.upper() or 'CS' in fn.upper():
+        protocol = 'SPI'
+        cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
+        configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
+        configDB.setdefault('config', (pinId, protocol, cs, enable))
     
     return configDB
 
