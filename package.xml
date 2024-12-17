@@ -2,6 +2,6 @@
 <Package name="shd">
     <Dependencies>
         <Dependency name="csp" version="3.20.0"/>
-        <Dependency name="core" version="3.14.0"/>
+        <Dependency name="core" version="3.14.1"/>
     </Dependencies>
 </Package>
