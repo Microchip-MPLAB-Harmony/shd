@@ -10,14 +10,15 @@ class ClickBoard:
         self.__currentConfig = {}
         self.__useXplainProAdaptor = False
         self.__hwAdaptatorComponent = None
+        boardYamlFile = None
         for item in sys.path:
-            if "shd\\clickBoards" in item:
+            if path.join("shd", "clickBoards") in item:
                 boardYamlFile = path.join(item, yamlFileName)
                 break
         else:
             raise AttributeError("clickBoards path is not found in sys path")
 
-        if not path.isfile(boardYamlFile):
+        if (boardYamlFile is None) or (not path.isfile(boardYamlFile)):
             raise AttributeError("{} does not exist".format(boardYamlFile))
         
         import yaml

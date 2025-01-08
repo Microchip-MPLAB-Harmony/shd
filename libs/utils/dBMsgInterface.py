@@ -316,16 +316,18 @@ def __getConfigDatabaseFLEXCOM(periphID, settings):
     setting = fnValue.split('_')[-1].split('/')[0].lower()
 
     configDB = dict()
-    configDB.setdefault('msgID', 'FLEXCOM_CONFIG_HW_IO')
     
     periphID = periphID.upper()
     if periphID == 'FLEXCOM_11268':
         if setting == 'io3':
+            configDB.setdefault('msgID', 'FLEXCOM_CONFIG_HW_IO')
             configDB.setdefault('config', ('NPCS0', enable))
         elif setting == 'io4':
+            configDB.setdefault('msgID', 'FLEXCOM_CONFIG_HW_IO')
             configDB.setdefault('config', ('NPCS1', enable))
     elif periphID == 'FLEXCOM_11277':
         if 'npcs' in setting:
+            configDB.setdefault('msgID', 'FLEXCOM_CONFIG_HW_IO')
             configDB.setdefault('config', (setting.upper(), enable))
     # else:
     #     print("SHD >> getConfigDatabaseFLEXCOM {} NOT FOUND!!!".format(periphID))

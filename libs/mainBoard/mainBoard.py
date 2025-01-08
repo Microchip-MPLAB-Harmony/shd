@@ -13,6 +13,7 @@ shdMultiInstanceDrivers = ['drv_i2c', 'drv_spi', 'drv_usart', 'drv_sdmmc', 'a_dr
 class MainBoard:
     def __init__(self, context):
         self.__currentConfig = {}
+        boardYamlFile = None
         for item in sys.path:
             pathToCheck = path.join("shd", "boards")
             if pathToCheck in item:
@@ -22,7 +23,7 @@ class MainBoard:
             if pathToCheck in item:
                 clickBoardsPath = item
 
-        if not path.isfile(boardYamlFile):
+        if (boardYamlFile is None) or (not path.isfile(boardYamlFile)):
             return None
 
         self.__db = context["database"]
