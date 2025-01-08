@@ -185,11 +185,11 @@ class MainBoard:
             return pinCtrlFunction
 
         # Adapt function name for MIPS architecture
-        if self.__architecture == "MIPS":
+        if self.__architecture == "MIPS" or self.__architecture == "33Axxx":
             pinCtrlFunction = pinCtrlFunction.split("_")[-1]
             # self.__log.writeInfoMessage("SHD >> __handleFunctionPioManager MIPS: {}".format(pinCtrlFunction))
 
-        if pinCtrlFunction in functionByPinId:
+        if functionByPinId.startswith(pinCtrlFunction):
             return functionByPinId
 
         return None
@@ -202,7 +202,7 @@ class MainBoard:
         if pinFunction.lower() != 'unused':
             # Get function values list from the pinNumber
             functionList = getDeviceFunctionListByPinId(self.__db, self.__atdf, pinId)
-            # self.__log.writeInfoMessage("SHD >> functionList {}".format(functionList))
+            # self.__log.writeInfoMessage("SHD >> pin {} - functionList {}".format(pinId, functionList))
 
             # Sort dictionary by key to set function as first setting
             sortedKeys = sorted(pinControl.keys())
@@ -462,12 +462,23 @@ class MainBoard:
             ret = self.__db.sendMessage("core", "PIN_GET_CONFIG_VALUE", params)
             pinFunction = ret.get("value")
             # self.__log.writeInfoMessage("SHD >> __getPinListByMultiPinDriver {}: {} in {}".format(pinId, dependency, pinFunction))
-            # Handle exceptions: MCPWM, ADCHS
+            # Handle exceptions: MCPWM, ADCHS, ADC(dsPIC33A)
+            updateList = False
             if dependency == 'mcpwm':
-                dependency = 'pwm'
-            if dependency == 'adchs':
-                dependency = 'an'
-            if dependency.lower() in pinFunction.lower():
+                if 'pwm' in pinFunction.lower():
+                    updateList = True
+            elif dependency == 'adchs':
+                if 'an' in pinFunction.lower():
+                    updateList = True
+            elif dependency == 'cbg':
+                if 'ibias' in pinFunction.lower() or 'isrc' in pinFunction.lower():
+                    updateList = True
+            elif self.__architecture == "33Axxx" and 'adc' in dependency:
+                dependency = dependency.replace("adc", "ad")
+                if dependency in pinFunction.lower():
+                    updateList = True
+
+            if updateList == True:
                 pinIdList.append(pinId)
 
         return pinIdList
@@ -567,7 +578,7 @@ class MainBoard:
                 if capId in idActiveList:
                     # Check MultiPin drivers (driver that uses more than 1 pin)
                     pinList = self.__getPinListByMultiPinDriver(capId)
-                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
+                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver 1 pinList: {}".format(pinList))
                     if len(pinList) == 0:
                         removeComponents.append(capId)
 
@@ -580,7 +591,7 @@ class MainBoard:
                         # MultiInstance drivers are removed in removeComponents loop (Deactivate components)
                         # Check MultiPin drivers (driver that uses more than 1 pin)
                         pinList = self.__getPinListByMultiPinDriver(depId)
-                        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver pinList: {}".format(pinList))
+                        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver 2 pinList: {}".format(pinList))
                         if len(pinList) == 0:
                             removeComponents.append(depId)
                 
@@ -1189,11 +1200,11 @@ class MainBoard:
                             # self.__log.writeInfoMessage("SHD >> Handle SPI CS exception - subSignal: {}".format(subSignal.lower())) 
                             symbolName = self.__symbolNamesByConnector[connectorName][pinId][signal]
                             shdSpiCSConfigSymbolName = "{}_{}".format(symbolName, "CSASGPIO")
-                            # self.__log.writeInfoMessage("SHD >> CS set Visible: {}".format(shdSpiCSConfigSymbolName))
-                            signalSpiCsPinSymbol = board.getSymbolByID(shdSpiCSConfigSymbolName)
-                            signalSpiCsPinSymbol.setVisible(True)
-                            if function.lower() == "gpio":
-                                signalSpiCsPinSymbol.setValue(True)
+                            signalSpiCsPinSymbol = self.__symbolInterfaces.get(shdSpiCSConfigSymbolName)
+                            if signalSpiCsPinSymbol is not None:
+                                signalSpiCsPinSymbol.setVisible(True)
+                                if function.lower() == "gpio":
+                                    signalSpiCsPinSymbol.setValue(True)
 
                     signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId][signal])
                     signalPinSymbol.setLabel(label)
@@ -1236,10 +1247,9 @@ class MainBoard:
                     if subSignal.lower() == 'cs' and function != "GPIO":
                         symbolName = self.__symbolNamesByConnector[connectorName][pinId][signal]
                         shdSpiCSConfigSymbolName = "{}_{}".format(symbolName, "CSASGPIO")
-                        # self.__log.writeInfoMessage("SHD >> SHD restoreConnections symbolID 2 CS: {}".format(shdSpiCSConfigSymbolName))
-                        # self.__log.writeInfoMessage("SHD >> SHD subSignal: {} function: {}".format(subSignal, function))
-                        signalSpiCsPinSymbol = board.getSymbolByID(shdSpiCSConfigSymbolName)
-                        signalSpiCsPinSymbol.setVisible(True)
+                        signalSpiCsPinSymbol = self.__symbolInterfaces.get(shdSpiCSConfigSymbolName)
+                        if signalSpiCsPinSymbol is not None:
+                            signalSpiCsPinSymbol.setVisible(True)
 
                 signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId][signal])
                 signalPinSymbol.setLabel(label)

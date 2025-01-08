@@ -72,7 +72,7 @@
 #include "peripheral/port/plib_port.h"
 {% elif board.ppio in ['PIO_11264'] or board.ppio in ['PIO_11004']%}
 #include "peripheral/pio/plib_pio.h"
-{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922'] or board.ppio in ['GPIO_01618'] or board.ppio in ['GPIO_02467'] or board.ppio in ['GPIO_26']%}
+{% elif board.ppio in ['GPIO_02610'] or board.ppio in ['GPIO_02922'] or board.ppio in ['GPIO_01618'] or board.ppio in ['GPIO_02467'] or board.ppio in ['GPIO_26'] or board.ppio in ['GPIO_04928']%}
 #include "peripheral/gpio/plib_gpio.h"
 {% endif %}
 
@@ -97,6 +97,8 @@
   {% endif %}
 {% elif board.ppio in ['GPIO_26'] %}
   {% from 'macros_gpio_26.j2' import generateOuputsHeaders, generateInputsHeaders %}
+{% elif board.ppio in ['GPIO_04928'] %}
+  {% from 'macros_gpio_04928.j2' import generateOuputsHeaders, generateInputsHeaders %}
 {% endif %}
 #define {{ board.name|upper()|replace("-", "_") }}
 #define BOARD_NAME    "{{ board.name|upper() }}"

@@ -1,0 +1,434 @@
+name: dspic33ak-dim-curiosity
+config: dspic33ak_dim_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/EV02G02A
+processor:
+  name: dsPIC33AK128MC106
+  architecture: 33Axxx
+  family: dsPIC33AK128MC106
+  series: dsPIC33AK
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led 0
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC3
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 1
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC4
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 2
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC5
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 3
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC6
+            name: LED3
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 4
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC7
+            name: LED4
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 5
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC8
+            name: LED5
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 6
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC9
+            name: LED6
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 7
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC10
+            name: LED7
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 8 Blue
+        description: Blue Led - active high
+        pinctrl:
+          gpio:
+            pinId: RD2
+            name: LED8_BLUE
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 8 Green
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RD0
+            name: LED8_GREEN
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 8 Red
+        description: Red Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC2
+            name: LED8_RED
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB Led 8 Blue
+        description: Blue Led - active high
+        pinctrl:
+          gpio:
+            pinId: RD2
+            name: RGB_LED8_BLUE
+            function: PWM_PWM1H
+      - name: RGB Led 8 Green
+        description: Green Led - active high
+        pinctrl:
+          gpio:
+            pinId: RD0
+            name: RGB_LED8_GREEN
+            function: PWM_PWM2H
+      - name: RGB Led 8 Red
+        description: Red Led - active high
+        pinctrl:
+          gpio:
+            pinId: RC2
+            name: RGB_LED8_RED
+            function: PWM_PWM4H
+      - name: User Button 1
+        description: User Button 1 (S1)
+        pinctrl:
+          gpio:
+            pinId: RB5
+            name: SW1
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Button 2
+        description: User Button 2 (S2)
+        pinctrl:
+          gpio:
+            pinId: RB4
+            name: SW2
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Button 3
+        description: User Button 3 (S3)
+        pinctrl:
+          gpio:
+            pinId: RA6
+            name: SW3
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Sensors interface
+    description: On-board sensors configurations
+    options:
+      - name: Potentiometer
+        description: Potentiometer
+        pinctrl:
+          an:
+            pinId: RA7
+            name: POT
+            function: ADC1_AD1AN6
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF020A interface
+        description: SST26VF020A QSPI flash memory
+        dependencies: [[drv_sst26, spi1]]
+        pinctrl:
+          cs:
+            pinId: RD4
+            name: SST26VF_CS
+            function: SPI1_SS1
+          sck:
+            pinId: RC0
+            name: SST26VF_SCK
+            function: SPI1_SCK1
+          miso:
+            pinId: RD11
+            name: SST26VF_MISO
+            function: SPI1_SDI1
+          mosi:
+            pinId: RC11
+            name: SST26VF_MOSI
+            function: SPI1_SDO1
+
+  - name: Touch interface
+    description: Capacitive Touch Pads configuration
+    options:
+      - name: Touch Pad 1
+        description: Cap Touch 1 (RA8)
+        pinctrl:
+          pad:
+            pinId: RA8
+            name: TOUCH_1
+            function: ADC2_AD2AN9
+      - name: Touch Pad 1R
+        description: Cap Touch 1R (RA9)
+        pinctrl:
+          pad:
+            pinId: RA9
+            name: TOUCH_1R
+            function: ADC1_AD1AN9
+      - name: Touch Pad 2
+        description: Cap Touch 2 (RA10)
+        pinctrl:
+          pad:
+            pinId: RA10
+            name: TOUCH_2
+            function: ADC2_AD2AN7
+      - name: Touch Pad 2R
+        description: Cap Touch 2R (RA2)
+        pinctrl:
+          pad:
+            pinId: RA2
+            name: TOUCH_2R
+            function: ADC1_AD1AN0
+      - name: Touch Pad 3
+        description: Cap Touch 3 (RA3)
+        pinctrl:
+          pad:
+            pinId: RA3
+            name: TOUCH_3
+            function: ADC2_AD2AN0
+      - name: Touch Pad 3R
+        description: Cap Touch 3R (RA4)
+        pinctrl:
+          pad:
+            pinId: RA4
+            name: TOUCH_3R
+            function: ADC1_AD1AN1
+      - name: Touch DS
+        description: Cap Touch DS (RD12)
+        pinctrl:
+          pad:
+            pinId: RD12
+            name: TOUCH_DS
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Communication interfaces
+    description: Communication Ports options
+    options:
+      - name: USB to UART
+        description: App UART configuration
+        pinctrl:
+          tx:
+            pinId: RD1
+            name: UART_TX
+            function: UART1_U1TX
+          rx:
+            pinId: RD3
+            name: UART_RX
+            function: UART1_U1RX
+      - name: USB to UART (HID)
+        description: App UART configuration
+        pinctrl:
+          sda:
+            pinId: RD8
+            name: I2C_SDA
+            function: I2C2_ASDA2
+          scl:
+            pinId: RD7
+            name: I2C_SCL
+            function: I2C2_ASCL2
+
+  - name: USB debugger interface
+    description: On-Board Debugger (PKOB4)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[sys_console, uart2]]
+        pinctrl:
+          tx:
+            pinId: RD9
+            name: VIRTUAL_COM_TX
+            function: UART2_U2TX
+          rx:
+            pinId: RD10
+            name: VIRTUAL_COM_RX
+            function: UART2_U2RX
+
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS Interface A
+    description: MikroBUS Standard Extension Header A
+    pinctrl:
+      an:
+        pinId: RA11
+        name: MikroBUS_A_AN
+        function: ADC1_AD1AN10
+      rst:
+        pinId: RB6
+        name: MikroBUS_A_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RB7
+          name: MikroBUS_A_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RC0
+          name: MikroBUS_A_SPI_SCK
+          function: SPI1_SCK1
+        miso:
+          pinId: RD11
+          name: MikroBUS_A_SPI_MISO
+          function: SPI1_SDI1
+        mosi:
+          pinId: RC11
+          name: MikroBUS_A_SPI_MOSI
+          function: SPI1_SDO1
+      pwm:
+        pinId: RC2
+        name: MikroBUS_A_PWM
+        function: PWM_PWM1L
+      int:
+        pinId: RA5
+        name: MikroBUS_A_INT
+        function: INT_INT1
+      uart:
+        tx:
+          pinId: RB10
+          name: MikroBUS_A_UART_TX
+          function: UART3_U3TX
+        rx:
+          pinId: RB11
+          name: MikroBUS_A_UART_RX
+          function: UART3_U3RX
+      i2c:
+        sda:
+          pinId: RD8
+          name: MikroBUS_A_I2C_SDA
+          function: I2C2_ASDA2
+        scl:
+          pinId: RD7
+          name: MikroBUS_A_I2C_SCL
+          function: I2C2_ASCL2
+
+  - compatible: mikrobus
+    name: MikroBUS Interface B
+    description: MikroBUS Standard Extension Header B
+    pinctrl:
+      i2c:
+        sda:
+          pinId: RD6
+          name: MikroBUS_B_I2C_SDA
+          function: I2C1_ASDA1
+        scl:
+          pinId: RD5
+          name: MikroBUS_B_I2C_SCL
+          function: I2C1_ASCL1
+
+  - compatible: xplainpro
+    name: Extension Header XPRO1
+    description: Xplained Pro Standard Extension Header 1 (J17)
+    pinctrl:
+      adc plus:
+        pinId: RB3
+        name: XPRO1_ADC_PLUS
+        function: ADC1_AD1AN5
+      adc minus:
+        pinId: RB9
+        name: XPRO1_ADC_PLUS2
+        function: ADC2_AD2AN10
+      gpio1:
+        pinId: RC8
+        name: XPRO1_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: RC7
+        name: XPRO1_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: RB8
+        name: XPRO1_PWM_PLUS
+        function: PWM_PWM2H
+      pwm minus:
+        pinId: RB2
+        name: XPRO1_PWM_MINUS
+        function: PWM_PWM2L
+      irq:
+        pinId: RB1
+        name: XPRO1_IRQ
+        function: INT_INT2
+      gpio ss:
+        pinId: RB0
+        name: XPRO1_GPIO_CS
+        function: GPIO
+        direction: out
+        latch: high
+      i2c:
+        sda:
+          pinId: RD6
+          name: XPRO1_I2C_SDA
+          function: I2C1_ASDA1
+        scl:
+          pinId: RD5
+          name: XPRO1_I2C_SCL
+          function: I2C1_ASCL1
+      spi:
+        cs:
+          pinId: RC5
+          name: XPRO1_SPI_CS
+          function: SPI3_SS3
+        sck:
+          pinId: RC4
+          name: XPRO1_SPI_SCK
+          function: SPI3_SCK3
+        miso:
+          pinId: RC3
+          name: XPRO1_SPI_MISO
+          function: SPI3_SDI3
+        mosi:
+          pinId: RC6
+          name: XPRO1_SPI_MOSI
+          function: SPI3_SDO3

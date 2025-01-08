@@ -188,6 +188,10 @@ def __getConfigDatabaseADC(periphID, settings):
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
         configDB.setdefault('config', (channel, enable))
 
+    elif periphID == 'ADC_03459':
+        channel = setting.split("an")[-1]
+        configDB.setdefault('config', (channel, enable))
+
     # elif periphID == 'ADC_02486':
     # else:
         # print("SHD >> getConfigDatabaseADC {} NOT FOUND!!!".format(periphID))
@@ -302,6 +306,13 @@ def __getConfigDatabasePWM(periphID, settings):
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
             
         configDB.setdefault('config', (channel, enable))
+
+    elif periphID == 'PWM_04302':
+        # get data configuration from setting
+        channel = int("".join(filter(lambda x: x.isdigit(), setting)))
+        polarity = setting[-1] #'l' or 'h'
+            
+        configDB.setdefault('config', (channel, polarity, enable))
         
     # elif periphID == 'PWM_54':
 
@@ -607,23 +618,64 @@ def __getConfigDatabaseSDADC(periphID, settings):
 
     return configDB
 
+def __getConfigDatabaseCBG(periphID, settings):
+    # fnValue format -> '{}_{}'.format(componentID, setting)
+    signalId, pinId, fnValue, pinNameValue, enable = settings
+    componentID = fnValue.split('_')[0].lower()
+    setting = fnValue.split('_')[-1].split('/')[0].lower()
+
+    configDB = dict()
+    configDB.setdefault('msgID', 'CBG_CONFIG_HW_IO')
+    
+    periphID = periphID.upper()
+    
+    if periphID == 'CBG_03516':
+        configDB.setdefault('config', (setting, enable))
+    # else:
+    #     print("SHD dbg >> __getConfigDatabaseCBG {} - NOT FOUND!!!".format(periphID))
+
+    return configDB
+
+def __getConfigDatabaseCMPDAC(periphID, settings):
+    # fnValue format -> '{}_{}'.format(componentID, setting)
+    signalId, pinId, fnValue, pinNameValue, enable = settings
+    componentID = fnValue.split('_')[0].lower()
+    setting = fnValue.split('_')[-1].split('/')[0].lower()
+
+    configDB = dict()
+    configDB.setdefault('msgID', 'CMPDAC_CONFIG_HW_IO')
+    
+    periphID = periphID.upper()
+    
+    if periphID == 'CMP_DAC_03496':
+        configDB.setdefault('config', (setting, enable))
+    # else:
+    #     print("SHD dbg >> __getConfigDatabaseCMPDAC {} - NOT FOUND!!!".format(periphID))
+
+    return configDB
+
+
 def getDBMsgPLIBConfiguration(ATDF, settings):
     periphList = __getDevicePeripheralList(ATDF)
     msgID = None
     
     signalId, pinId, fnValue, pinNameValue, enable = settings
     # fnValue format -> '{}_{}'.format(componentID, setting)
-    componentID = fnValue.split('_')[0].lower()
+    splitedComp = fnValue.split('_')
+    if len(splitedComp) > 2:
+        componentID = "_".join(splitedComp[:2]).lower()
+    else:
+        componentID = splitedComp[0].lower()
     # Remove plib number except i2c, for example: flexcom0 -> flexcom
     plib = componentID
     if plib != 'i2s':
-        plib = "".join(filter(lambda x: x.isalpha(), componentID))
+        plib = "".join(filter(lambda x: not x.isdigit(), componentID))
 
     # Adapt plib according to the peripheral PIO ID
     dependencyList = dict()
     dependencyList[plib] = componentID
     newDependencyList = adaptDevicePeripheralDependencies(ATDF, dependencyList)
-    # print("SHD >> getDBMsgPLIBConfiguration newDependencyList {}".format(newDependencyList))
+    # print("SHD >> getDBMsgPLIBConfiguration newDependencyList: {}".format(newDependencyList))
 
     for depId, capId in newDependencyList.items():
         componentID = capId
@@ -634,7 +686,12 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
         params = dict()
         
         for peripheral in periphList:
-            pName = peripheral.split('_')[0].lower()
+            splitedPeriph = peripheral.split('_')
+            if len(splitedPeriph) > 2:
+                pName = "_".join(splitedPeriph[:2]).lower()
+            else:
+                pName = splitedPeriph[0].lower()
+            
             # print("SHD >> checking periph {}: {} = {}".format(peripheral, plib, pName))
             if plib == pName:
                 periphID = peripheral
@@ -698,6 +755,12 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
         elif plib == 'sdadc':
             configDB = __getConfigDatabaseSDADC(periphID, settings)
         
+        elif plib == 'cbg':
+            configDB = __getConfigDatabaseCBG(periphID, settings)
+        
+        elif plib == 'cmp_dac':
+            configDB = __getConfigDatabaseCMPDAC(periphID, settings)
+
         # else:
         #     print("SHD >> getDevicePLIBConfigurationDBMessage {} NOT FOUND!!! - {}".format(plib, periphID))
             
@@ -1067,6 +1130,8 @@ def getDriverDependencyFromPin(pinName, pinFunction):
             dep = "drvGmac" + "".join(filter(lambda x: x.isdigit(), string.split("_")[0]))
         elif __checkSubstringList(['ETHMAC'], string) == True:
             dep = "drvPic32mEthmac"
+        elif __checkSubstringList(['CMP_DAC'], string) == True:
+            dep = string[:8].lower()
 
     return dep
 

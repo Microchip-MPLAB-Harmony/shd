@@ -92,6 +92,8 @@
   {% endif %}
 {% elif board.ppio in ['GPIO_26'] %}
   {% from 'macros_gpio_26.j2' import generateLedsInitialization %}
+{% elif board.ppio in ['GPIO_04928'] %}
+  {% from 'macros_gpio_04928.j2' import generateLedsInitialization %}
 {% endif %}
 void BSP_Initialize(void )
 {

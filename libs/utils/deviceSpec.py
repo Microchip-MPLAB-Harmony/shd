@@ -8,7 +8,7 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
     functionList = []
     family = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
     architecture = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
-    if architecture == "MIPS":
+    if architecture == "MIPS" or architecture == "33Axxx":
         params = dict()
         params.setdefault('pinName', pinId)
         symbolDict = Database.sendMessage("core", "PIN_FUNCTION_LIST", params)
@@ -128,7 +128,7 @@ def __getDeviceFLEXCOMPeripheral(ATDF):
 
 def adaptDevicePeripheralDependencies(ATDF, dependencyList):
     architecture = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
-    if architecture == "MIPS":
+    if architecture == "MIPS" or architecture == "33Axxx":
         family = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
         if family == "PIC32MZW":
             newDependencyList = {}
