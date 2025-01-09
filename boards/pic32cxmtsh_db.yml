@@ -16,7 +16,7 @@ interfaces:
         pinctrl:
           gpio:
             pinId: PA14
-            name: SCROLL_UP_BUTTON
+            name: SCRL_UP_BTN
             function: GPIO
             direction: in
             interrupt: raising edge
@@ -26,7 +26,7 @@ interfaces:
         pinctrl:
           gpio:
             pinId: PA15
-            name: SCROLL_DOWN_BUTTON
+            name: SCRL_DOWN_BTN
             function: GPIO
             direction: in
             interrupt: raising edge
