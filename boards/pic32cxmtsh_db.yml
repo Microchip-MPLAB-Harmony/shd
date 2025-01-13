@@ -323,8 +323,9 @@ connectors:
         pinId: PA3
         name: EXT_IRQ
         function: GPIO
-        direction: out
-        latch: high
+        direction: in
+        pull down: True
+        interrupt: falling edge
       gpio ss:
         pinId: PA2
         name: EXT_GPIO_SS
@@ -406,8 +407,9 @@ connectors:
         pinId: PB25
         name: MikroBUS_INT
         function: GPIO
-        direction: out
-        latch: high
+        direction: in
+        pull down: True
+        interrupt: falling edge
       uart:
         tx:
           pinId: PC16

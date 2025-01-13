@@ -124,6 +124,7 @@ connectors:
         name: MikroBUS_1_INT
         function: GPIO
         direction: in
+        pull down: True
         interrupt: falling edge
       uart:
         tx:
@@ -184,7 +185,7 @@ connectors:
         name: MikroBUS_2_INT
         function: GPIO
         direction: in
-        latch: low
+        pull down: True
         interrupt: falling edge
       uart:
         tx:
