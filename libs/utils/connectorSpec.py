@@ -203,7 +203,7 @@ __connectorSpec = {
         'nrst': 42,
         'nint': 49,
     },
-    'm.2': {
+    'm2': {
         'spi': {
             'sck': 11,
             'miso': 13,
