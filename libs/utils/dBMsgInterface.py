@@ -396,10 +396,16 @@ def __getConfigDatabaseEIC(periphID, settings):
     periphID = periphID.upper()
     channel = ""
     if periphID == 'EIC_U2254':
-        channel = "".join(filter(lambda x: x.isdigit(), setting))
-
+        if "NMI" in setting.upper():
+            channel = "NMI"
+        else:
+            channel = "".join(filter(lambda x: x.isdigit(), setting))
+        
     elif periphID == 'EIC_U2217' or periphID == 'EIC_U2804' or periphID == 'EIC_03706':
-        channel = "".join(filter(lambda x: x.isdigit(), setting))
+        if "NMI" in setting.upper():
+            channel = "NMI"
+        else:
+            channel = "".join(filter(lambda x: x.isdigit(), setting))
         
     elif periphID == 'EIC_44139':
         channel = "".join(filter(lambda x: x.isdigit(), setting))
