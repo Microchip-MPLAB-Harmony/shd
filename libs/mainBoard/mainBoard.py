@@ -83,7 +83,16 @@ class MainBoard:
         
     def __str__(self):
         return "{}".format(self.__currentConfig)
-        
+
+    def __checkComponentAvailable(self, component):
+        if self.__db.isComponentAvailable(component) == False:
+            if component != "":
+                self.__log.writeInfoMessage("SHD >> WARNING: {} component is not available in your Harmony Content Path.".format(component))
+                self.__log.writeInfoMessage("SHD >> To be able to use this component, please download the proper H3 repository.")
+            return False
+
+        return True
+            
     def __setPLIBSettings(self, pinDescr, value):
         idActiveList = self.__db.getActiveComponentIDs()
         for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
@@ -489,10 +498,6 @@ class MainBoard:
         dependencyList = adaptDevicePeripheralDependencies(self.__atdf, dependencyListFiltered)
         # self.__log.writeInfoMessage("SHD >> __updateDriverConnections PIO adapted dependencyList: {}".format(dependencyList))
 
-        # if addDependency == True and self.__checkExistConnection(dependencyList):
-        #     self.__log.writeInfoMessage("SHD >> __updateDriverConnections connections already created: {}".format(dependencyList))
-        #     return
-
         newConnections = []
         newComponents = []
         multiInstanceComponent = []
@@ -500,6 +505,7 @@ class MainBoard:
         updatePlibInstance = False
         
         for depId, capId in dependencyList.items():
+            createConnection = True
             # self.__log.writeInfoMessage("SHD >> __updateDriverConnections dependencyList.items: {} {}".format(depId, capId))
             if addDependency is True:
                 if self.__checkIsMultiInstanceDriver(depId) == True:
@@ -507,29 +513,47 @@ class MainBoard:
                     # Add new component/connection (multi instance)
                     newInstanceNumber = self.__getDriverMultiInstanceNumber(idActiveList, depId)
                     newDep ="{}_{}".format(depId, newInstanceNumber)
-                    newConnections.append((newDep, capId))
-                    newComponents.append(capId)
+                    
+                    if self.__checkComponentAvailable(capId) == True:
+                        newComponents.append(capId)
+                    else:
+                        createConnection = False
+
                     if newInstanceNumber == 0:
-                        newComponents.append(depId)
+                        if self.__checkComponentAvailable(depId) == True:
+                            newComponents.append(depId)
+                        else:
+                            createConnection = False
                     else:
                         if newDep not in idActiveList: 
                             multiInstanceComponent.append(depId)
+                    
+                    if createConnection == True:
+                        newConnections.append((newDep, capId))
                         
                     updatePlibInstance = True
                 else:
                     # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver FALSE: {}".format(depId))
                     if depId not in idActiveList:
                         # Add new component/connection (single instance)
-                        newComponents.append(depId)
+                        if self.__checkComponentAvailable(depId) == True:
+                            newComponents.append(depId)
+                        else:
+                            createConnection = False
                         # self.__log.writeInfoMessage("SHD >> __updateDriverConnections depId NOT IN idActiveList - adding {}".format(depId))
                         
                     if capId != "" and capId not in idActiveList:
                         # Check if depId has not been previously added
                         if depId not in idActiveList:
                             # self.__log.writeInfoMessage("SHD >> __updateDriverConnections capId NOT IN idActiveList - adding {}".format(capId))
-                            newComponents.append(capId)
-                            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections adding new connection: {}".format((depId, capId)))
-                            newConnections.append((depId, capId))
+                            if self.__checkComponentAvailable(capId) == True:
+                                newComponents.append(capId)
+                            else:
+                                createConnection = False
+                            
+                            if createConnection == True:
+                                # self.__log.writeInfoMessage("SHD >> __updateDriverConnections adding new connection {}: {}".format(createConnection, (depId, capId)))
+                                newConnections.append((depId, capId))
                             
             else:
                 if capId in idActiveList:
@@ -665,7 +689,9 @@ class MainBoard:
                 # Extract PLIB capabilities from Pin Function
                 if pinFunction != None and pinFunction != 'GPIO':
                     newCap = pinFunction.upper().split('_')[0].lower()
-                    capId = newCap
+                    # Handle exceptions: USB
+                    if newCap not in ["usb", "i2s"]:
+                        capId = newCap
 
                 # GPIOs don't have dependencies, except I2C_BB
                 # Extract PLIB capabilities from Pin Name (I2C_BB)
