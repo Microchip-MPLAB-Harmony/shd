@@ -1376,6 +1376,14 @@ class MainBoard:
                         symbol.setHelp(shdMainBoardHelp)
                         self.__symbolInterfaces.setdefault(optionSymbolName, symbol)
 
+                        warnComment = option.get('warning')
+                        if warnComment is not None:
+                            warnSymbolName = "{}_WARN".format(optionSymbolName)
+                            warnSymbol = boardInterface.createCommentSymbol(warnSymbolName, symbol)
+                            warnSymbol.setLabel("WARNING!! {}".format(warnComment))
+                            warnSymbol.setVisible(False)
+                            warnSymbol.setDependencies(self.__showSymbol, [optionSymbolName])
+
                         pinControlList = self.getDescriptionListByInterface(interfaceIndex, optionIndex)
                         # self.__log.writeInfoMessage("SHD >> option pinControlList: {}".format(pinControlList))
                         for pinControl in pinControlList:
@@ -1409,6 +1417,14 @@ class MainBoard:
                     symbol.setDefaultValue(False)
                     symbol.setHelp(shdMainBoardHelp)
                     self.__symbolInterfaces.setdefault(interfaceSymbolName, symbol)
+
+                    warnComment = interface.get('warning')
+                    if warnComment is not None:
+                        warnSymbolName = "{}_WARN".format(interfaceSymbolName)
+                        warnSymbol = boardInterface.createCommentSymbol(warnSymbolName, symbol)
+                        warnSymbol.setLabel("WARNING!! {}".format(warnComment))
+                        warnSymbol.setVisible(False)
+                        warnSymbol.setDependencies(self.__showSymbol, [interfaceSymbolName])
 
                     pinControlList = self.getDescriptionListByInterface(interfaceIndex)
                     # self.__log.writeInfoMessage("SHD >> pinControlList: {}".format(pinControlList))
