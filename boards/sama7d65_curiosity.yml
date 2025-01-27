@@ -1,0 +1,694 @@
+name: sama7d65_curiosity
+config: sama7d65_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/EV63J76A
+processor:
+  name: SAMA7D65
+  architecture: CORTEX-A7
+  family: SAMA7
+  series: SAMA7D6
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: RGB Red Led
+        description: RGB Red Led
+        pinctrl:
+          gpio:
+            pinId: PB17
+            name: RGB_RED_LED
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB Green Led
+        description: RGB Green Led
+        pinctrl:
+          gpio:
+            pinId: PB15
+            name: RGB_GREEN_LED
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB Blue Led
+        description: RGB Blue Led
+        pinctrl:
+          gpio:
+            pinId: PA21
+            name: RGB_BLUE_LED
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Button
+        description: User Button
+        pinctrl:
+          gpio:
+            pinId: PC10
+            name: USER_BUTTON
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B QSPI flash memory
+        dependencies: [[drv_sst26, qspi0]]
+        pinctrl:
+          qsck:
+            pinId: PB13
+            function: QSPI0_SCK
+          qcs:
+            pinId: PB12
+            function: QSPI0_CS
+          quio0:
+            pinId: PB11
+            function: QSPI0_IO0
+          quio1:
+            pinId: PB10
+            function: QSPI0_IO1
+          quio2:
+            pinId: PB9
+            function: QSPI0_IO2
+          quio3:
+            pinId: PB8
+            function: QSPI0_IO3
+      - name: Serial EEPROM interface
+        description: Serial EEPROM with EIA-48 MAC address (24AA025E48)
+        dependencies: [[drv_at24, flexcom10]]
+        pinctrl:
+          sda:
+            pinId: PB20
+            name: EEPROM_I2C_SDA
+            function: FLEXCOM10_IO0
+          scl:
+            pinId: PB19
+            name: EEPROM_I2C_SCL
+            function: FLEXCOM10_IO1
+      - name: SDMMC0 interface (4-bit)
+        description: Secure Digital Multimedia Card 1 (SDMMC1)
+        dependencies: [[drv_sdmmc, sdmmc1]]
+        pinctrl:
+          ck:
+            pinId: PB23
+            function: SDMMC1_CK
+          cd:
+            pinId: PB29
+            function: SDMMC1_CD
+          cmd:
+            pinId: PB22
+            function: SDMMC1_CMD
+          wp:
+            pinId: PB28
+            function: SDMMC1_WP
+          dat0:
+            pinId: PB24
+            function: SDMMC1_DAT0
+          dat1:
+            pinId: PB25
+            function: SDMMC1_DAT1
+          dat2:
+            pinId: PB26
+            function: SDMMC1_DAT2
+          dat3:
+            pinId: PB27
+            function: SDMMC1_DAT3
+          pwr:
+            pinId: PB21
+            name: SDMMC1_PWR
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: USB interface
+    description: USB COM Ports interface
+    options:
+      - name: USB-A Port
+        description: USB-A Port configuration
+        pinctrl:
+          gpio:
+            pinId: PC8
+            name: USBA_VBUS_DET
+            function: GPIO
+            direction: in
+            pull down: True
+      - name: USB-B Port
+        description: USB-B Port configuration
+        pinctrl:
+          gpio1:
+            pinId: PC20
+            name: USBB_EN
+            function: GPIO
+            direction: out
+            latch: low
+          gpio2:
+            pinId: PC18
+            name: USBB_OVCUR
+            function: GPIO
+            direction: in
+            pull down: True
+      - name: USB-C Port
+        description: USB-C Port configuration
+        pinctrl:
+          gpio1:
+            pinId: PC21
+            name: USBC_EN
+            function: GPIO
+            direction: out
+            latch: low
+          gpio2:
+            pinId: PC19
+            name: USBC_OVCUR
+            function: GPIO
+            direction: in
+            pull down: True
+
+  - name: CAN interface
+    description: Control Area Network - CAN
+    options:
+      - name: CAN1 interface
+        description: CAN1 interface
+        pinctrl:
+          tx:
+            pinId: PD10
+            name: CAN1_TX
+            function: MCAN1_CANTX1
+          rx:
+            pinId: PD11
+            name: CAN1_RX
+            function: MCAN1_CANRX1
+      - name: CAN2 interface
+        description: CAN2 interface
+        pinctrl:
+          tx:
+            pinId: PD12
+            name: CAN2_TX
+            function: MCAN2_CANTX2
+          rx:
+            pinId: PD13
+            name: CAN2_RX
+            function: MCAN2_CANRX2
+      - name: CAN3 interface
+        description: CAN3 interface
+        pinctrl:
+          tx:
+            pinId: PD14
+            name: CAN3_TX
+            function: MCAN3_CANTX3
+          rx:
+            pinId: PD15
+            name: CAN3_RX
+            function: MCAN3_CANRX3
+
+  - name: Ethernet interface
+    description: Modular Ethernet PHY system
+    options:
+      - name: Ethernet RMII interface
+        description: Ethernet GMAC configuration
+        dependencies: [[drvGmac0, drvExtPhyLan8840]]
+        pinctrl:
+          gtxen:
+            pinId: PA25
+            function: GMAC0_G0_TXCTL/G0_TXEN
+          gtxck:
+            pinId: PB1
+            function: GMAC0_G0_REFCK/G0_TXCK
+          gtx0:
+            pinId: PA26
+            function: GMAC0_G0_TX0
+          gtx1:
+            pinId: PA27
+            function: GMAC0_G0_TX1
+          gtx2:
+            pinId: PB4
+            function: GMAC0_G0_TX2
+          gtx3:
+            pinId: PB5
+            function: GMAC0_G0_TX3
+          grx0:
+            pinId: PA29
+            function: GMAC0_G0_RX0
+          grx1:
+            pinId: PA30
+            function: GMAC0_G0_RX1
+          grx2:
+            pinId: PB2
+            function: GMAC0_G0_RX2
+          grx3:
+            pinId: PB6
+            function: GMAC0_G0_RX3
+          grxck:
+            pinId: PB3
+            function: GMAC0_G0_RXCK
+          grxdv:
+            pinId: PA28
+            function: GMAC0_G0_RXCTL/G0_CRSDV
+          gmdc:
+            pinId: PA31
+            function: GMAC0_G0_MDC
+          gmdio:
+            pinId: PB0
+            function: GMAC0_G0_MDIO
+      - name: Ethernet interrupt interface
+        description: Ethernet initerrupt configuration
+        pinctrl:
+          irq:
+            pinId: PC1
+            name: ETH_IRQ
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: MIPI DSI Camera interface
+    description: MIPI CSI Camera interface
+    options:
+      - name: MIPI IRQ interface
+        description: MIPI interrupt
+        pinctrl:
+          irq1:
+            pinId: PB16
+            name: MIPI_CTRL_IRQ
+            function: GPIO
+            direction: in
+            pull up: True
+            interrupt: falling edge
+      - name: MIPI PWM
+        description: MIPI PWM interface used as backlight control
+        pinctrl:
+          pwm:
+            pinId: PB14
+            name: MIPI_INTF_BACKLIGHT
+            function: PWM_PWMH3
+      - name: MIPI DISP interface
+        description: MIPI LCD DISP
+        pinctrl:
+          disp:
+            pinId: PB18
+            name: MIPI_INTF_EN
+            function: GPIO
+            direction: out
+            latch: low
+      - name: MIPI I2C interface
+        description: MIPI I2C interface
+        pinctrl:
+          sda:
+            pinId: PC7
+            name: MIPI_I2C_SDA
+            function: FLEXCOM0_IO0
+          scl:
+            pinId: PC6
+            name: MIPI_I2C_SCL
+            function: FLEXCOM0_IO1
+
+  - name: LVDS interface
+    description: LVDS Data and Control configuration
+    options:
+      - name: LVDS IRQ interface
+        description: LVDS interrupt
+        pinctrl:
+          irq1:
+            pinId: PB16
+            name: LVDS_CTRL_IRQ
+            function: GPIO
+            direction: in
+            pull up: True
+            interrupt: falling edge
+      - name: LVDS I2C interface
+        description: LVDS I2C interface
+        pinctrl:
+          sda:
+            pinId: PC7
+            name: LVDS_I2C_SDA
+            function: FLEXCOM0_IO0
+          scl:
+            pinId: PC6
+            name: LVDS_I2C_SCL
+            function: FLEXCOM0_IO1
+      - name: LVDS PWM
+        description: LVDS PWM interface used as backlight control
+        pinctrl:
+          pwm:
+            pinId: PB14
+            name: LVDS_INTF_BACKLIGHT
+            function: PWM_PWMH3
+      - name: LVDS DISP interface
+        description: LVDS LCD DISP
+        pinctrl:
+          disp:
+            pinId: PB18
+            name: LVDS_INTF_EN
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Debugging interface
+    description: Debugging interface
+    options:
+      - name: Serial Debug interface
+        description: Serial Debug Com Port (FTDI, J35)
+        dependencies: [[sys_console, flexcom6]]
+        pinctrl:
+          tx:
+            pinId: PD18
+            name: DEBUG_TX
+            function: FLEXCOM6_IO0
+          rx:
+            pinId: PD19
+            name: DEBUG_RX
+            function: FLEXCOM6_IO1
+      - name: Serial Debug interface
+        description: Serial Debug Com Port (USB, J5)
+        dependencies: [[sys_console, flexcom6]]
+        warning: Populate the R16 and R18 resistors
+        pinctrl:
+          tx:
+            pinId: PD18
+            name: DEBUG_TX
+            function: FLEXCOM6_IO0
+          rx:
+            pinId: PD19
+            name: DEBUG_RX
+            function: FLEXCOM6_IO1
+
+connectors:
+  - compatible: mikrobus
+    name: MikroBUS Header 1
+    description: MikroBUS Standard Extension Header 1
+    pinctrl:
+      an:
+        pinId: PC5
+        name: MikroBUS1_AN
+        function: ADC_AD2
+      rst:
+        pinId: PC9
+        name: MikroBUS1_RST
+        function: GPIO
+        direction: out
+        latch: high
+      spi:
+        cs:
+          pinId: PA15
+          name: MikroBUS1_SPI_CS
+          function: FLEXCOM4_IO3
+        sck:
+          pinId: PA16
+          name: MikroBUS1_SPI_SCK
+          function: FLEXCOM4_IO2
+        miso:
+          pinId: PA17
+          name: MikroBUS1_SPI_MISO
+          function: FLEXCOM4_IO1
+        mosi:
+          pinId: PA18
+          name: MikroBUS1_SPI_MOSI
+          function: FLEXCOM4_IO0
+      pwm:
+        pinId: PB15
+        name: MikroBUS1_PWM
+        function: PWM_PWML0
+      int:
+        pinId: PB7
+        name: MikroBUS1_INT
+        function: GPIO
+        direction: out
+        pull up: True
+      uart:
+        tx:
+          pinId: PD8
+          name: MikroBUS1_UART_TX
+          function: FLEXCOM7_IO0
+        rx:
+          pinId: PD9
+          name: MikroBUS1_UART_RX
+          function: FLEXCOM7_IO1
+      i2c:
+        sda:
+          pinId: PC7
+          name: MikroBUS1_I2C_SDA
+          function: FLEXCOM0_IO0
+        scl:
+          pinId: PC6
+          name: MikroBUS1_I2C_SCL
+          function: FLEXCOM0_IO1
+
+  - compatible: mikrobus
+    name: MikroBUS Header 2
+    description: MikroBUS Standard Extension Header 2
+    pinctrl:
+      an:
+        pinId: PDC13
+        name: MikroBUS2_AN
+        function: ADC_AD7
+      rst:
+        pinId: PC9
+        name: MikroBUS2_RST
+        function: GPIO
+        direction: out
+        latch: high
+      spi:
+        cs:
+          pinId: PA14
+          name: MikroBUS2_SPI_CS
+          function: FLEXCOM4_IO4
+        sck:
+          pinId: PA16
+          name: MikroBUS2_SPI_SCK
+          function: FLEXCOM4_IO2
+        miso:
+          pinId: PA17
+          name: MikroBUS2_SPI_MISO
+          function: FLEXCOM4_IO1
+        mosi:
+          pinId: PA18
+          name: MikroBUS2_SPI_MOSI
+          function: FLEXCOM4_IO0
+      pwm:
+        pinId: PB17
+        name: MikroBUS2_PWM
+        function: PWM_PWML1
+      int:
+        pinId: PA22
+        name: MikroBUS2_INT
+        function: GPIO
+        direction: out
+        pull up: True
+      uart:
+        tx:
+          pinId: PD17
+          name: MikroBUS2_UART_TX
+          function: FLEXCOM5_IO1
+        rx:
+          pinId: PD16
+          name: MikroBUS2_UART_RX
+          function: FLEXCOM5_IO0
+      i2c:
+        sda:
+          pinId: PC7
+          name: MikroBUS2_I2C_SDA
+          function: FLEXCOM0_IO0
+        scl:
+          pinId: PC6
+          name: MikroBUS2_I2C_SCL
+          function: FLEXCOM0_IO1
+
+  - compatible: m.2
+    name: Wireless M2 Header
+    description: Wireless m.2 Header
+    pinctrl:
+      spi:
+        cs:
+          pinId: PC30
+          name: Wireless_SPI_CS
+          function: FLEXCOM8_IO3
+        sck:
+          pinId: PC29
+          name: Wireless_SPI_SCK
+          function: FLEXCOM8_IO2
+        miso:
+          pinId: PC28
+          name: Wireless_SPI_MISO
+          function: FLEXCOM8_IO1
+        mosi:
+          pinId: PC27
+          name: Wireless_SPI_MOSI
+          function: FLEXCOM8_IO0
+      sdio:
+        ck:
+          pinId: PC28
+          name: Wireless_SDI0_CK
+          function: SDMMC2_CK
+        cmd:
+          pinId: PC27
+          name: Wireless_SDI0_CMD
+          function: SDMMC2_CMD
+        dat0:
+          pinId: PC29
+          name: Wireless_SDI0_DAT0
+          function: SDMMC2_DAT0
+        dat1:
+          pinId: PC30
+          name: Wireless_SDI0_DAT1
+          function: SDMMC2_DAT1
+        dat2:
+          pinId: PC31
+          name: Wireless_SDI0_DAT2
+          function: SDMMC2_DAT2
+        dat3:
+          pinId: PD0
+          name: Wireless_SDI0_DAT3
+          function: SDMMC2_DAT3
+      irqn:
+        pinId: PD4
+        name: Wireless_IRQN
+        function: GPIO
+        direction: in
+        pull up: True
+        interrupt: falling edge
+      usart:
+        rx:
+          pinId: PD6
+          name: Wireless_USART_RX
+          function: FLEXCOM1_IO1
+        tx:
+          pinId: PD7
+          name: Wireless_USART_TX
+          function: FLEXCOM1_IO0
+        cts:
+          pinId: PD5
+          name: Wireless_USART_CTS
+          function: FLEXCOM1_IO3
+        rts:
+          pinId: PD3
+          name: Wireless_USART_RTS
+          function: FLEXCOM1_IO4
+      modsel1:
+        pinId: PD7
+        name: Wireless_MODSEL1
+        function: GPIO
+        direction: out
+      wake:
+        pinId: PD1
+        name: Wireless_WAKE
+        function: GPIO
+        direction: out
+      modsel2:
+        pinId: PD6
+        name: Wireless_MODSEL2
+        function: GPIO
+        direction: out
+      nrst:
+        pinId: PD20
+        name: Wireless_NRST
+        function: GPIO
+        direction: out
+        latch: low
+      i2c:
+        sda:
+          pinId: PC7
+          name: Wireless_I2C_SDA
+          function: FLEXCOM0_IO0
+        scl:
+          pinId: PC6
+          name: Wireless_I2C_SCL
+          function: FLEXCOM0_IO1
+      int:
+        pinId: PD2
+        name: Wireless_INT
+        function: GPIO
+        direction: in
+        pull up: True
+
+  - compatible: rgmii
+    name: Gigabit Ethernet interface
+    description: Gigabit Ethernet configuration
+    pinctrl:
+      ethphy:
+        gmdc:
+          pinId: PD25
+          name: RGMII_MDC
+          function: GMAC1_G1_MDC
+        gmdio:
+          pinId: PD26
+          name: RGMII_MDIO
+          function: GMAC1_G1_MDIO
+        gtxen:
+          pinId: PD21
+          name: RGMII_TXEN
+          function: GMAC1_G1_TXCTL/G1_TXEN
+        gtxck:
+          pinId: PD29
+          name: RGMII_TXCK
+          function: GMAC1_G1_REFCK/G1_TXCK
+        gtx0:
+          pinId: PD22
+          name: RGMII_TX0
+          function: GMAC1_G1_TX0
+        gtx1:
+          pinId: PD23
+          name: RGMII_TX1
+          function: GMAC1_G1_TX1
+        gtx2:
+          pinId: PE0
+          name: RGMII_TX2
+          function: GMAC1_G1_TX2
+        gtx3:
+          pinId: PE1
+          name: RGMII_TX3
+          function: GMAC1_G1_TX3
+        grxdv:
+          pinId: PD24
+          name: RGMII_RXDV
+          function: GMAC1_G1_RXCTL/G1_CRSDV
+        grxck:
+          pinId: PE2
+          name: RGMII_RXCK
+          function: GMAC1_G1_RXCK
+        grx0:
+          pinId: PD27
+          name: RGMII_RX0
+          function: GMAC1_G1_RX0
+        grx1:
+          pinId: PD28
+          name: RGMII_RX1
+          function: GMAC1_G1_RX1
+        grx2:
+          pinId: PD30
+          name: RGMII_RX2
+          function: GMAC1_G1_RX2
+        grx3:
+          pinId: PD31
+          name: RGMII_RX3
+          function: GMAC1_G1_RX3
+      spi:
+        cs:
+          pinId: PA20
+          name: RGMII_SPI_CS
+          function: FLEXCOM4_IO6
+        sck:
+          pinId: PA16
+          name: RGMII_SPI_SCK
+          function: FLEXCOM4_IO2
+        miso:
+          pinId: PA17
+          name: RGMII_SPI_MISO
+          function: FLEXCOM4_IO1
+        mosi:
+          pinId: PA18
+          name: RGMII_SPI_MOSI
+          function: FLEXCOM4_IO0
+      i2c:
+        sda:
+          pinId: PB20
+          name: RGMII_I2C_SDA
+          function: FLEXCOM10_IO0
+        scl:
+          pinId: PB19
+          name: RGMII_I2C_SCL
+          function: FLEXCOM10_IO1
+      nint:
+        pinId: PE3
+        name: RGMII_NIRQ
+        function: GPIO
+        direction: in
+        pull up: True
+        interrupt: falling edge
