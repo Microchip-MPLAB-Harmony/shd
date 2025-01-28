@@ -325,7 +325,7 @@ connectors:
         function: GPIO
         direction: in
         pull down: True
-        interrupt: falling edge
+        interrupt: Low level
       gpio ss:
         pinId: PA2
         name: EXT_GPIO_SS

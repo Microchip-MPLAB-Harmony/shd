@@ -344,7 +344,7 @@ connectors:
         function: GPIO
         direction: in
         pull down: True
-        interrupt: falling edge
+        interrupt: Low level
       gpio ss:
         pinId: PB15
         name: EXT_GPIO_SS
