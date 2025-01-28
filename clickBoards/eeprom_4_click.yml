@@ -13,6 +13,7 @@ supported:
   spi:
     cs:
       name: EEPROM4_CS
+      function: GPIO
     sck:
       name: EEPROM4_SCK
     miso:

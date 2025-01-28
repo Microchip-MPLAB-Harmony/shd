@@ -1165,13 +1165,15 @@ class MainBoard:
                         name, function, subSignal, pinNumber, pinId = pinDescription
                         label = self.__getSymbolLabel(name, function, subSignal, pinNumber, pinId)
                         # Handle SPI CS exception (configuration option is not allowed)
-                        if subSignal.lower() == 'cs' and function.lower() not in ["gpio", "unused"]:
+                        if subSignal.lower() == 'cs' and function.lower() is not "unused":
                             # self.__log.writeInfoMessage("SHD >> Handle SPI CS exception - subSignal: {}".format(subSignal.lower())) 
                             symbolName = self.__symbolNamesByConnector[connectorName][pinId]
                             shdSpiCSConfigSymbolName = "{}_{}".format(symbolName, "CSASGPIO")
                             # self.__log.writeInfoMessage("SHD >> CS set Visible: {}".format(shdSpiCSConfigSymbolName))
                             signalSpiCsPinSymbol = board.getSymbolByID(shdSpiCSConfigSymbolName)
                             signalSpiCsPinSymbol.setVisible(True)
+                            if function.lower() == "gpio":
+                                signalSpiCsPinSymbol.setValue(True)
 
                     signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId])
                     signalPinSymbol.setLabel(label)
