@@ -4,7 +4,7 @@ description: >
   which operates in the frequency band 0 .. 500kHz.
 documentation: https://www.microchip.com/en-us/development-tool/EV13L63A
 compatible: xplainpro
-dependencies: [[drvG3MacRt, spi]]
+dependencies: [[drvG3MacRt, spi], [srv_pvddmon, adc plus]]
 multiconnection: False
 supported:
   adc plus:

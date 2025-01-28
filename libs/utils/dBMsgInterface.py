@@ -37,7 +37,8 @@ __drvDependencies = {
     'ecc204': 'I2C',
     'sha104': 'I2C',
     'sha105': 'I2C',
-    'ta010': 'I2C'
+    'ta010': 'I2C',
+    'srv_pvddmon': 'ADC'
 }
 
 def __checkSubstringList(substringList, string):
@@ -798,7 +799,7 @@ def __getConfigDatabaseDrvWINCS02(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
 
     configDB = dict()
-    if (signalId == 'irq'):
+    if (signalId == 'irq') or (signalId == 'int'):
         plib = functionValue.split("_")[0]
         setting = functionValue.split('_')[-1]
         channel = "".join(filter(lambda x: x.isdigit(), setting))
@@ -828,6 +829,18 @@ def __getConfigDatabaseWirelessRNBD(settings):
     
     return configDB
 
+def __getConfigDatabasePlcSrvPvddMon(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+    plib = functionValue.split("_")[0]
+    setting = functionValue.split('_')[-1]
+    channel = "".join(filter(lambda x: x.isdigit(), setting))
+    configDB.setdefault('msgID', 'PLV_SRV_PVDDMON_CONFIG_HW_IO')
+    configDB.setdefault('config', (plib, channel, enable))
+
+    return configDB
+
 def getDBMsgDriverConfiguration(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
     
@@ -853,6 +866,8 @@ def getDBMsgDriverConfiguration(settings):
         configDB = __getConfigDatabaseWirelessRNWF(settings)
     elif driver == 'RNBD_Dependency':
         configDB = __getConfigDatabaseWirelessRNBD(settings)
+    elif driver == 'srv_pvddmon':
+        configDB = __getConfigDatabasePlcSrvPvddMon(settings)
     # else:
     #     print("SHD >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
         
@@ -1031,18 +1046,30 @@ def getDriverDependencyFromPin(pinName, pinFunction):
         if __checkSubstringList(['SDMMC'], string) == True:
             dep = "drv_sdmmc"
         elif __checkSubstringList(['GMAC'], string) == True:
-            dep = "drvGmac"
+            # Add instance number if needed
+            dep = "drvGmac" + "".join(filter(lambda x: x.isdigit(), string.split("_")[0]))
         elif __checkSubstringList(['ETHMAC'], string) == True:
             dep = "drvPic32mEthmac"
 
     return dep
 
 def checkPlibFromSignalConnector(plib, signal):
-    if plib.lower() == signal.lower():
+    plibLow = plib.lower()
+    signalLow = signal.lower()
+
+    if plibLow == signalLow:
         return True
-    elif __checkSubstringList(['i2c', 'uart', 'spi'], signal.lower()) == True:
+    elif 'i2c' in signalLow:
         # Check if Plib supports these communication signals
-        if __checkSubstringList(['i2c', 'twi', 'spi', 'sercom', 'flexcom'], plib.lower()) == True:
+        if __checkSubstringList(['i2c', 'twi', 'sercom', 'flexcom'], plibLow) == True:
+            return True
+    elif 'uart' in signalLow:
+        # Check if Plib supports these communication signals
+        if __checkSubstringList(['uart', 'usart', 'sercom', 'flexcom'], plibLow) == True:
+            return True
+    elif 'spi' in signalLow:
+        # Check if Plib supports these communication signals
+        if __checkSubstringList(['spi', 'sercom', 'flexcom'], plibLow) == True:
             return True
 
     return False
