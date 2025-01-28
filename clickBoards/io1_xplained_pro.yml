@@ -34,6 +34,8 @@ supported:
   gpio ss:
     name: IO1_microSD_DETECT
     description: Detect pin on microSD card connector (GPIO)
+    direction: in
+    pull up: True
   i2c:
     sda:
       name: IO1_TWI_SDA

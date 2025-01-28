@@ -664,35 +664,35 @@ interfaces:
           adc:
             pinId: RG15
             name: GFX_ADC0
-            function: ADC7_AN23
+            function: ADCHS_AN23
       - name: ADC1
         description: GFX ADC1 Interface
         pinctrl:
           adc:
             pinId: RA0
             name: GFX_ADC1
-            function: ADC7_AN24
+            function: ADCHS_AN24
       - name: ADC2
         description: GFX ADC2 Interface
         pinctrl:
           adc:
             pinId: RA9
             name: GFX_ADC2
-            function: ADC7_AN27
+            function: ADCHS_AN27
       - name: ADC3
         description: GFX ADC3 Interface
         pinctrl:
           adc:
             pinId: RA10
             name: GFX_ADC3
-            function: ADC7_AN28
+            function: ADCHS_AN28
       - name: ADC4
         description: GFX ADC3 Interface
         pinctrl:
           adc:
             pinId: RA5
             name: GFX_ADC4
-            function: ADC7_AN34
+            function: ADCHS_AN34
 
   - name: USB debugger interface
     description: On-Board Debugger (PKOB4)
@@ -761,11 +761,11 @@ connectors:
       adc plus:
         pinId: RB2
         name: EXT1_ADC_PLUS
-        function: ADC1_AN2
+        function: ADCHS_AN2
       adc minus:
         pinId: RB12
         name: EXT1_ADC_MINUS
-        function: ADC1_AN7
+        function: ADCHS_AN7
       gpio1:
         pinId: RK4
         name: EXT1_GPIO1
@@ -832,7 +832,7 @@ connectors:
       an:
         pinId: RB10
         name: MikroBUS1_AN
-        function: ADC7_AN5
+        function: ADCHS_AN5
       rst:
         pinId: RJ12
         name: MikroBUS1_RST
@@ -893,7 +893,7 @@ connectors:
       an:
         pinId: RB11
         name: MikroBUS2_AN
-        function: ADC7_AN6
+        function: ADCHS_AN6
       rst:
         pinId: RJ10
         name: MikroBUS2_RST
@@ -954,27 +954,27 @@ connectors:
       adc0:
         pinId: RB4
         name: Arduino_ADC0
-        function: ADC4_AN4
+        function: ADCHS_AN4
       adc1:
         pinId: RA1
         name: Arduino_ADC1
-        function: ADC7_AN29
+        function: ADCHS_AN29
       adc2:
         pinId: RB13
         name: Arduino_ADC2
-        function: ADC7_AN8
+        function: ADCHS_AN8
       adc3:
         pinId: RH0
         name: Arduino_ADC3
-        function: ADC7_AN38
+        function: ADCHS_AN38
       adc4:
         pinId: RH1
         name: Arduino_ADC4
-        function: ADC7_AN39
+        function: ADCHS_AN39
       adc5:
         pinId: RH6
         name: Arduino_ADC5
-        function: ADC7_AN42
+        function: ADCHS_AN42
       i2c:
         sda:
           pinId: RA15
