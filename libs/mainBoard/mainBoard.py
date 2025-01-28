@@ -689,8 +689,8 @@ class MainBoard:
                 # Extract PLIB capabilities from Pin Function
                 if pinFunction != None and pinFunction != 'GPIO':
                     newCap = pinFunction.upper().split('_')[0].lower()
-                    # Handle exceptions: USB
-                    if newCap not in ["usb", "i2s"]:
+                    if ('gmac' not in newCap) and (newCap not in ["usb", "i2s"]):
+                        # Handle exceptions: USB, I2S
                         capId = newCap
 
                 # GPIOs don't have dependencies, except I2C_BB
