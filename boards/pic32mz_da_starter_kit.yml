@@ -1,0 +1,213 @@
+name: pic32mz-da-starter-kit
+config: pic32mz_da_starter_kit.py
+documentation: https://www.microchip.com/en-us/development-tool/DM320010
+processor:
+  name: PIC32MZ2064DAG169
+  architecture: MIPS
+  family: PIC32MZDA
+  series: PIC32MZ
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led 1
+        description: Red Led (RH0) - active high
+        pinctrl:
+          gpio:
+            pinId: RH0
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 2
+        description: Green Led (RH1) - active high
+        pinctrl:
+          gpio:
+            pinId: RH1
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Led 3
+        description: Yellow Led (RH2) - active high
+        pinctrl:
+          gpio:
+            pinId: RH2
+            name: LED3
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User Button 1
+        description: User Button 1 (RB12)
+        pinctrl:
+          gpio:
+            pinId: RB13
+            name: SW1
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+      - name: User Button 2
+        description: User Button 2 (RB13)
+        pinctrl:
+          gpio:
+            pinId: RB12
+            name: SW2
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+      - name: User Button 3
+        description: User Button 3 (RB14)
+        pinctrl:
+          gpio:
+            pinId: RB14
+            name: SW3
+            function: GPIO
+            direction: in
+            pull up: True
+            change notification: True
+
+  - name: Communication interfaces
+    description: Communication Ports options
+    options:
+      - name: USB to UART (J5)
+        description: App UART configuration
+        pinctrl:
+          tx:
+            pinId: RB0
+            name: UART_TX
+            function: UART4_U4TX
+          rx:
+            pinId: RG9
+            name: UART_RX
+            function: UART4_U4RX
+      - name: USB to I2C (J5)
+        description: App UART configuration
+        pinctrl:
+          sda:
+            pinId: RF2
+            name: I2C_SDA
+            function: I2C3_SDA3
+          scl:
+            pinId: RF8
+            name: I2C_SCL
+            function: I2C3_SCL3
+      - name: USB type-A (J7)
+        description: Target USB configuration
+        pinctrl:
+          gpio0:
+            pinId: RE6
+            name: USB_OVCUR
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF032B interface
+        description: SST26VF032B SQI flash memory
+        dependencies: [[drv_sst26, sqi1]]
+        pinctrl:
+          sqiClk:
+            pinId: RA6
+            function: SQI1_SQICLK
+          qcs:
+            pinId: RD5
+            function: SQI1_SQICS1
+          sqid0:
+            pinId: RG13
+            function: SQI1_SQID0
+          sqid1:
+            pinId: RG12
+            function: SQI1_SQID1
+          qsqid2:
+            pinId: RG14
+            function: SQI1_SQID2
+          sqid3:
+            pinId: RA7
+            function: SQI1_SQID3
+      - name: SDMMC0 interface (4-bit)
+        description: Secure Digital Multimedia Card 1 (SDMMC1)
+        dependencies: [[drv_sdmmc, sdhc]]
+        pinctrl:
+          ck:
+            pinId: RA6
+            function: SDHC_SDCK
+          cd:
+            pinId: RA0
+            function: SDHC_SDCD
+          cmd:
+            pinId: RD4
+            function: SDHC_SDCMD
+          dat0:
+            pinId: RG13
+            function: SDHC_SDDATA0
+          dat1:
+            pinId: RG12
+            function: SDHC_SDDATA1
+          dat2:
+            pinId: RG14
+            function: SDHC_SDDATA2
+          dat3:
+            pinId: RA7
+            function: SDHC_SDDATA3
+
+connectors:
+  - compatible: rmii
+    name: Ethernet PHY Header (J9)
+    description: Ethernet PHY Header configurations
+    pinctrl:
+      ethphy:
+        txen:
+          pinId: RD6
+          name: RMII_TX_EN
+          function: ETHMAC_ETXEN
+        txd0:
+          pinId: RJ8
+          name: RMII_TXD0
+          function: ETHMAC_ETXD0
+        txd1:
+          pinId: RJ9
+          name: RMII_TXD1
+          function: ETHMAC_ETXD1
+        refck:
+          pinId: RJ11
+          name: RMII_CLK_OUT
+          function: ETHMAC_EREFCLK
+        rxd1:
+          pinId: RH5
+          name: RMII_RXD1
+          function: ETHMAC_ERXD1
+        rxd0:
+          pinId: RH8
+          name: RMII_RXDO
+          function: ETHMAC_ERXD0
+        rxer:
+          pinId: RF3
+          name: RMII_RX_ER
+          function: ETHMAC_ERXERR
+        rxdv:
+          pinId: RH13
+          name: RMII_CRS_DV
+          function: ETHMAC_ECRSDV
+        mdc:
+          pinId: RD11
+          name: RMII_MDC
+          function: ETHMAC_EMDC
+        mdio:
+          pinId: RJ1
+          name: RMII_MDIO
+          function: ETHMAC_EMDIO
+      nint:
+        pinId: RC13
+        name: RMII_NINT
+        function: INT_INT4
+      nrst:
+        pinId: RJ15
+        name: RMII_NRST
+        function: GPIO
+        direction: out
+        latch: low
