@@ -344,20 +344,3 @@ connectors:
           pinId: RK9
           name: EXT_USART_RX
           function: UART2_U2RX
-      spi:
-        cs:
-          pinId: RB10
-          name: EXT_SPI_CS
-          function: SPI2_SS2 (out)
-        sck:
-          pinId: RB6
-          name: EXT_SPI_SCK
-          function: SPI2_SCK2
-        miso:
-          pinId: RA15
-          name: EXT_SPI_MISO
-          function: SPI2_SDI2
-        mosi:
-          pinId: RB14
-          name: EXT_SPI_MOSI
-          function: SPI2_SDO2
