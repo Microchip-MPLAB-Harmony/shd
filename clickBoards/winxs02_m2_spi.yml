@@ -1,0 +1,71 @@
+name: WIxCS02 M2 WiFi Module Card SPI
+description: >
+  WIxCS02 M.2 Wi-Fi® Module Card is an M.2 interface board that supports the IEEE® 802.11 b/g/n standard. 
+  It is designed to demonstrate the features and functionalities of Microchip’s low-power Wi-Fi WILCS02UE Module.
+
+documentation: https://www.microchip.com/en-us/development-tool/EV59Y78A
+compatible: m2
+dependencies: [[drvWifiWincS02, spi]]
+supported:
+  usb:
+    dp:
+      name: WIxCS02_PTA_WLAN_ACTIVE
+      function: GPIO
+      direction: input
+      pull up: True
+    dm:
+      name: WIxCS02_PTA_BT_PRIO
+      function: GPIO
+      direction: output
+      latch: low
+  spi:
+    cs:
+      name: WIxCS02_SPI_CS
+      function: GPIO
+    sck:
+      name: WIxCS02_SPI_SCK
+    miso:
+      name: WIxCS02_SPI_MISO
+    mosi:
+      name: WIxCS02_SPI_MOSI
+  hostwake:
+    name: WIxCS02_HOST_WAKE
+  usartwake:
+    name: WIxCS02_UART_WAKE
+  usart:
+    tx: 
+      name: WIxCS02_USART_TXD
+    rx:
+      name: WIxCS02_USART_RXD
+    rts:
+      name: WIxCS02_USART_RTS
+      function: unused
+    cts:
+      name: WIxCS02_USART_CTS
+      function: unused
+  vendor:
+    strap1: 
+      name: WIxCS02_STRAP1
+      latch: high
+    wake: 
+      name: WIxCS02_WAKE
+    strap2: 
+      name: WIxCS02_STRAP2
+  coex:
+    coex3:
+      name: WIxCS02_PTA_BT_PRIO
+    txd:
+      name: WIxCS02_PTA_WLAN_ACTIVE
+    rxd:
+      name: WIxCS02_PTA_BT_ACTIVE
+  susclk:
+    name: WIxCS02_SUSCLK
+  nrst:
+    name: WIxCS02_RESETN
+  i2c:
+    sda:
+      name: WIxCS02_I2C_SDA1
+    scl:
+      name: WIxCS02_I2C_SCl1
+  alert:
+    name: WIxCS02_I2C_WAKE

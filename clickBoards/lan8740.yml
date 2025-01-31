@@ -1,0 +1,29 @@
+name: LAN8740 Phy Board
+description: >
+  The EVB8740 is a PHY Evaluation Board EVB that interfaces a MAC controller to the LAN8740 Ethernet PHY 
+  via a standard 40-pin MII connector and supports Energy Efficient Ethernet IEE802.3az along with Wake-on-LAN and Cable Diagnostics.
+documentation: https://www.microchip.com/en-us/development-tool/EVB8740
+compatible: rmii
+dependencies: [[drvExtPhyLan8740, ethphy]]
+supported:
+  ethphy:
+    txen:
+      name: PHY_DB_RMII_TXEN
+    txd0:
+      name: PHY_DB_RMII_TXD0
+    txd1:
+      name: PHY_DB_RMII_TXD1
+    refck:
+      name: PHY_DB_RMII_REFCK
+    rxd1:
+      name: PHY_DB_RMII_RXD1
+    rxd0:
+      name: PHY_DB_RMII_RXDO
+    rxer:
+      name: PHY_DB_RMII_RXER
+    rxdv:
+      name: PHY_DB_RMII_RXDV
+    mdc:
+      name: PHY_DB_RMII_MDC
+    mdio:
+      name: PHY_DB_RMII_MDIO

@@ -491,9 +491,9 @@ connectors:
           name: MikroBUS2_I2C_SCL
           function: FLEXCOM0_IO1
 
-  - compatible: m.2
+  - compatible: m2
     name: Wireless M2 Header
-    description: Wireless m.2 Header
+    description: Wireless M2 Header
     pinctrl:
       spi:
         cs:
@@ -537,7 +537,7 @@ connectors:
           pinId: PD0
           name: Wireless_SDI0_DAT3
           function: SDMMC2_DAT3
-      irqn:
+      hostwake:
         pinId: PD4
         name: Wireless_IRQN
         function: GPIO
@@ -561,21 +561,22 @@ connectors:
           pinId: PD3
           name: Wireless_USART_RTS
           function: FLEXCOM1_IO4
-      modsel1:
-        pinId: PD7
-        name: Wireless_MODSEL1
-        function: GPIO
-        direction: out
-      wake:
-        pinId: PD1
-        name: Wireless_WAKE
-        function: GPIO
-        direction: out
-      modsel2:
-        pinId: PD6
-        name: Wireless_MODSEL2
-        function: GPIO
-        direction: out
+      vendor:
+        strap1:
+          pinId: PD7
+          name: Wireless_MODSEL1
+          function: GPIO
+          direction: out
+        wake:
+          pinId: PD1
+          name: Wireless_WAKE
+          function: GPIO
+          direction: out
+        strap2:
+          pinId: PD6
+          name: Wireless_MODSEL2
+          function: GPIO
+          direction: out
       nrst:
         pinId: PD20
         name: Wireless_NRST
@@ -591,12 +592,13 @@ connectors:
           pinId: PC6
           name: Wireless_I2C_SCL
           function: FLEXCOM0_IO1
-      int:
+      alert:
         pinId: PD2
         name: Wireless_INT
         function: GPIO
         direction: in
         pull up: True
+        interrupt: falling edge
 
   - compatible: rgmii
     name: Gigabit Ethernet interface

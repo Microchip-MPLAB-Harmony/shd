@@ -170,7 +170,16 @@ __connectorSpec = {
             'mdio': 20,
         },
         'nint': 21,
-        'nrst': 22
+        'nrst': 22,
+        'spi': {
+            'cs': 11,
+            'sck': 12,
+            'miso': 5,
+            'mosi': 4
+        },
+        'gpio0': 23,
+        'gpio1': 14,
+        'gpio2': 13,
     },
     'rgmii': {
         'ethphy': {
@@ -204,6 +213,22 @@ __connectorSpec = {
         'nint': 49,
     },
     'm2': {
+        'usb': {
+            'usb_dp': 3,
+            'usb_dm': 5,
+        },
+        'pcm': {
+            'clk': 8,
+            'sync': 10,
+            'out': 12,
+            'in': 14,
+        },
+        'i2s': {
+            'sck': 8,
+            'ws': 10,
+            'sdout': 12,
+            'sdin': 14,
+        },
         'spi': {
             'sck': 11,
             'miso': 13,
@@ -216,29 +241,38 @@ __connectorSpec = {
             'dat0': 13,
             'dat1': 15,
             'dat2': 17,
+            'dat3': 19,
         },
-        'irqn': 21,
+        'host_wake': 21,
+        'usart_wake': 20,
         'usart': {
-            'rx': 22,
-            'tx': 32,
-            'cts': 34,
-            'rts': 36
+            'tx': 22,
+            'rx': 32,
+            'rts': 34,
+            'cts': 36
         },
-        'modsel1': 38,
-        'wireless_wake': 40,
-        'modsel2': 42,
+        'vendor': {
+            'strap1': 38,
+            'wake': 40,
+            'strap2': 42
+        },
+        'coex': {
+            'coex3': 44,
+            'txd': 46,
+            'rxd': 48
+        },
+        'susclk': 50,
         'mbus': {
             'pta_bt_prio': 44,
             'pta_wlan_active': 46,
             'pta_bt_active': 48
         },
-        'xin32k': 50,
         'nrst': 54,
         'i2c': {
             'sda': 58,
             'scl': 60
         },
-        'int': 62
+        'alert': 62
     }
 }
 

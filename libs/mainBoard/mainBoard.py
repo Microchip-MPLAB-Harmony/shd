@@ -85,6 +85,13 @@ class MainBoard:
         return "{}".format(self.__currentConfig)
 
     def __checkComponentAvailable(self, component):
+        # Handle exceptions
+        if component.lower() in ['int', 'aic', 'supc']:
+            return True
+        
+        if component.lower() == 'unused':
+            return False
+        
         if self.__db.isComponentAvailable(component) == False:
             if component != "":
                 self.__log.writeInfoMessage("SHD >> WARNING: {} component is not available in your Harmony Content Path.".format(component))
@@ -324,6 +331,7 @@ class MainBoard:
             for pinId in self.__configuredPins:
                 # Get collision pins in configuredPins
                 symbolList = self.__collisionsByPinID.get(pinId)
+                # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions check PinId:{} symbolList:{}".format(pinId, symbolList))
                 if symbolList != None:
                     for symbolId in symbolList:
                         symbolInterface = self.__symbolInterfaces.get(symbolId)
@@ -689,9 +697,10 @@ class MainBoard:
                 # Extract PLIB capabilities from Pin Function
                 if pinFunction != None and pinFunction != 'GPIO':
                     newCap = pinFunction.upper().split('_')[0].lower()
-                    if ('gmac' not in newCap) and (newCap not in ["usb", "i2s"]):
-                        # Handle exceptions: USB, I2S
-                        capId = newCap
+                    if ('gmac' not in newCap) and ('ethmac' not in newCap):
+                        if (newCap not in ["usb", "i2s"]):
+                            # Handle exceptions: USB, I2S
+                            capId = newCap
 
                 # GPIOs don't have dependencies, except I2C_BB
                 # Extract PLIB capabilities from Pin Name (I2C_BB)
@@ -701,6 +710,11 @@ class MainBoard:
                         capId = "i2c_bb"
                     else:
                         autodetectDeps = False
+
+                # Not add a new dependency if capId == unused (some pins are not used in click boards)
+                if capId == 'unused':
+                    # self.__log.writeInfoMessage("SHD >> __signalEnableCallback skip dependency (unused): {}".format((depId, capId)))
+                    autodetectDeps = False
 
                 if autodetectDeps == True:
                     # self.__log.writeInfoMessage("SHD >> __signalEnableCallback Autodetect dependency [{},{}]".format(depId, capId))
@@ -1167,7 +1181,7 @@ class MainBoard:
                         # Handle SPI CS exception (configuration option is not allowed)
                         if subSignal.lower() == 'cs' and function.lower() is not "unused":
                             # self.__log.writeInfoMessage("SHD >> Handle SPI CS exception - subSignal: {}".format(subSignal.lower())) 
-                            symbolName = self.__symbolNamesByConnector[connectorName][pinId]
+                            symbolName = self.__symbolNamesByConnector[connectorName][pinId][signal]
                             shdSpiCSConfigSymbolName = "{}_{}".format(symbolName, "CSASGPIO")
                             # self.__log.writeInfoMessage("SHD >> CS set Visible: {}".format(shdSpiCSConfigSymbolName))
                             signalSpiCsPinSymbol = board.getSymbolByID(shdSpiCSConfigSymbolName)
@@ -1175,7 +1189,7 @@ class MainBoard:
                             if function.lower() == "gpio":
                                 signalSpiCsPinSymbol.setValue(True)
 
-                    signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId])
+                    signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId][signal])
                     signalPinSymbol.setLabel(label)
                     
                 # self.__log.writeInfoMessage("SHD >> setConnectorConfig Enable symbol: {}".format(connectorSignalName))
@@ -1199,21 +1213,29 @@ class MainBoard:
             signalSymbol.setLabel(signal.upper())
             # Update Symbol label
             pinDescriptionList = self.getDescriptionListByConnectorSignal(connectorName, signal)
+            # self.__log.writeInfoMessage("SHD >> SHD restoreConnections connectorName: {} signal: {}".format(connectorName, signal))
             for pinDescription in pinDescriptionList:
                 if len(pinDescription) == 4:
                     name, function, pinNumber, pinId = pinDescription
                     label = self.__getSymbolLabel(name, function, None, pinNumber, pinId)
+                    symbolID = self.__symbolNamesByConnector[connectorName][pinId][signal]
+                    # self.__log.writeInfoMessage("SHD >> SHD restoreConnections symbolID 1: {}".format(symbolID))
                 else:
                     name, function, subSignal, pinNumber, pinId = pinDescription
+                    # self.__log.writeInfoMessage("SHD >> SHD pinDescription: {}".format(pinDescription))
                     label = self.__getSymbolLabel(name, function, subSignal, pinNumber, pinId)
+                    symbolID = self.__symbolNamesByConnector[connectorName][pinId][signal]
+                    # self.__log.writeInfoMessage("SHD >> SHD restoreConnections symbolID 2: {}".format(symbolID))
                     # Handle SPI CS exception (configuration option is not allowed)
                     if subSignal.lower() == 'cs' and function != "GPIO":
-                        symbolName = self.__symbolNamesByConnector[connectorName][pinId]
+                        symbolName = self.__symbolNamesByConnector[connectorName][pinId][signal]
                         shdSpiCSConfigSymbolName = "{}_{}".format(symbolName, "CSASGPIO")
+                        # self.__log.writeInfoMessage("SHD >> SHD restoreConnections symbolID 2 CS: {}".format(shdSpiCSConfigSymbolName))
+                        # self.__log.writeInfoMessage("SHD >> SHD subSignal: {} function: {}".format(subSignal, function))
                         signalSpiCsPinSymbol = board.getSymbolByID(shdSpiCSConfigSymbolName)
                         signalSpiCsPinSymbol.setVisible(True)
 
-                signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId])
+                signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId][signal])
                 signalPinSymbol.setLabel(label)
 
     def handleMessage(self, id, args):
@@ -1491,7 +1513,7 @@ class MainBoard:
                     if addClickBoard == True:
                         clickBoardList.append(clickBoardName)
                 
-                if len(clickBoardList) == 1:
+                if len(clickBoardList) == 0:
                     clickBoardList = ['No extension board available']
                 else:
                     clickBoardList.sort()
@@ -1551,7 +1573,12 @@ class MainBoard:
                             
                         shdConPinControlSymbolName = self.getConnectorSignalPinSymbolName(conName, signal, pinId)
                         # Store the Symbol name to be used in click Boards connection events
-                        symbolNamesByPinId.setdefault(pinId, shdConPinControlSymbolName)
+                        listSymbolId = symbolNamesByPinId.get(pinId)
+                        if listSymbolId == None:
+                            symbolNamesByPinId.setdefault(pinId, {signal:shdConPinControlSymbolName})
+                        else:
+                            symbolNamesByPinId[pinId][signal] = shdConPinControlSymbolName
+
                         # self.__log.writeInfoMessage("SHD >> symbolNamesByPinId: {}".format(symbolNamesByPinId))
 
                         # self.__log.writeInfoMessage("SHD >> conPinControlName: ", conPinControlName)

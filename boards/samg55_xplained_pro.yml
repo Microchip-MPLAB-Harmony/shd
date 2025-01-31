@@ -180,11 +180,11 @@ connectors:
       spi:
         cs:
           pinId: PA11
-          name: EXT1SPI_CS
+          name: EXT1_SPI_CS
           function: SPI5_NPCS0
         sck:
           pinId: PA14
-          name: EXT1SPI_SCK
+          name: EXT1_SPI_SCK
           function: SPI5_SPCK
         miso:
           pinId: PA12

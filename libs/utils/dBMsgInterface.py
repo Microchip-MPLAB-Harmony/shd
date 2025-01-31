@@ -799,12 +799,11 @@ def __getConfigDatabaseDrvWINCS02(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
 
     configDB = dict()
-    if (signalId == 'irq') or (signalId == 'int'):
+    if (signalId == 'irq') or (signalId == 'int') or (signalId == 'hostwake'):
         plib = functionValue.split("_")[0]
         setting = functionValue.split('_')[-1]
-        channel = "".join(filter(lambda x: x.isdigit(), setting))
         configDB.setdefault('msgID', 'WINCS02_CONFIG_HW_IO')
-        configDB.setdefault('config', (plib, channel, enable))
+        configDB.setdefault('config', (signalId, pinId, plib, setting, enable))
     
     return configDB
 
@@ -972,7 +971,9 @@ def getAutoconnectTable(family, idDependency, idCapability):
                     depType = "spi_dependency"
                 elif 'drv_sst26' == depId:
                     depType = depId
-                    if 'qspi' not in idCapability:
+                    if 'sqi' in idCapability:
+                        capId = "SQI"
+                    elif 'qspi' not in idCapability:
                         capId = "SPI"
                 elif 'RNBD_Dependency' == depId:
                     exception = True
@@ -1008,6 +1009,10 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 else:
                     if idCapability[:2] == 'a_':
                         idCapability = idCapability.replace("a_", "")
+                        if family == "PIC32MZDA":
+                            instance = idCapability[-1]
+                            idCapability = "SPI{}_I2S".format(instance)
+                            exception = True
                     elif 'drvExtPhy' in idCapability:
                         exception = True
                         idCapability = "lib{}".format(idCapability)
@@ -1032,7 +1037,7 @@ def getDriverDependencyFromPin(pinName, pinFunction):
             dep = ""
         else:
             dep = "drv_i2c"
-    elif __checkSubstringList(['SPI', 'MISO', 'MOSI', 'CS', 'SCK'], string) == True:
+    elif __checkSubstringList(['_SPI', '_MISO', '_MOSI', '_CS', '_SCK'], string) == True:
         if __checkSubstringList(['LIN' ,'GFX_DISP' ,'X32', 'I2S'], string) == True:
             dep = ""
         elif __checkSubstringList(['USART'], string) == True:
