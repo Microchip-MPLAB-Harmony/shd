@@ -39,10 +39,10 @@ def instantiateComponent(boardComponent):
     context["log"] = Log
     mainBoard = MainBoard(context)
     boardName = mainBoard.getName()
-    if mainBoard != None:
+    if boardName is not None:
         Log.writeInfoMessage("Loading SHD Main Board: " + boardName.upper())
     else:
-        Log.writeInfoMessage("ERROR in Loading SHD Main Board: " + boardName.upper())
+        Log.writeInfoMessage("ERROR in Loading SHD Main Board: " + context["configuration"])
         return
 
     mainBoard.createConfigurationSymbols(boardComponent)
