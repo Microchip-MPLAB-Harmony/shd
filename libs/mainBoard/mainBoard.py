@@ -93,9 +93,9 @@ class MainBoard:
             return False
         
         if self.__db.isComponentAvailable(component) == False:
-            if component != "":
-                self.__log.writeInfoMessage("SHD >> WARNING: {} component is not available in your Harmony Content Path.".format(component))
-                self.__log.writeInfoMessage("SHD >> To be able to use this component, please download the proper H3 repository.")
+            # if component != "":
+            #     self.__log.writeInfoMessage("SHD >> WARNING: {} component is not available in your Harmony Content Path.".format(component))
+            #     self.__log.writeInfoMessage("SHD >> To be able to use this component, please download the proper H3 repository.")
             return False
 
         return True
@@ -363,7 +363,7 @@ class MainBoard:
     def __connectComponentDependencies(self, connection):
         depId, capId = connection
             
-        connectTable = getAutoconnectTable(self.__family, depId, capId)
+        connectTable = getAutoconnectTable(self.__atdf, depId, capId)
         # self.__log.writeInfoMessage("SHD >> __connectComponentDependencies connectTable: {}".format(connectTable)) 
 
         if len(connectTable) > 0:
@@ -692,14 +692,20 @@ class MainBoard:
                 if pinName != None:
                     newDep = getDriverDependencyFromPin(pinName, pinFunction)
                     if (newDep != ""):
+                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback newDep: {}".format((newDep)))
                         depId = newDep
                     
                 # Extract PLIB capabilities from Pin Function
                 if pinFunction != None and pinFunction != 'GPIO':
                     newCap = pinFunction.upper().split('_')[0].lower()
                     if ('gmac' not in newCap) and ('ethmac' not in newCap):
-                        if (newCap not in ["usb", "i2s"]):
-                            # Handle exceptions: USB, I2S
+                        if newCap.startswith("i2s") == True:
+                            # Handle exceptions: I2S
+                            capId = newCap.replace("i2s", "a_i2s")
+                            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback newCap 1: {}".format((capId)))
+                        elif newCap != "usb":
+                            # Handle exceptions: USB
+                            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback newCap 2: {}".format((newCap)))
                             capId = newCap
 
                 # GPIOs don't have dependencies, except I2C_BB

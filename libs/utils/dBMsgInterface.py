@@ -880,28 +880,31 @@ def getDBMsgDriverConfiguration(settings):
 
     return (componentID, msgID, params)
 
-def getAutoconnectTable(family, idDependency, idCapability):
+def getAutoconnectTable(atdf, idDependency, idCapability):
     connectionTable = []
-    # print("SHD >> getAutoconnectTable dep:{} cap:{}".format(idDependency, idCapability)) 
+    family = atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
+    # print("SHD >> getAutoconnectTable family:{} dep:{} cap:{}".format(family, idDependency, idCapability)) 
 
     if idDependency != "":
         for depId, capId in __drvDependencies.items():
             exception = False
+            periphGmac = None
+            periphEth = None
             depToCheck = idDependency
 
             # Handle exceptions in drv instance numbers designators and RMII connections
-            if "drvEmac" in idDependency: #drvEmac0
+            if idDependency.startswith("drvEmac") == True:
                 if "drvExtPhy" in idCapability:
                     depToCheck = "drvEmac"
                 else:
                     continue
-            elif "drvGmac" in idDependency: #drvGmac0
+            elif idDependency.startswith("drvGmac") == True:
+                periphGmac = atdf.getNode("/avr-tools-device-file/devices/device/peripherals/module@[name=\"GMAC\"]")
+                periphEth = atdf.getNode("/avr-tools-device-file/devices/device/peripherals/module@[name=\"ETH\"]")
                 if "drvExtPhy" in idCapability:
                     depToCheck = "drvGmac"
                 else:
                     continue
-            elif "drvGmac" in idDependency: #drvGmac0
-                depToCheck = "drvGmac"
             else:
                 # Remove instance number if needed from dep to check
                 idDepSplit = idDependency.split("_")
@@ -915,7 +918,8 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 connection.append(idDependency)
                 # handle name exceptions
                 if 'a_drv_i2s' == depId:
-                    depType = depId.replace('a_', '')
+                    exception = True
+                    depType = "drv_i2s_I2S_dependency"
                 elif 'audio_codec_ak495' in idDependency:
                     depType = idCapability # could be I2C or I2S
                 elif 'stdio' == depId:
@@ -937,32 +941,30 @@ def getAutoconnectTable(family, idDependency, idCapability):
                     else:
                         # print("SHD >> getAutoconnectTable skip pmsm_foc: plib:{}".format(plib)) 
                         continue
-                    
                     # print("SHD >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType)) 
                 elif 'drvGmac' == depId:
                     exception = True
-                    # print("SHD >> getAutoconnectTable drvGmac: family:{} - depId:{}".format(family, depId)) 
-                    if "SAMA" in family:
+                    if periphGmac is not None:
                         instance = "".join(filter(lambda x: x.isdigit(), idDependency))
                         depType = "GMAC{}_PHY_Dependency".format(instance)
-                    elif family == "SAME" or family == "SAMV" or family == "SAMS":
-                        depType = "GMAC_PHY_Dependency"
-                    else:
+                    elif periphEth is not None:
                         depType = "ETH_PHY_Dependency"
+                    else:
+                        # print("SHD >> getAutoconnectTable drvGmac peripheral not found") 
+                        continue
+                elif 'drvEmac' == depId:
+                    exception = True
+                    instance = "".join(filter(lambda x: x.isdigit(), idDependency))
+                    depType = "MAC_PHY_Dependency{}".format(instance)
+                elif 'drvPic32mEthmac' == depId:
+                    exception = True
+                    depType = "ETHMAC_PHY_Dependency"
                 elif 'le_gfx_lcdc' == depId:
                     exception = True
                     depType = "LCDC"
                 elif 'le_gfx_slcdc' == depId or 'le_gfx_slcd' == depId:
                     exception = True
                     depType = "Segmented Display"
-                elif 'drvEmac' == depId:
-                    exception = True
-                    # get Instance number
-                    instance = "".join(filter(lambda x: x.isdigit(), idDependency))
-                    depType = "MAC_PHY_Dependency{}".format(instance)
-                elif 'drvPic32mEthmac' == depId:
-                    exception = True
-                    depType = "ETHMAC_PHY_Dependency"
                 elif 'ptc' == depId:
                     exception = True
                     depType = "lib_acquire"
@@ -994,28 +996,38 @@ def getAutoconnectTable(family, idDependency, idCapability):
                 exception = False
                 connection.append(idCapability)
                 if idCapability == "i2c_bb":
+                    exception = True
                     idCapability = "I2C"
-                    exception = True
                 elif "gfx_disp_slcd1-" in idCapability:
-                    idCapability = "slcd_display"
                     exception = True
-                elif family == "PIC32MX":
-                    if "a_i2s" in capId[:5]:
-                        instance = idCapability[-1]
-                        idCapability = "I2S{}_I2S".format(instance)
+                    idCapability = "slcd_display"
+                elif idCapability.startswith("a_i2sc"):
+                    exception = True
+                    instance = "".join(filter(lambda x: x.isdigit(), idCapability.replace("i2s", "is")))
+                    idCapability = "I2SC{}_I2S".format(instance)
+                elif idCapability.startswith("a_ssc"):
+                    exception = True
+                    instance = "".join(filter(lambda x: x.isdigit(), idCapability.replace("i2s", "is")))
+                    idCapability = "SSC{}_I2S".format(instance)
+                elif idCapability.startswith("a_i2s"):
+                    spiPeripheral = atdf.getNode("/avr-tools-device-file/devices/device/peripherals/module@[name=\"SPI\"]")
+                    spiVersion = None
+                    if spiPeripheral is not None:
+                        spiVersion = spiPeripheral.getAttribute("id")
+
+                    if spiVersion == "01329":
                         exception = True
+                        instance = "".join(filter(lambda x: x.isdigit(), idCapability.replace("i2s", "is")))
+                        idCapability = "SPI{}_I2S".format(instance)
+                    else:
+                        exception = True
+                        instance = "".join(filter(lambda x: x.isdigit(), idCapability.replace("i2s", "is")))
+                        idCapability = "I2S{}_I2S".format(instance)
                 elif capId == "SWI":
                     capId = "UART"
-                else:
-                    if idCapability[:2] == 'a_':
-                        idCapability = idCapability.replace("a_", "")
-                        if family == "PIC32MZDA":
-                            instance = idCapability[-1]
-                            idCapability = "SPI{}_I2S".format(instance)
-                            exception = True
-                    elif 'drvExtPhy' in idCapability:
-                        exception = True
-                        idCapability = "lib{}".format(idCapability)
+                elif 'drvExtPhy' in idCapability:
+                    exception = True
+                    idCapability = "lib{}".format(idCapability)
 
                 if exception == True:
                     connection.append("{}".format(idCapability))
