@@ -545,3 +545,4 @@ connectors:
         function: GPIO
         direction: in
         pull up: True
+        interrupt: low level

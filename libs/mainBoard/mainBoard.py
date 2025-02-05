@@ -433,7 +433,7 @@ class MainBoard:
                             depId = driver
                             # self.__log.writeInfoMessage("SHD >> __overlapDependencies add checkPlibFromSignalConnector:PLIB {} {}".format(depId, capId))
                             newDeps[depId] = capId
-                        elif 'drvExtPhy' in signal:
+                        elif ('drvExtPhy' in signal) and ('mac' in depId):
                             del newDeps[depId]
                             # Replace connection for RMII
                             capId = signal
@@ -871,7 +871,6 @@ class MainBoard:
                     # self.__log.writeInfoMessage("SHD >> __connectClickBoard: bindingList - {}".format(bindingList))
                     if bindingList != None:
                         index = 0
-                        rmiiConDetected = False
                         for binding in bindingList:
                             if len(binding) == 1:
                                 bindingList[index] = binding
@@ -880,6 +879,7 @@ class MainBoard:
                                 pinControlConnector = self.getPinControlByConnectorName(connectorName)
                                 pinControlSignal = pinControlConnector.get(signalCon)
                                 if pinControlSignal != None:
+                                    rmiiConDetected = False
                                     pinFunction = pinControlSignal.get("function")
                                     if pinFunction == None: # this is a bus signals (usart, i2c, spi, rmii)
                                         if signalCon == 'spi':
@@ -890,7 +890,10 @@ class MainBoard:
                                             pinFunction = pinControlSignal.get("sda").get("function")
                                         elif signalCon == 'ethphy':
                                             rmiiConDetected = True
-                                            pinFunction = pinControlSignal.get("txen").get("function")
+                                            if clickBoardInterface.getConnectorCompatible() == "rgmii":
+                                                pinFunction = pinControlSignal.get("gtxen").get("function")
+                                            else:
+                                                pinFunction = pinControlSignal.get("txen").get("function")
 
                                     if pinFunction != None:
                                         pinFunction = pinFunction.upper()
@@ -1132,8 +1135,11 @@ class MainBoard:
             else:
                 # Multi Pin
                 for subSignal, newSubConfig in newConfig.items():
-                    if pinControlCurrent.get(signal) != None and pinControlCurrent[signal][subSignal] != None:
-                        pinControlCurrent[signal][subSignal] = self.__updatePinConfiguration(pinControlCurrent[signal][subSignal], newSubConfig)
+                    signalId = pinControlCurrent.get(signal)
+                    if signalId != None:
+                        subSignalId = signalId.get(subSignal)
+                        if subSignalId != None:
+                            pinControlCurrent[signal][subSignal] = self.__updatePinConfiguration(pinControlCurrent[signal][subSignal], newSubConfig)
                     
         # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
 

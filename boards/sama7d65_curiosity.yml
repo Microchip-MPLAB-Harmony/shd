@@ -693,4 +693,4 @@ connectors:
         function: GPIO
         direction: in
         pull up: True
-        interrupt: falling edge
+        interrupt: low level

@@ -1,0 +1,49 @@
+name: LAN8840 EDS2 Daughter Card
+description: >
+  The LAN8840 EDS2 PHY Daughter Card enables copper Gigabit Ethernet connectivity for 
+  Microchip development platforms with the EDS2 interface. The LAN8840 is a completely 
+  integrated 10/100/1000 Ethernet physical layer transceiver with PTP Support for 
+  transmission and reception of data on standard CAT-5 as well as CAT-5e and 
+  CAT-6 unshielded twisted pair (UTP) cables.
+documentation: https://www.microchip.com/en-us/development-tool/EV12N54A
+compatible: rgmii
+dependencies: [[drvExtPhyLan8840, ethphy], [drv_at24, i2c]]
+supported:
+  ethphy:
+      gmdc:
+        name: LAN8840_RGMII_GMDC
+      gmdio:
+        name: LAN8840_RGMII_GMDIO
+      g125ck:
+        name: LAN8840_RGMII_G125CK
+      gtxen:
+        name: LAN8840_RGMII_GTXEN
+      gtxck:
+        name: LAN8840_RGMII_GTXCK
+      gtx0:
+        name: LAN8840_RGMII_GTX0
+      gtx1:
+        name: LAN8840_RGMII_GTX1
+      gtx2:
+        name: LAN8840_RGMII_GTX2
+      gtx3:
+        name: LAN8840_RGMII_GTX3
+      grxdv:
+        name: LAN8840_RGMII_GRXDV
+      grxck:
+        name: LAN8840_RGMII_GRXCK
+      grx0:
+        name: LAN8840_RGMII_GRX0
+      grx1:
+        name: LAN8840_RGMII_GRX1
+      grx2:
+        name: LAN8840_RGMII_GRX2
+      grx3:
+        name: LAN8840_RGMII_GRX3
+  i2c:
+    sda:
+      name: LAN8840_RGMII_I2C_SDA
+    scl:
+      name: LAN8840_RGMII_I2C_SCL
+  nint:
+    name: LAN8840_RGMII_NIRQ
