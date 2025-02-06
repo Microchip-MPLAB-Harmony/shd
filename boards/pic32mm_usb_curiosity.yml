@@ -149,25 +149,30 @@ interfaces:
             pinId: RB13
             name: X32-A_I2C_SCL
             function: I2C3_SCL3
-      - name: SPI interface
-        description: Audio SPI interface 1
+      - name: I2S interface
+        description: Audio I2S interface 1
+        dependencies: [[a_drv_i2s, a_i2s2]]
         pinctrl:
           cs:
             pinId: RB2
-            name: X32-A_SPI-1_CS
-            function: SPI2_SS2OUT
+            name: X32-A_I2S-1_CS
+            function: I2S2_SS2OUT
           sck:
             pinId: RB8
-            name: X32-A_SPI-1_SCK
-            function: SPI2_SCK2OUT
-          miso:
+            name: X32-A_I2S-1_SCK
+            function: I2S2_SCK2OUT
+          sdi:
             pinId: RA9
-            name: X32-A_SPI-1_MISO
-            function: SPI2_SDI2
-          mosi:
+            name: X32-A_I2S-1_MISO
+            function: I2S2_SDI2
+          sdo:
             pinId: RB3
-            name: X32-A_SPI-1_MOSI
-            function: SPI2_SDO2
+            name: X32-A_I2S-1_MOSI
+            function: I2S2_SDO2
+          mck:
+            pinId: RB15
+            name: X32-A_I2S-1_MCK
+            function: REFCLKO
       - name: X32 StandBy / Reset
         description: StandBy / Reset control signal
         pinctrl:
@@ -177,32 +182,26 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: Clock Reference
-        description: Clock Reference
-        pinctrl:
-          gpio:
-            pinId: RB15
-            name: X32-A_REFCLK
-            function: REFCLKO
-      - name: SPI interface
-        description: Audio SPI interface 2
+      - name: I2S interface
+        description: Audio I2S interface 2
+        dependencies: [[a_drv_i2s, a_i2s3]]
         pinctrl:
           cs:
             pinId: RC11
-            name: X32-A_SPI-2_CS
-            function: SPI3_SS3
+            name: X32-A_I2S-2_CS
+            function: I2S3_SS3
           sck:
             pinId: RA10
-            name: X32-A_SPI-2_SCK
-            function: SPI3_SCK3
-          miso:
+            name: X32-A_I2S-2_SCK
+            function: I2S3_SCK3
+          sdi:
             pinId: RA7
-            name: X32-A_SPI-2_MISO
-            function: SPI3_SDI3
-          mosi:
+            name: X32-A_I2S-2_MISO
+            function: I2S3_SDI3
+          sdo:
             pinId: RA8
-            name: X32-A_SPI-2_MOSI
-            function: SPI3_SDO3
+            name: X32-A_I2S-2_MOSI
+            function: I2S3_SDO3
       - name: GPIO interface
         description: Audio GPIO interface 2
         pinctrl:
@@ -271,25 +270,30 @@ interfaces:
             function: GPIO
             direction: in
             open drain: True
-      - name: SPI interface
-        description: Audio SPI interface 1
+      - name: I2S interface
+        description: Audio I2S interface 1
+        dependencies: [[a_drv_i2s, a_i2s3]]
         pinctrl:
           cs:
             pinId: RC11
-            name: X32-B_SPI-1_CS
-            function: SPI2_SS3
+            name: X32-A_I2S-1_CS
+            function: I2S3_SS3
           sck:
             pinId: RA10
-            name: X32-B_SPI-1_SCK
-            function: SPI3_SCK3
-          miso:
+            name: X32-A_I2S-1_SCK
+            function: I2S3_SCK3
+          sdi:
             pinId: RA7
-            name: X32-B_SPI-1_MISO
-            function: SPI3_SDI3
-          mosi:
+            name: X32-A_I2S-1_MISO
+            function: I2S3_SDI3
+          sdo:
             pinId: RA8
-            name: X32-B_SPI-1_MOSI
-            function: SPI3_SDO3
+            name: X32-A_I2S-1_MOSI
+            function: I2S3_SDO3
+          mck:
+            pinId: RB15
+            name: X32-A_I2S-1_MCK
+            function: REFCLKO
       - name: X32 StandBy / Reset
         description: StandBy / Reset control signal
         pinctrl:
@@ -299,32 +303,26 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: Clock Reference
-        description: Clock Reference
-        pinctrl:
-          gpio:
-            pinId: RB15
-            name: X32-B_REFCLK
-            function: REFCLKO
-      - name: SPI interface
-        description: Audio SPI interface 2
+      - name: I2S interface
+        description: Audio I2S interface 2
+        dependencies: [[a_drv_i2s, a_i2s2]]
         pinctrl:
           cs:
             pinId: RB2
-            name: X32-B_SPI-2_CS
-            function: SPI2_SS2OUT
+            name: X32-B_I2S-2_CS
+            function: I2S2_SS2OUT
           sck:
             pinId: RB8
-            name: X32-B_SPI-2_SCK
-            function: SPI2_SCK2OUT
-          miso:
+            name: X32-B_I2S-2_SCK
+            function: I2S2_SCK2OUT
+          sdi:
             pinId: RA9
-            name: X32-B_SPI-2_MISO
-            function: SPI2_SDI2
-          mosi:
+            name: X32-B_I2S-2_MISO
+            function: I2S2_SDI2
+          sdo:
             pinId: RB3
-            name: X32-B_SPI-2_MOSI
-            function: SPI2_SDO2
+            name: X32-B_I2S-2_MOSI
+            function: I2S2_SDO2
       - name: GPIO interface
         description: Audio GPIO interface 2
         pinctrl:

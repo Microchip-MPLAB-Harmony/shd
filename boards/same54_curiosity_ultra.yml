@@ -208,12 +208,6 @@ interfaces:
         description: Audio I2S interface
         dependencies: [[a_drv_i2s, a_i2s]]
         pinctrl:
-          stbrst:
-            pinId: PC18
-            name: X32_STBRST
-            function: GPIO
-            direction: out
-            latch: high
           sdi:
             pinId: PB10
             name: X32_I2S_SDI
@@ -222,7 +216,7 @@ interfaces:
             pinId: PA11
             name: X32_I2S_SDO
             function: I2S_SDO
-          fs:
+          ws:
             pinId: PA09
             name: X32_I2S_FS
             function: I2S_FS0
@@ -230,6 +224,15 @@ interfaces:
             pinId: PA10
             name: X32_I2S_SCK
             function: I2S_SCK0
+      - name: X32 StandBy / Reset
+        description: StandBy / Reset control signal
+        pinctrl:
+          stbyrst:
+            pinId: PC18
+            name: X32_STBRST
+            function: GPIO
+            direction: out
+            latch: high
 
   - name: DACC interface
     description: DAC OUT interface configuration

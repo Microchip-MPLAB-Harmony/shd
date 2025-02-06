@@ -259,11 +259,11 @@ interfaces:
         description: Audio I2SC interface on J903 jumper
         dependencies: [[a_drv_i2s, a_i2sc1]]
         pinctrl:
-          di:
+          sdi:
             pinId: PE2
             name: X32_I2SC_DI
             function: I2SC1_DI0
-          do:
+          sdo:
             pinId: PE1
             name: X32_I2SC_DO
             function: I2SC1_DO0
@@ -271,7 +271,7 @@ interfaces:
             pinId: PE0
             name: X32_I2SC_WS
             function: I2SC1_WS
-          ck:
+          sck:
             pinId: PA20
             name: X32_I2SC_CK
             function: I2SC1_CK

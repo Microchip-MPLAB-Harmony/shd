@@ -184,11 +184,11 @@ interfaces:
         description: Audio I2S interface
         dependencies: [[a_drv_i2s, a_i2sc1]]
         pinctrl:
-          din:
+          sdi:
             pinId: PE2
             name: X32_I2SC_DI
             function: I2SC1_DI0
-          dout:
+          sdo:
             pinId: PE1
             name: X32_I2SC_DO
             function: I2SC1_DO0

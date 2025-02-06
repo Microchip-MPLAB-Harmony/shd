@@ -654,7 +654,6 @@ def __getConfigDatabaseCMPDAC(periphID, settings):
 
     return configDB
 
-
 def getDBMsgPLIBConfiguration(ATDF, settings):
     periphList = __getDevicePeripheralList(ATDF)
     msgID = None
@@ -749,8 +748,8 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
         elif plib == 'spi':
             configDB = __getConfigDatabaseSPI(periphID, settings)
 
-        elif plib == 'i2s':
-            componentID, configDB = __getConfigDatabaseI2S(periphID, settings)
+        # elif plib == 'i2s':
+        #     componentID, configDB = __getConfigDatabaseI2S(periphID, settings)
 
         elif plib == 'sdadc':
             configDB = __getConfigDatabaseSDADC(periphID, settings)

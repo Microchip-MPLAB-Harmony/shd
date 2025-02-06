@@ -231,11 +231,11 @@ interfaces:
         description: Audio I2S interface 1
         dependencies: [[a_drv_i2s, a_i2s1]]
         pinctrl:
-          din:
+          sdi:
             pinId: RB5
             name: X32-1_I2S1_DI
             function: I2S1_SDI1
-          dout:
+          sdo:
             pinId: RB10
             name: X32-1_I2S1_DO
             function: I2S1_SDO1
@@ -255,11 +255,11 @@ interfaces:
         description: Audio I2S interface 2
         dependencies: [[a_drv_i2s, a_i2s3]]
         pinctrl:
-          din:
+          sdi:
             pinId: RC14
             name: X32-1_I2S2_DI
             function: I2S3_SDI3
-          dout:
+          sdo:
             pinId: RD14
             name: X32-1_I2S2_DO
             function: I2S3_SDO3
@@ -320,11 +320,11 @@ interfaces:
         description: Audio I2S interface 1
         dependencies: [[a_drv_i2s, a_i2s1]]
         pinctrl:
-          din:
+          sdi:
             pinId: RB5
             name: X32-2_I2S1_DI
             function: I2S1_SDI1
-          dout:
+          sdo:
             pinId: RB10
             name: X32-2_I2S1_DO
             function: I2S1_SDO1
@@ -344,11 +344,11 @@ interfaces:
         description: Audio I2S interface 2
         dependencies: [[a_drv_i2s, a_i2s3]]
         pinctrl:
-          din:
+          sdi:
             pinId: RC14
             name: X32-2_I2S2_DI
             function: I2S3_SDI3
-          dout:
+          sdo:
             pinId: RD14
             name: X32-2_I2S2_DO
             function: I2S3_SDO3
