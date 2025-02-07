@@ -228,7 +228,7 @@ class MainBoard:
                         continue
                             
                 if key == 'function':
-                    value = value.upper()
+                    # value = value.upper()
                     value = value.replace("(IN)", "(in)")
                     value = value.replace("(OUT)", "(out)")
                     value = value.replace("(IN/OUT)", "(in/out)")
@@ -708,7 +708,7 @@ class MainBoard:
                     
                 # Extract PLIB capabilities from Pin Function
                 if pinFunction != None and pinFunction != 'GPIO':
-                    newCap = pinFunction.upper().split('_')[0].lower()
+                    newCap = pinFunction.split('_')[0].lower()
                     if ('gmac' not in newCap) and ('ethmac' not in newCap):
                         if newCap.startswith("i2s") == True:
                             # Handle exceptions: I2S
