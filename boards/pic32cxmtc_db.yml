@@ -388,43 +388,43 @@ connectors:
           function: FLEXCOM5_IO0
 
   - compatible: mikrobus
-    name: MikroBUS
-    description: MikroBUS Standard Extension Header J28
+    name: mikroBUS
+    description: mikroBUS Standard Extension Header J28
     pinctrl:
       an:
         pinId: PA31
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADC_AD2/ACC_INP2
       rst:
         pinId: PC1
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: PA15
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: FLEXCOM2_IO3
         sck:
           pinId: PA14
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: FLEXCOM2_IO2
         miso:
           pinId: PA13
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: FLEXCOM2_IO1
         mosi:
           pinId: PA12
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: FLEXCOM2_IO0
       pwm:
         pinId: PD16
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: PWM_PWMH2
       int:
         pinId: PA2
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: GPIO
         direction: in
         pull down: True
@@ -432,18 +432,18 @@ connectors:
       uart:
         tx:
           pinId: PA8
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: FLEXCOM1_IO0
         rx:
           pinId: PA9
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: FLEXCOM1_IO1
       i2c:
         sda:
           pinId: PB5
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: FLEXCOM4_IO0
         scl:
           pinId: PB6
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: FLEXCOM4_IO1

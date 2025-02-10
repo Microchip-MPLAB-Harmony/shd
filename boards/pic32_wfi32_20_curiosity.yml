@@ -30,8 +30,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Button
-        description: User Button (RA10) - SW200 - Ensure J211 jumper is mounted on pins 1-2
+      - name: Switch
+        description: Switch (RA10) - SW200 - Ensure J211 jumper is mounted on pins 1-2
         pinctrl:
           gpio:
             pinId: RA10
@@ -77,61 +77,61 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS headers configurations (J200)
+    name: mikroBUS Header
+    description: mikroBUS headers configurations (J200)
     pinctrl:
       an:
         pinId: RA14
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADCHS_AN14
       rst:
         pinId: RB6
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RB7
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: SPI2_SS2 (out)
         sck:
           pinId: RA11
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SPI2_SCK2
         miso:
           pinId: RK5
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SPI2_SDI2
         mosi:
           pinId: RK4
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SPI2_SDO2
       int:
         pinId: RK6
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: INT_INT2
       pwm:
         pinId: RB12
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: OCMP1_OC1
       uart:
         tx:
           pinId: RK7
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: UART2_U2TX
         rx:
           pinId: RB9
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: UART2_U2RX
       i2c:
         sda:
           pinId: RA5
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: I2C1_SDA1
         scl:
           pinId: RA4
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: I2C1_SCL1
 
   - compatible: rmii

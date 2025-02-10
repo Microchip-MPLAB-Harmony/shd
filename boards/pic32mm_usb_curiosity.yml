@@ -365,123 +365,123 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header A
-    description: MikroBUS Standard Extension Header A
+    name: mikroBUS Header A
+    description: mikroBUS Standard Extension Header A
     pinctrl:
       an:
         pinId: RC0
-        name: MikroBUSA_AN
+        name: mikroBUSA_AN
         function: ADC_AN12
       rst:
         pinId: RC2
-        name: MikroBUSA_RST
+        name: mikroBUSA_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RB2
-          name: MikroBUSA_SPI_CS
+          name: mikroBUSA_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: RB8
-          name: MikroBUSA_SPI_SCK
+          name: mikroBUSA_SPI_SCK
           function: SPI2_SCK2OUT
         miso:
           pinId: RA9
-          name: MikroBUSA_SPI_MISO
+          name: mikroBUSA_SPI_MISO
           function: SPI2_SDI2
         mosi:
           pinId: RB3
-          name: MikroBUSA_SPI_MOSI
+          name: mikroBUSA_SPI_MOSI
           function: SPI2_SDO2
       pwm:
         pinId: RB15
-        name: MikroBUSA_PWM
+        name: mikroBUSA_PWM
         function: CCP4_OCM4
       int:
         pinId: RB1
-        name: MikroBUSA_INT
+        name: mikroBUSA_INT
         function: INT_INT4
       uart:
         tx:
           pinId: RC6
-          name: MikroBUSA_UART_TX
+          name: mikroBUSA_UART_TX
           function: UART2_U2TX
         rx:
           pinId: RC7
-          name: MikroBUSA_UART_RX
+          name: mikroBUSA_UART_RX
           function: UART2_U2RX
       i2c:
         sda:
           pinId: RB7
-          name: MikroBUSA_I2C_SDA
+          name: mikroBUSA_I2C_SDA
           function: I2C3_SDA3
         scl:
           pinId: RB13
-          name: MikroBUSA_I2C_SCL
+          name: mikroBUSA_I2C_SCL
           function: I2C3_SCL3
 
   - compatible: mikrobus
-    name: MikroBUS Header B
-    description: MikroBUS Standard Extension Header B
+    name: mikroBUS Header B
+    description: mikroBUS Standard Extension Header B
     pinctrl:
       an:
         pinId: RA12
-        name: MikroBUSB_AN
+        name: mikroBUSB_AN
         function: ADC_AN17
       rst:
         pinId: RC14
-        name: MikroBUSB_RST
+        name: mikroBUSB_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RC11
-          name: MikroBUSB_SPI_CS
+          name: mikroBUSB_SPI_CS
           function: SPI3_SS3
         sck:
           pinId: RA10
-          name: MikroBUSB_SPI_SCK
+          name: mikroBUSB_SPI_SCK
           function: SPI3_SCK3
         miso:
           pinId: RA7
-          name: MikroBUSB_SPI_MISO
+          name: mikroBUSB_SPI_MISO
           function: SPI2_SDI3
         mosi:
           pinId: RA8
-          name: MikroBUSB_SPI_MOSI
+          name: mikroBUSB_SPI_MOSI
           function: SPI2_SDO3
       pwm:
         pinId: RB0
-        name: MikroBUSB_PWM
+        name: mikroBUSB_PWM
         function: CCP4_OCM4
       int:
         pinId: RD2
-        name: MikroBUSB_INT
+        name: mikroBUSB_INT
         function: INT_INT0
       uart:
         tx:
           pinId: RC12
-          name: MikroBUSB_UART_TX
+          name: mikroBUSB_UART_TX
           function: UART1_U1TX
         rx:
           pinId: RA6
-          name: MikroBUSB_UART_RX
+          name: mikroBUSB_UART_RX
           function: UART1_U1RX
       i2c:
         sda:
           pinId: RB5
-          name: MikroBUSB_I2C_BB_SDA
+          name: mikroBUSB_I2C_BB_SDA
           function: GPIO
           direction: in
           open drain: True
         scl:
           pinId: RC9
-          name: MikroBUSB_I2C_BB_SCL
+          name: mikroBUSB_I2C_BB_SCL
           function: GPIO
           direction: in
           open drain: True

@@ -718,64 +718,64 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS Standard Extension Header
+    name: mikroBUS Header
+    description: mikroBUS Standard Extension Header
     pinctrl:
       an:
         pinId: PA14
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADC_VINP24
       rst:
         pinId: PB27
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: PC14
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: PC13
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SERCOM3_PAD1
         miso:
           pinId: PC15
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SERCOM3_PAD3
         mosi:
           pinId: PC12
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SERCOM3_PAD0
       pwm:
         pinId: PA22
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: TCC7_WO0
       int:
         pinId: PA08
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: EIC_EXTINT8
         pull up: True
       uart:
         tx:
           pinId: PC21
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: SERCOM4_PAD0
         rx:
           pinId: PC22
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: SERCOM4_PAD1
       i2c:
         sda:
           pinId: PC25
-          name: MikroBUS_I2C_TWD
+          name: mikroBUS_I2C_TWD
           function: SERCOM5_PAD0
         scl:
           pinId: PC26
-          name: MikroBUS_I2C_TWCK
+          name: mikroBUS_I2C_TWCK
           function: SERCOM5_PAD1
 
   - compatible: xplainpro

@@ -11,7 +11,7 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: User Led 1
+      - name: Led 1
         description: Red Led (RH0) - active low
         pinctrl:
           gpio:
@@ -20,7 +20,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Led 2
+      - name: Led 2
         description: Green Led (RH1) - active low
         pinctrl:
           gpio:
@@ -29,7 +29,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Led 3
+      - name: Led 3
         description: Yellow Led (RH2) - active low
         pinctrl:
           gpio:
@@ -65,8 +65,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Button 1
-        description: User Button 1 (RJ4)
+      - name: Switch 1
+        description: Switch 1 (RJ4)
         pinctrl:
           gpio:
             pinId: RJ4
@@ -74,8 +74,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: User Button 2
-        description: User Button 2 (RJ5)
+      - name: Switch 2
+        description: Switch 2 (RJ5)
         pinctrl:
           gpio:
             pinId: RJ5
@@ -83,8 +83,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: User Button 3
-        description: User Button 3 (RJ6)
+      - name: Switch 3
+        description: Switch 3 (RJ6)
         pinctrl:
           gpio:
             pinId: RJ6
@@ -92,8 +92,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: User Button 4
-        description: User Button 4 (RC15)
+      - name: Switch 4
+        description: Switch 4 (RC15)
         pinctrl:
           gpio:
             pinId: RC15
@@ -830,43 +830,43 @@ connectors:
           function: SPI3_SDO3
 
   - compatible: mikrobus
-    name: MikroBUS Header 1
-    description: MikroBUS Standard Extension Header 1
+    name: mikroBUS Header 1
+    description: mikroBUS Standard Extension Header 1
     pinctrl:
       an:
         pinId: RB10
-        name: MikroBUS1_AN
+        name: mikroBUS1_AN
         function: ADCHS_AN5
       rst:
         pinId: RJ12
-        name: MikroBUS1_RST
+        name: mikroBUS1_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RD9
-          name: MikroBUS1_SPI_CS
+          name: mikroBUS1_SPI_CS
           function: SPI1_SS1 (out)
         sck:
           pinId: RD1
-          name: MikroBUS1_SPI_SCK
+          name: mikroBUS1_SPI_SCK
           function: SPI1_SCK1
         miso:
           pinId: RD14
-          name: MikroBUS1_SPI_MISO
+          name: mikroBUS1_SPI_MISO
           function: SPI1_SDI1
         mosi:
           pinId: RD7
-          name: MikroBUS1_SPI_MOSI
+          name: mikroBUS1_SPI_MOSI
           function: SPI1_SDO1
       pwm:
         pinId: RD15
-        name: MikroBUS1_PWM
+        name: mikroBUS1_PWM
         function: REFCLKO1
       int:
         pinId: RF12
-        name: MikroBUS1_INT
+        name: mikroBUS1_INT
         function: GPIO
         direction: in
         pull up: True
@@ -874,60 +874,60 @@ connectors:
       uart:
         tx:
           pinId: RC4
-          name: MikroBUS1_UART_TX
+          name: mikroBUS1_UART_TX
           function: UART1_U1TX
         rx:
           pinId: RC1
-          name: MikroBUS1_UART_RX
+          name: mikroBUS1_UART_RX
           function: UART1_U1RX
       i2c:
         sda:
           pinId: RA15
-          name: MikroBUS1_I2C_SDA
+          name: mikroBUS1_I2C_SDA
           function: I2C1_SDA1
         scl:
           pinId: RA14
-          name: MikroBUS1_I2C_SCL
+          name: mikroBUS1_I2C_SCL
           function: I2C1_SCL1
 
   - compatible: mikrobus
-    name: MikroBUS Header 2
-    description: MikroBUS Standard Extension Header 2
+    name: mikroBUS Header 2
+    description: mikroBUS Standard Extension Header 2
     pinctrl:
       an:
         pinId: RB11
-        name: MikroBUS2_AN
+        name: mikroBUS2_AN
         function: ADCHS_AN6
       rst:
         pinId: RJ10
-        name: MikroBUS2_RST
+        name: mikroBUS2_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RC2
-          name: MikroBUS2_SPI_CS
+          name: mikroBUS2_SPI_CS
           function: SPI2_SS2 (out)
         sck:
           pinId: RG6
-          name: MikroBUS2_SPI_SCK
+          name: mikroBUS2_SPI_SCK
           function: SPI2_SCK2
         miso:
           pinId: RG7
-          name: MikroBUS2_SPI_MISO
+          name: mikroBUS2_SPI_MISO
           function: SPI2_SDI2
         mosi:
           pinId: RG8
-          name: MikroBUS2_SPI_MOSI
+          name: mikroBUS2_SPI_MOSI
           function: SPI2_SDO2
       pwm:
         pinId: RD15
-        name: MikroBUS1_PWM
+        name: mikroBUS1_PWM
         function: REFCLKO1
       int:
         pinId: RD10
-        name: MikroBUS2_INT
+        name: mikroBUS2_INT
         function: GPIO
         direction: in
         pull up: True
@@ -935,20 +935,20 @@ connectors:
       uart:
         tx:
           pinId: RG9
-          name: MikroBUS2_UART_TX
+          name: mikroBUS2_UART_TX
           function: UART2_U2TX
         rx:
           pinId: RE9
-          name: MikroBUS2_UART_RX
+          name: mikroBUS2_UART_RX
           function: UART2_U2RX
       i2c:
         sda:
           pinId: RA15
-          name: MikroBUS2_I2C_SDA
+          name: mikroBUS2_I2C_SDA
           function: I2C1_SDA1
         scl:
           pinId: RA14
-          name: MikroBUS2_I2C_SCL
+          name: mikroBUS2_I2C_SCL
           function: I2C1_SCL1
 
   - compatible: arduino

@@ -11,7 +11,7 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: User Led
+      - name: Led
         description: Yellow Led (PA16) - latch high
         pinctrl:
           gpio:
@@ -20,8 +20,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Button
-        description: User Button (SW0)
+      - name: Switch
+        description: Switch (SW0)
         pinctrl:
           gpio:
             pinId: PA14

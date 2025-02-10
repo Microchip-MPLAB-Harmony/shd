@@ -68,8 +68,8 @@ interfaces:
             pinId: RB5
             name: RGB_LED_BLUE
             function: TCC0_WO2
-      - name: User Button
-        description: User Button (SW2)
+      - name: Switch
+        description: Switch (SW2)
         pinctrl:
           gpio:
             pinId: RB4
@@ -152,59 +152,59 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS headers configurations (J4)
+    name: mikroBUS Header
+    description: mikroBUS headers configurations (J4)
     pinctrl:
       an:
         pinId: RB1
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADCHS_AN5
       rst:
         pinId: RB2
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RA9
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: SERCOM1_PAD2 (out)
         sck:
           pinId: RA8
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SERCOM1_PAD1 (out)
         miso:
           pinId: RA10
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SERCOM1_PAD3 (in)
         mosi:
           pinId: RA7
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SERCOM1_PAD0 (out)
       int:
         pinId: RA2
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: EIC_EXTINT0 (in)
       pwm:
         pinId: RA2
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: TCC1_WO1
       uart:
         tx:
           pinId: RA7
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: SERCOM1_PAD0 (out)
         rx:
           pinId: RA8
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: SERCOM1_PAD1 (in)
       i2c:
         sda:
           pinId: RA13
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: SERCOM2_PAD0 (in)
         scl:
           pinId: RA14
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: SERCOM2_PAD1 (out)

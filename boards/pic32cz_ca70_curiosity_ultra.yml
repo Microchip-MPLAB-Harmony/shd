@@ -418,45 +418,45 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS Standard Extension Header
+    name: mikroBUS Header
+    description: mikroBUS Standard Extension Header
     pinctrl:
       an:
         pinId: PC31
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: AFEC1_AD6
       rst:
         pinId: PC28
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: PA10
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: PD22
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SPI0_SPCK
         miso:
           pinId: PD20
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SPI0_MISO
         mosi:
           pinId: PD21
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SPI0_MOSI
       pwm:
         pinId: PA0
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: PWM0_PWMH0
       int:
         pinId: PD28
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: GPIO
         direction: in
         interrupt: low level
@@ -464,20 +464,20 @@ connectors:
       uart:
         tx:
           pinId: PB1
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: USART0_TXD0
         rx:
           pinId: PB0
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: USART0_RXD0
       i2c:
         sda:
           pinId: PA3
-          name: MikroBUS_I2C_TWD
+          name: mikroBUS_I2C_TWD
           function: TWIHS0_TWD0
         scl:
           pinId: PA4
-          name: MikroBUS_I2C_TWCK
+          name: mikroBUS_I2C_TWCK
           function: TWIHS0_TWCK0
 
   - compatible: xplainpro

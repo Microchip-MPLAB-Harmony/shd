@@ -11,7 +11,7 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: User Led 0
+      - name: Led 0
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -20,7 +20,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 1
+      - name: Led 1
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -29,7 +29,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 2
+      - name: Led 2
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -38,7 +38,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 3
+      - name: Led 3
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -47,7 +47,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 4
+      - name: Led 4
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -56,7 +56,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 5
+      - name: Led 5
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -65,7 +65,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 6
+      - name: Led 6
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -74,7 +74,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 7
+      - name: Led 7
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -83,7 +83,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 8 Blue
+      - name: Led 8 Blue
         description: Blue Led - active high
         pinctrl:
           gpio:
@@ -92,7 +92,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 8 Green
+      - name: Led 8 Green
         description: Green Led - active high
         pinctrl:
           gpio:
@@ -101,7 +101,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 8 Red
+      - name: Led 8 Red
         description: Red Led - active high
         pinctrl:
           gpio:
@@ -131,8 +131,8 @@ interfaces:
             pinId: RC2
             name: RGB_LED8_RED
             function: PWM_PWM4H
-      - name: User Button 1
-        description: User Button 1 (S1)
+      - name: Switch 1
+        description: Switch 1 (S1)
         pinctrl:
           gpio:
             pinId: RB5
@@ -140,8 +140,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: User Button 2
-        description: User Button 2 (S2)
+      - name: Switch 2
+        description: Switch 2 (S2)
         pinctrl:
           gpio:
             pinId: RB4
@@ -149,8 +149,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: User Button 3
-        description: User Button 3 (S3)
+      - name: Switch 3
+        description: Switch 3 (S3)
         pinctrl:
           gpio:
             pinId: RA6
@@ -293,77 +293,77 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Interface A
-    description: MikroBUS Standard Extension Header A
+    name: mikroBUS Interface A
+    description: mikroBUS Standard Extension Header A
     pinctrl:
       an:
         pinId: RA11
-        name: MikroBUS_A_AN
+        name: mikroBUS_A_AN
         function: ADC1_AD1AN10
       rst:
         pinId: RB6
-        name: MikroBUS_A_RST
+        name: mikroBUS_A_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RB7
-          name: MikroBUS_A_SPI_CS
+          name: mikroBUS_A_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: RC0
-          name: MikroBUS_A_SPI_SCK
+          name: mikroBUS_A_SPI_SCK
           function: SPI1_SCK1
         miso:
           pinId: RD11
-          name: MikroBUS_A_SPI_MISO
+          name: mikroBUS_A_SPI_MISO
           function: SPI1_SDI1
         mosi:
           pinId: RC11
-          name: MikroBUS_A_SPI_MOSI
+          name: mikroBUS_A_SPI_MOSI
           function: SPI1_SDO1
       pwm:
         pinId: RC2
-        name: MikroBUS_A_PWM
+        name: mikroBUS_A_PWM
         function: PWM_PWM1L
       int:
         pinId: RA5
-        name: MikroBUS_A_INT
+        name: mikroBUS_A_INT
         function: INT_INT1
       uart:
         tx:
           pinId: RB10
-          name: MikroBUS_A_UART_TX
+          name: mikroBUS_A_UART_TX
           function: UART3_U3TX
         rx:
           pinId: RB11
-          name: MikroBUS_A_UART_RX
+          name: mikroBUS_A_UART_RX
           function: UART3_U3RX
       i2c:
         sda:
           pinId: RD8
-          name: MikroBUS_A_I2C_SDA
+          name: mikroBUS_A_I2C_SDA
           function: I2C2_ASDA2
         scl:
           pinId: RD7
-          name: MikroBUS_A_I2C_SCL
+          name: mikroBUS_A_I2C_SCL
           function: I2C2_ASCL2
 
   - compatible: mikrobus
-    name: MikroBUS Interface B
-    description: MikroBUS Standard Extension Header B
+    name: mikroBUS Interface B
+    description: mikroBUS Standard Extension Header B
     pinctrl:
       i2c:
         sda:
           pinId: RD6
-          name: MikroBUS_B_I2C_SDA
+          name: mikroBUS_B_I2C_SDA
           function: I2C1_ASDA1
         scl:
           pinId: RD5
-          name: MikroBUS_B_I2C_SCL
+          name: mikroBUS_B_I2C_SCL
           function: I2C1_ASCL1
 
   - compatible: xplainpro

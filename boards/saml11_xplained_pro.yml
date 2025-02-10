@@ -11,7 +11,7 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: User Led 1
+      - name: Led 1
         description: Yellow Led (PB10) - latch high
         pinctrl:
           gpio:
@@ -20,8 +20,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Button 1
-        description: User Button 1 (PA02)
+      - name: Switch 1
+        description: Switch 1 (PA02)
         pinctrl:
           gpio:
             pinId: PA27
@@ -332,59 +332,59 @@ connectors:
           function: SERCOM0_PAD2
 
   - compatible: mikrobus
-    name: MikroBUS 1
-    description: MikroBUS 1 Standard Extension Header
+    name: mikroBUS 1
+    description: mikroBUS 1 Standard Extension Header
     pinctrl:
       an:
         pinId: PA02
-        name: MikroBUS_1_AN
+        name: mikroBUS_1_AN
         function: ADC_AIN0
       rst:
         pinId: PA23
-        name: MikroBUS_1_RST
+        name: mikroBUS_1_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: PA05
-          name: MikroBUS_1_SPI_CS
+          name: mikroBUS_1_SPI_CS
           function: SERCOM0_PAD1
         sck:
           pinId: PA15
-          name: MikroBUS_1_SPI_SCK
+          name: mikroBUS_1_SPI_SCK
           function: SERCOM0_PAD3
         miso:
           pinId: PA04
-          name: MikroBUS_1_SPI_MISO
+          name: mikroBUS_1_SPI_MISO
           function: SERCOM0_PAD0
         mosi:
           pinId: PA14
-          name: MikroBUS_1_SPI_MOSI
+          name: mikroBUS_1_SPI_MOSI
           function: SERCOM0_PAD2
       pwm:
         pinId: PA18
-        name: MikroBUS_1_PWM
+        name: mikroBUS_1_PWM
         function: TC2_WO0
       int:
         pinId: PA22
-        name: MikroBUS_1_INT
+        name: mikroBUS_1_INT
         function: EIC_EXTINT1
       uart:
         tx:
           pinId: PA08
-          name: MikroBUS_1_UART_TX
+          name: mikroBUS_1_UART_TX
           function: SERCOM2_PAD0
         rx:
           pinId: PA09
-          name: MikroBUS_1_UART_RX
+          name: mikroBUS_1_UART_RX
           function: SERCOM2_PAD1
       i2c:
         sda:
           pinId: PA16
-          name: MikroBUS_1_I2C_SDA
+          name: mikroBUS_1_I2C_SDA
           function: SERCOM1_PAD0
         scl:
           pinId: PA17
-          name: MikroBUS_1_I2C_SCL
+          name: mikroBUS_1_I2C_SCL
           function: SERCOM1_PAD1

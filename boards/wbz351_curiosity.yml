@@ -47,8 +47,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Button 1 (SW2)
-        description: User Button 1 (SW2)
+      - name: Switch 1 (SW2)
+        description: Switch 1 (SW2)
         pinctrl:
           gpio:
             pinId: RB9
@@ -56,8 +56,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: User Button 2 (SW3)
-        description: User Button 2 (SW3)
+      - name: Switch 2 (SW3)
+        description: Switch 2 (SW3)
         pinctrl:
           gpio:
             pinId: RA4
@@ -141,61 +141,61 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS header configuration (J4)
+    name: mikroBUS Header
+    description: mikroBUS header configuration (J4)
     pinctrl:
       an:
         pinId: RB1
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADCHS_AN5
       rst:
         pinId: RB2
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RA9
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: SERCOM1_PAD2 (out)
         sck:
           pinId: RA8
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SERCOM1_PAD1 (out)
         miso:
           pinId: RA10
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SERCOM1_PAD3 (in)
         mosi:
           pinId: RA7
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SERCOM1_PAD0 (out)
       int:
         pinId: RB10
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: EIC_EXTINT2 (in)
       pwm:
         pinId: PB10
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: TCC0_WO2
       uart:
         tx:
           pinId: RA7
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: SERCOM1_PAD0 (out)
         rx:
           pinId: RA8
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: SERCOM1_PAD1 (in)
       i2c:
         sda:
           pinId: RA13
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: SERCOM2_SDA (in)
         scl:
           pinId: RA14
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: SERCOM2_SCL (out)
 
   - compatible: xplainpro
@@ -250,11 +250,11 @@ connectors:
       uart:
         tx:
           pinId: RA7
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: SERCOM1_PAD0 (out)
         rx:
           pinId: RA8
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: SERCOM1_PAD1 (in)
       spi:
         cs:

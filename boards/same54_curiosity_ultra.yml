@@ -1,6 +1,6 @@
 name: same54-curiosity-ultra
 config: same54_curiosity_ultra.py
-documentation: https://www.microchip.com/en-us/development-tool/DM320210
+documentation: https://www.microchip.com/en-us/development-tool/EV66Z56A
 processor:
   name: ATSAME54P20A
   architecture: CORTEX-M4
@@ -11,7 +11,7 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: User Led 1
+      - name: Led 1
         description: Yellow Led (PC21) - latch high
         pinctrl:
           gpio:
@@ -20,7 +20,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Led 2
+      - name: Led 2
         description: Yellow Led (PA16) - latch high
         pinctrl:
           gpio:
@@ -29,8 +29,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Button 1
-        description: User Button 1 (PD00)
+      - name: Switch 1
+        description: Switch 1 (PD00)
         pinctrl:
           gpio:
             pinId: PD00
@@ -38,8 +38,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: User Button 2
-        description: User Button 2 (PD01)
+      - name: Switch 2
+        description: Switch 2 (PD01)
         pinctrl:
           gpio:
             pinId: PD01
@@ -764,63 +764,63 @@ connectors:
           function: SERCOM0_PAD0
 
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS Standard Extension Header
+    name: mikroBUS Header
+    description: mikroBUS Standard Extension Header
     pinctrl:
       an:
         pinId: PA02
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADC0_AIN0
       rst:
         pinId: PC18
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: PC15
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: PB25
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SERCOM0_PAD1
         miso:
           pinId: PC25
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SERCOM0_PAD3
         mosi:
           pinId: PB24
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SERCOM0_PAD0
       pwm:
         pinId: PB16
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: TCC0_WO4
       int:
         pinId: PC14
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: EIC_EXTINT14
       uart:
         tx:
           pinId: PC12
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: SERCOM7_PAD0
         rx:
           pinId: PC13
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: SERCOM7_PAD1
       i2c:
         sda:
           pinId: PD09
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: SERCOM6_PAD0
         scl:
           pinId: PD08
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: SERCOM6_PAD1
 
   - compatible: arduino

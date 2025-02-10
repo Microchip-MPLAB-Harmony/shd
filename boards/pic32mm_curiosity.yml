@@ -182,65 +182,65 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS Standard Extension Header
+    name: mikroBUS Header
+    description: mikroBUS Standard Extension Header
     pinctrl:
       an:
         pinId: RB2
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADC_AN4
       rst:
         pinId: RB1
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RB0
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: RB8
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SPI1_SCK1
         miso:
           pinId: RB14
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SPI1_SDI1
         mosi:
           pinId: RB9
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SPI1_SDO1
       pwm:
         pinId: RB15
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: CCP2_OCM2
       int:
         pinId: RA1
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: INT_INT4
       uart:
         tx:
           pinId: RB11
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: UART2_U2TX
         rx:
           pinId: RB10
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: UART2_U2RX
       i2c:
         sda:
           pinId: RC2
-          name: MikroBUS_I2C_BB_SDA
+          name: mikroBUS_I2C_BB_SDA
           function: GPIO
           direction: in/out
           open drain: True
         scl:
           pinId: RC1
-          name: MikroBUS_I2C_BB_SCL
+          name: mikroBUS_I2C_BB_SCL
           function: GPIO
           direction: in/out
           open drain: True

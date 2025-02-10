@@ -38,8 +38,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Button
-        description: User Button
+      - name: Switch
+        description: Switch
         pinctrl:
           gpio:
             pinId: PA12
@@ -445,37 +445,37 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS 1 Header
-    description: MikroBUS 1 Standard Extension Header
+    name: mikroBUS 1 Header
+    description: mikroBUS 1 Standard Extension Header
     pinctrl:
       an:
         pinId: PD0
-        name: MikroBUS_1_AN
+        name: mikroBUS_1_AN
         function: ADC_AD14
       spi:
         cs:
           pinId: PB6
-          name: MikroBUS_1_SPI_CS
+          name: mikroBUS_1_SPI_CS
           function: FLEXCOM11_IO3
         sck:
           pinId: PB5
-          name: MikroBUS_1_SPI_SCK
+          name: mikroBUS_1_SPI_SCK
           function: FLEXCOM11_IO2
         miso:
           pinId: PB3
-          name: MikroBUS_1_SPI_MISO
+          name: mikroBUS_1_SPI_MISO
           function: FLEXCOM11_IO0
         mosi:
           pinId: PB4
-          name: MikroBUS_1_SPI_MOSI
+          name: mikroBUS_1_SPI_MOSI
           function: FLEXCOM11_IO1
       pwm:
         pinId: PA13
-        name: MikroBUS_1_PWM
+        name: mikroBUS_1_PWM
         function: PWM_PWMH2
       int:
         pinId: PC21
-        name: MikroBUS_1_INT
+        name: mikroBUS_1_INT
         function: GPIO
         direction: in
         interrupt: falling edge
@@ -483,53 +483,53 @@ connectors:
       uart:
         tx:
           pinId: PD18
-          name: MikroBUS_1_UART_TX
+          name: mikroBUS_1_UART_TX
           function: FLEXCOM4_IO0
         rx:
           pinId: PD19
-          name: MikroBUS_1_UART_RX
+          name: mikroBUS_1_UART_RX
           function: FLEXCOM4_IO1
       i2c:
         sda:
           pinId: PC18
-          name: MikroBUS_1_I2C_SDA
+          name: mikroBUS_1_I2C_SDA
           function: FLEXCOM9_IO0
         scl:
           pinId: PC19
-          name: MikroBUS_1_I2C_SCL
+          name: mikroBUS_1_I2C_SCL
           function: FLEXCOM9_IO1
   - compatible: mikrobus
-    name: MikroBUS 2 Header
-    description: MikroBUS 2 Standard Extension Header
+    name: mikroBUS 2 Header
+    description: mikroBUS 2 Standard Extension Header
     pinctrl:
       an:
         pinId: PD1
-        name: MikroBUS_2_AN
+        name: mikroBUS_2_AN
         function: ADC_AD15
       spi:
         cs:
           pinId: PB7
-          name: MikroBUS_2_SPI_CS
+          name: mikroBUS_2_SPI_CS
           function: FLEXCOM11_IO4
         sck:
           pinId: PB5
-          name: MikroBUS_2_SPI_SCK
+          name: mikroBUS_2_SPI_SCK
           function: FLEXCOM11_IO2
         miso:
           pinId: PB3
-          name: MikroBUS_2_SPI_MISO
+          name: mikroBUS_2_SPI_MISO
           function: FLEXCOM11_IO0
         mosi:
           pinId: PB4
-          name: MikroBUS_2_SPI_MOSI
+          name: mikroBUS_2_SPI_MOSI
           function: FLEXCOM11_IO1
       pwm:
         pinId: PD20
-        name: MikroBUS_2_PWM
+        name: mikroBUS_2_PWM
         function: PWM_PWMH3
       int:
         pinId: PC20
-        name: MikroBUS_2_INT
+        name: mikroBUS_2_INT
         function: GPIO
         direction: in
         interrupt: falling edge
@@ -537,18 +537,18 @@ connectors:
       uart:
         tx:
           pinId: PC23
-          name: MikroBUS_2_UART_TX
+          name: mikroBUS_2_UART_TX
           function: FLEXCOM7_IO0
         rx:
           pinId: PC24
-          name: MikroBUS_2_UART_RX
+          name: mikroBUS_2_UART_RX
           function: FLEXCOM7_IO1
       i2c:
         sda:
           pinId: PC18
-          name: MikroBUS_2_I2C_SDA
+          name: mikroBUS_2_I2C_SDA
           function: FLEXCOM9_IO0
         scl:
           pinId: PC19
-          name: MikroBUS_2_I2C_SCL
+          name: mikroBUS_2_I2C_SCL
           function: FLEXCOM9_IO1

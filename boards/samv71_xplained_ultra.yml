@@ -29,8 +29,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Button 0
-        description: User Button 0 (PA9)
+      - name: Switch 0
+        description: Switch 0 (PA9)
         pinctrl:
           gpio:
             pinId: PA9
@@ -39,8 +39,8 @@ interfaces:
             direction: in
             interrupt: rising edge
             pull up: True
-      - name: User Button 1
-        description: User Button 1 (PB12)
+      - name: Switch 1
+        description: Switch 1 (PB12)
         pinctrl:
           gpio:
             pinId: PB12

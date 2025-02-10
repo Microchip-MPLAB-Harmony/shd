@@ -481,63 +481,63 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS Standard Extension Header
+    name: mikroBUS Header
+    description: mikroBUS Standard Extension Header
     pinctrl:
       an:
         pinId: PA10
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADC_VINP6
       rst:
         pinId: PD21
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: PD15
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: PC16
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SERCOM2_PAD1
         miso:
           pinId: PC17
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SERCOM2_PAD2
         mosi:
           pinId: PC15
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SERCOM2_PAD0
       pwm:
         pinId: PC01
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: TCC0_WO2
       int:
         pinId: PD18
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: EIC_EXTINT2
       uart:
         tx:
           pinId: PD13
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: SERCOM1_PAD0
         rx:
           pinId: PD14
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: SERCOM1_PAD1
       i2c:
         sda:
           pinId: PB09
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: SERCOM4_PAD0
         scl:
           pinId: PB10
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: SERCOM4_PAD1
 
   - compatible: xplainpro

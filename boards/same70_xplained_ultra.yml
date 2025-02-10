@@ -11,7 +11,7 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: User Led 1
+      - name: Led 1
         description: Yellow Led - latch high
         pinctrl:
           gpio:
@@ -20,7 +20,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Led 2
+      - name: Led 2
         description: Yellow Led - latch high
         pinctrl:
           gpio:
@@ -29,8 +29,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Button
-        description: User Button 1
+      - name: Switch
+        description: Switch 1
         pinctrl:
           gpio:
             pinId: PA11
@@ -891,45 +891,45 @@ connectors:
           function: SPI0_MOSI
 
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS Standard Extension Header
+    name: mikroBUS Header
+    description: mikroBUS Standard Extension Header
     pinctrl:
       an:
         pinId: PC31
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: AFEC1_AD6
       rst:
         pinId: PD11
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: PA5
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: PD22
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SPI0_SPCK
         miso:
           pinId: PD20
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SPI0_MISO
         mosi:
           pinId: PD21
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SPI0_MOSI
       pwm:
         pinId: PA0
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: PWM0_PWMH0
       int:
         pinId: PD28
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: GPIO
         direction: in
         latch: low
@@ -937,20 +937,20 @@ connectors:
       uart:
         tx:
           pinId: PB1
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: USART0_TXD0
         rx:
           pinId: PB0
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: USART0_RXD0
       i2c:
         sda:
           pinId: PA3
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: TWIHS0_TWCK0
         scl:
           pinId: PA4
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: TWIHS0_TWCK0
 
   - compatible: rmii

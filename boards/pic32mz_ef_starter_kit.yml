@@ -11,7 +11,7 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: User Led 1
+      - name: Led 1
         description: Red Led (RH0) - active high
         pinctrl:
           gpio:
@@ -20,7 +20,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 2
+      - name: Led 2
         description: Yellow Led (RH1) - active high
         pinctrl:
           gpio:
@@ -29,7 +29,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Led 3
+      - name: Led 3
         description: Green Led (RH2) - active high
         pinctrl:
           gpio:
@@ -38,8 +38,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Button 1
-        description: User Button 1 (RB12)
+      - name: Switch 1
+        description: Switch 1 (RB12)
         pinctrl:
           gpio:
             pinId: RB12
@@ -48,8 +48,8 @@ interfaces:
             direction: in
             pull up: True
             change notification: True
-      - name: User Button 2
-        description: User Button 2 (RB13)
+      - name: Switch 2
+        description: Switch 2 (RB13)
         pinctrl:
           gpio:
             pinId: RB13
@@ -58,8 +58,8 @@ interfaces:
             direction: in
             pull up: True
             change notification: True
-      - name: User Button 3
-        description: User Button 3 (RB14)
+      - name: Switch 3
+        description: Switch 3 (RB14)
         pinctrl:
           gpio:
             pinId: RB14

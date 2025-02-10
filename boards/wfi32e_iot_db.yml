@@ -52,8 +52,8 @@ interfaces:
             direction: out
             latch: high
             
-      - name: User Button 1
-        description: User Button (RPB8) - SW400 - Ensure J400 jumper is mounted on pins 1-2
+      - name: Switch 1
+        description: Switch (RPB8) - SW400 - Ensure J400 jumper is mounted on pins 1-2
         pinctrl:
           gpio:
             pinId: RB8
@@ -62,8 +62,8 @@ interfaces:
             direction: in
             pull up: True
             
-      - name: User Button 2
-        description: User Button (RPA10) - SW401 - Ensure J400 jumper is mounted on pins 1-2
+      - name: Switch 2
+        description: Switch (RPA10) - SW401 - Ensure J400 jumper is mounted on pins 1-2
         pinctrl:
           gpio:
             pinId: RA10
@@ -149,61 +149,61 @@ interfaces:
             
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS header configuration - J402
+    name: mikroBUS Header
+    description: mikroBUS header configuration - J402
     pinctrl:
       an:
         pinId: RA14
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADCHS_AN14
       rst:
         pinId: RC12
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: RC15
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: GPIO
           direction: out
           latch: high
         sck:
           pinId: RA11
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: SPI2_SCK2
         miso:
           pinId: RK5
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: SPI2_SDI2
         mosi:
           pinId: RK4
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: SPI2_SDO2
       pwm:
         pinId: RB12
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: OCMP1_OC1
       int:
         pinId: RA13
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: INT_INT3
       uart:
         tx:
           pinId: RK7
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: UART2_U2TX
         rx:
           pinId: RB9
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: UART2_U2RX
       i2c:
         sda:
           pinId: RA5
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: I2C1_SDA1
         scl:
           pinId: RA4
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: I2C1_SCL1

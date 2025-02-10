@@ -20,8 +20,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
-      - name: User Button 0
-        description: User Button 0 (PB19)
+      - name: Switch 0
+        description: Switch 0 (PB19)
         pinctrl:
           gpio:
             pinId: PB19

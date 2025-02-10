@@ -38,8 +38,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: User Button
-        description: User Button
+      - name: Switch
+        description: Switch
         pinctrl:
           gpio:
             pinId: PC9
@@ -281,62 +281,62 @@ interfaces:
 
 connectors:
   - compatible: mikrobus
-    name: MikroBUS Header
-    description: MikroBUS Standard Extension Header
+    name: mikroBUS Header
+    description: mikroBUS Standard Extension Header
     pinctrl:
       an:
         pinId: PA31
-        name: MikroBUS_AN
+        name: mikroBUS_AN
         function: ADC_AD7
       rst:
         pinId: PA17
-        name: MikroBUS_RST
+        name: mikroBUS_RST
         function: GPIO
         direction: out
         latch: low
       spi:
         cs:
           pinId: PC24
-          name: MikroBUS_SPI_CS
+          name: mikroBUS_SPI_CS
           function: FLEXCOM3_IO4
         sck:
           pinId: PC26
-          name: MikroBUS_SPI_SCK
+          name: mikroBUS_SPI_SCK
           function: FLEXCOM3_IO2
         miso:
           pinId: PC23
-          name: MikroBUS_SPI_MISO
+          name: mikroBUS_SPI_MISO
           function: FLEXCOM3_IO1
         mosi:
           pinId: PC22
-          name: MikroBUS_SPI_MOSI
+          name: mikroBUS_SPI_MOSI
           function: FLEXCOM3_IO0
       pwm:
         pinId: PC21
-        name: MikroBUS_PWM
+        name: mikroBUS_PWM
         function: PWM_PWM3
       int:
         pinId: PB18
-        name: MikroBUS_INT
+        name: mikroBUS_INT
         function: AIC_IRQ
         pull up: True
       uart:
         tx:
           pinId: PA28
-          name: MikroBUS_UART_TX
+          name: mikroBUS_UART_TX
           function: FLEXCOM1_IO0
         rx:
           pinId: PA29
-          name: MikroBUS_UART_RX
+          name: mikroBUS_UART_RX
           function: FLEXCOM1_IO1
       i2c:
         sda:
           pinId: PC0
-          name: MikroBUS_I2C_SDA
+          name: mikroBUS_I2C_SDA
           function: FLEXCOM7_IO0
         scl:
           pinId: PC1
-          name: MikroBUS_I2C_SCL
+          name: mikroBUS_I2C_SCL
           function: FLEXCOM7_IO1
 
   - compatible: m2
