@@ -3,6 +3,52 @@
 
 # Microchip MPLAB® Harmony 3 Release Notes
 
+## SHD Release v1.0.0
+
+This release adds support for the following development kits and extension boards:
+
+- **Host boards support**
+  - **MPU**
+    - SAM9X60 Curiosity
+    - SAM9X75 Curiosity
+    - SAMA5D27-SOM1-EK1
+    - ATSAMA5D27-WLSOM1 EVALUATION KIT
+    - SAMA5D29 Curiosity
+    - SAMA7D65 Curiosity Kit
+    - SAMA7G54 Evaluation Kit
+  - **PIC3xAK**
+    - PIC32AK DIM + Curiosity Development Board
+    - PIC33AK DIM + Curiosity Development Board
+  - **Wireless solutions**
+    - WFI32E02 High Pin Count (HPC) Curiosity Board
+    - WFI32E04 High Pin Count (HPC) Curiosity Board
+  - **PIC32MZ DA**
+    - PIC32MZ DA Curiosity
+    - PIC32MZ DA Starter Kit
+  - **PIC32CZ CA**
+    - PIC32CZ CA70 Curiosity Ultra
+    - PIC32CZ CA80 Curiosity Ultra
+    - PIC32CZ CA90 Curiosity Ultra
+  - **PIC32CX_MT**
+    - PIC32CXMTC Curiosity Board
+- **Click/Add-on boards support**
+  - **Wireless add-on boards**
+    - WIxCS02 M.2 Wi-Fi Module Card (SPI)
+  - **Ethernet PHY boards**
+    - LAN8740 Phy Board
+  - **Gigabit Ethernet connectivity boards**
+    - LAN8840 EDS2 Daughter Card
+
+**Known issues**
+  - None.
+
+**Development Tools**
+
+- [MPLAB® X IDE v6.20](https://www.microchip.com/mplab/mplab-x-ide)
+- MPLAB® X IDE plug-ins:
+  - MPLAB® Code Configurator 5.5.1 or higher
+- MPLAB® Harmony3 Library 1.5.4 or higher
+
 ## SHD Release v1.0.0-E1
 
 This release introduces initial support for:
@@ -46,7 +92,7 @@ This release introduces initial support for:
     - SAM L11 Xplained Pro
     - SAM L21 Xplained Pro
     - SAM L22 Xplained Pro
-  - **WSG**
+  - **Wireless solutions**
     - WBZ351 EVB Board
     - WBZ451 EVB Board
     - PIC32 WFI32E Curiosity Board
@@ -61,7 +107,7 @@ This release introduces initial support for:
     - I/O1 Xplained Pro
     - PL460 Evaluation Kit (G3 MAC RT)
     - PL460 Evaluation Kit (PLC PHY)
-  - **WSG Add-on boards**
+  - **Wireless add-on boards**
     - WINCS02 add-on board
     - RNWF11
     - RNWF02

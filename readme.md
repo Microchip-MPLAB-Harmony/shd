@@ -18,7 +18,7 @@ Refer to the following links for release notes, training materials, and interfac
 reference information.
 
 - [Release Notes](./release_notes.md)
-- [MPLAB® Harmony License](mplab_harmony_license.md)
+- [Microchip SLA](Microchip_SLA001.md)
 
 # Contents Summary
 
@@ -27,13 +27,20 @@ reference information.
 | boards      | Configuration files of Microchip development boards   |
 | clickBoards | Configuration files of the supported extension boards |
 | config      | Core module configuration scripts                     |
-| libs        | Library modules                                       |
+| libs        | Internal library modules                              |
+
+## Documentation
+
+Click [here](https://onlinedocs.microchip.com/v2/keyword-lookup?keyword=shdMainBoardHelpKeyword&redirect=true) to view the online documentation of csp repository.
+
+To view the documentation offline, follow these steps:
+ - Download the publication as a zip file from [here](https://onlinedocs.microchip.com/download/GUID-72679332-5DB4-417E-ABF2-90DB2270509C?type=webhelp).
+ - Extract the zip file into a folder.
+ - Navigate to the folder and open **index.html** in a web browser of your choice.
 
 ---
 
-[![License](https://img.shields.io/badge/license-Harmony%20license-orange.svg)](https://github.com/Microchip-MPLAB-Harmony/shd/blob/master/mplab_harmony_license.md)
-[![Latest release](https://img.shields.io/github/release/Microchip-MPLAB-Harmony/shd.svg)](https://github.com/Microchip-MPLAB-Harmony/shd/releases/latest)
-[![Latest release date](https://img.shields.io/github/release-date/Microchip-MPLAB-Harmony/shd.svg)](https://github.com/Microchip-MPLAB-Harmony/shd/releases/latest)
+[![License](https://img.shields.io/badge/license-Harmony%20license-orange.svg)](https://github.com/Microchip-MPLAB-Harmony/shd/blob/master/Microchip_SLA001.md)
 [![Commit activity](https://img.shields.io/github/commit-activity/y/Microchip-MPLAB-Harmony/shd.svg)](https://github.com/Microchip-MPLAB-Harmony/shd/graphs/commit-activity)
 [![Contributors](https://img.shields.io/github/contributors-anon/Microchip-MPLAB-Harmony/shd.svg)]()
 
