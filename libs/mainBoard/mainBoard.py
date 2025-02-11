@@ -1165,6 +1165,7 @@ class MainBoard:
                             pinControlCurrent[signal][subSignal] = self.__updatePinConfiguration(pinControlCurrent[signal][subSignal], newSubConfig)
                     
         # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector pinControlCurrent 2: {}".format(pinControlCurrent))
+        # self.__log.writeInfoMessage("SHD >> SHD updatePinControlByConnector self.__currentConfig['connectors'][0]: {}".format(self.__currentConfig['connectors'][0]))
 
     def restorePinControlByConnector(self, connectorName):
         connectorIndex = 0
@@ -1244,17 +1245,22 @@ class MainBoard:
     def resetConnectorConfig(self, connectorName):
         # self.__log.writeInfoMessage("SHD >> SHD restoreConnections connectorName: {}".format(connectorName))
         board = self.__db.getComponentByID(self.__interfaceID)
-        
-        # Restore Pin Control by default of the Main Board by Connector
-        self.restorePinControlByConnector(connectorName)
 
-        # Update Configuration Options by Connector
+        # Clear values of the current configuration
         signalList = self.getSignalListByConnectorName(connectorName)
         for signal in signalList:
             connectorSignalName = self.getConnectorSignalSymbolName(connectorName, signal)
             signalSymbol = board.getSymbolByID(connectorSignalName)
             signalSymbol.clearValue()
-            # signalSymbol.setReadOnly(False)
+        
+        # Restore Pin Control by default of the Main Board by Connector
+        self.restorePinControlByConnector(connectorName)
+
+        # Restore Description and Labels by Connector
+        signalList = self.getSignalListByConnectorName(connectorName)
+        for signal in signalList:
+            connectorSignalName = self.getConnectorSignalSymbolName(connectorName, signal)
+            signalSymbol = board.getSymbolByID(connectorSignalName)
             signalSymbol.setVisible(True)
             signalSymbol.setLabel(signal.upper())
             # Update Symbol label
