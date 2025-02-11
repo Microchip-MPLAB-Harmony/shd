@@ -846,7 +846,7 @@ def __getConfigDatabaseDrvSST26(settings):
         cs = "".join(filter(lambda x: x.isdigit(), functionValue))
         configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
         configDB.setdefault('config', (pinId, protocol, cs, enable))
-    elif 'SS' in fn.upper() or 'CS' in fn.upper():
+    elif 'SS' in fn.upper() or 'CS' in fn.upper() or '_CS' in nameValue.upper():
         protocol = 'SPI'
         cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
         configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
@@ -1141,7 +1141,7 @@ def getDriverDependencyFromPin(pinName, pinFunction):
             dep = "drv_usart"
         else:
             dep = "drv_spi"
-    elif __checkSubstringList(['UART', 'USART', 'VIRTUAL_COM'], string) == True:
+    elif __checkSubstringList(['UART', 'USART', 'VIRTUAL_COM', 'VCOM'], string) == True:
         dep = "drv_usart"
     else:
         string = pinFunction.upper()
