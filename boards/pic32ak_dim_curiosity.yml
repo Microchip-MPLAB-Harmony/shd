@@ -1,4 +1,4 @@
-name: pic32ak-dim-curiosity
+name: PIC32AK1216GC41064-GP-DIM-Curiosity-Platform
 config: pic32ak_dim_curiosity.py
 documentation: https://www.microchip.com/en-us/development-tool/EV02G02A
 processor:
@@ -180,7 +180,9 @@ interfaces:
           cs:
             pinId: RD4
             name: SST26VF_CS
-            function: SPI1_SS1
+            function: GPIO
+            direction: out
+            latch: high
           sck:
             pinId: RC0
             name: SST26VF_SCK
@@ -252,43 +254,39 @@ interfaces:
   - name: Communication interfaces
     description: Communication Ports options
     options:
-      - name: USB to UART
-        description: App UART configuration
+      - name: Virtual COM Port MCP2221A interface
+        description: Virtual COM Port MCP2221A configuration
         pinctrl:
           tx:
             pinId: RD1
-            name: UART_TX
+            name: MCP2221A_VCOM_TX
             function: UART1_U1TX
           rx:
             pinId: RD3
-            name: UART_RX
+            name: MCP2221A_VCOM_RX
             function: UART1_U1RX
-      - name: USB to UART (HID)
-        description: App UART configuration
+      - name: MCP2221A I2C-USB-HID interface
+        description: MCP2221A I2C-USB-HID configuration
         pinctrl:
           sda:
             pinId: RD8
-            name: I2C_SDA
+            name: MCP2221A_HID_I2C_SDA
             function: I2C2_ASDA2
           scl:
             pinId: RD7
-            name: I2C_SCL
+            name: MCP2221A_HID_I2C_SCL
             function: I2C2_ASCL2
-
-  - name: USB debugger interface
-    description: On-Board Debugger (PKOB4)
-    options:
-      - name: Virtual COM Port interface
-        description: Serial Debug Console
+      - name: Virtual COM Port PKOB4 interface
+        description: Virtual COM Port PKOB4 configuration
         dependencies: [[sys_console, uart2]]
         pinctrl:
           tx:
             pinId: RD9
-            name: VIRTUAL_COM_TX
+            name: PKOB4_VCOM_TX
             function: UART2_U2TX
           rx:
             pinId: RD10
-            name: VIRTUAL_COM_RX
+            name: PKOB4_VCOM_RX
             function: UART2_U2RX
 
 connectors:
@@ -419,7 +417,9 @@ connectors:
         cs:
           pinId: RC5
           name: XPRO1_SPI_CS
-          function: SPI3_SS3
+          function: GPIO
+          direction: out
+          latch: high
         sck:
           pinId: RC4
           name: XPRO1_SPI_SCK
