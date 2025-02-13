@@ -867,6 +867,22 @@ def __getConfigDatabaseDrvAT25(settings):
     
     return configDB
 
+def __getConfigDatabaseDrvSDSPI(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+
+    # print("SHD >> __getConfigDatabaseDrvSDMMC nameValue: {} ".format(nameValue))
+    if functionValue == "GPIO" and signalId == "cs" and "_microSD_SS" in nameValue:
+        configDB.setdefault('msgID', 'DRV_SDSPI_CONFIG_HW_IO')
+        configDB.setdefault('config', (pinId, signalId, nameValue, enable))
+    elif signalId == "sck":
+        plib = functionValue.split("_")[0]
+        configDB.setdefault('msgID', 'DRV_SDSPI_CONFIG_INSTANCE_HW_IO')
+        configDB.setdefault('config', (plib, enable))
+    
+    return configDB
+
 def __getConfigDatabaseDrvAT25DF(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
 
@@ -942,6 +958,8 @@ def getDBMsgDriverConfiguration(settings):
         configDB = __getConfigDatabaseDrvSST26(settings)
     elif driver == 'drv_at25':
         configDB = __getConfigDatabaseDrvAT25(settings)
+    elif driver == 'drv_sdspi':
+        configDB = __getConfigDatabaseDrvSDSPI(settings)
     elif driver == 'drv_at25df':
         configDB = __getConfigDatabaseDrvAT25DF(settings)
     elif driver == 'drvWifiWincS02':
