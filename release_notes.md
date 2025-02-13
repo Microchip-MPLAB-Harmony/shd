@@ -16,9 +16,10 @@ This release adds support for the following development kits and extension board
     - SAMA5D29 Curiosity
     - SAMA7D65 Curiosity Kit
     - SAMA7G54 Evaluation Kit
-  - **PIC3xAK**
-    - PIC32AK DIM + Curiosity Development Board
-    - PIC33AK DIM + Curiosity Development Board
+  - **PIC32AK**
+    - PIC32AK DIM + Curiosity Platform Development Board
+  - **dsPIC33AK**
+    - dsPIC33AK DIM + Curiosity Platform Development Board
   - **Wireless solutions**
     - WFI32E02 High Pin Count (HPC) Curiosity Board
     - WFI32E04 High Pin Count (HPC) Curiosity Board
