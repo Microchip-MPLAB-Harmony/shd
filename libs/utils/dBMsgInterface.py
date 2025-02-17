@@ -839,19 +839,21 @@ def __getConfigDatabaseDrvSST26(settings):
 
     configDB = dict()
 
-    fn = "".join(filter(lambda x: x.isalpha(), functionValue))
+    cs = ""
+    fn = "".join(filter(lambda x: x.isalpha(), functionValue)).upper()
     # print("SHD dbg >> getConfigDatabaseDrvSST26 settings: {} ".format(settings))
-    if 'SQI' in fn.upper():
-        protocol = 'SQI'
-        cs = "".join(filter(lambda x: x.isdigit(), functionValue))
-        configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
-        configDB.setdefault('config', (pinId, protocol, cs, enable))
-    elif 'SS' in fn.upper() or 'CS' in fn.upper() or '_CS' in nameValue.upper():
+    if 'SQI' in fn:
+        if signalId.lower() == 'qcs':
+            protocol = 'SQI'
+            cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
+    elif ('SS' in fn) or ('CS' in fn) or (nameValue is not None and '_CS' in nameValue.upper()):
         protocol = 'SPI'
         cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
-        configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
-        configDB.setdefault('config', (pinId, protocol, cs, enable))
     
+    if cs != "":
+        configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
+        configDB.setdefault('config', (pinId, protocol, int(cs), enable))
+
     return configDB
 
 def __getConfigDatabaseDrvAT25(settings):
