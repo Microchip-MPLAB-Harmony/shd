@@ -846,104 +846,112 @@ class MainBoard:
         clickBoardSelection = event['value']
         connectorSymbolID = symbol.getID().replace("_DUMMY", "")
         connectorName = self.getConnectorNameFromSymbolID(connectorSymbolID)
-        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: connectorName: {}".format(clickBoardSelection))
+        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: clickBoardSelection: {}".format(clickBoardSelection))
         # self.__log.writeInfoMessage("SHD >> __connectClickBoard: connectorSymbolName: {}".format(connectorSymbolID))
         # self.__log.writeInfoMessage("SHD >> __connectClickBoard: connectorName: {}".format(connectorName))
-
-        self.resetConnectorConfig(connectorName)
-
-        if clickBoardSelection == "Select extension board":
-            if self.__depBindings.get(connectorName) != None:
-                del self.__depBindings[connectorName]
-                del self.__connectedClickBoards[connectorName]
-                self.__connectedClickBoards[connectorName] = None
-                connectorAdaptorSymbol = self.__connectorAdaptorSymbols.get(connectorName)
-                if connectorAdaptorSymbol != None:
-                    connectorAdaptorSymbol.setVisible(False)
-
+        
+        previousConnectedBoard = self.__connectedClickBoards.get(connectorName)
+        # self.__log.writeInfoMessage("SHD >> previousConnectedBoard: {}".format(previousConnectedBoard))
+        if (previousConnectedBoard is not None) and (clickBoardSelection != "Select extension board"):
+            self.__log.writeInfoMessage("SHD >> WARNING: {} is already connected. Please disconnect and select again.".format(previousConnectedBoard.getName()))
         else:
-            clickBoardInterface = None
-            for clickBoardFileName, (clickBoardName, clickBoardCompatible) in self.__clickBoardFileList.items():
-                if clickBoardName == clickBoardSelection:
-                    clickBoardInterface = ClickBoard(clickBoardFileName)
-                    self.__connectedClickBoards.setdefault(connectorName, clickBoardInterface)
-                    break
+            self.resetConnectorConfig(connectorName)
 
-            if clickBoardInterface != None:
-                # Check if multi-connection is allowed
-                if self.__checkAvailableClickBoard(connectorName, clickBoardInterface) == True:
-                    self.__log.writeInfoMessage("SHD >> Connect Click Board: {}".format(clickBoardInterface.getName()))
-                    self.__log.writeInfoMessage("SHD >> For further information: {}".format(clickBoardInterface.getDocumentation()))
-
-                    # Check if XplainPro to mikroBUS adapator board is needed
+            if clickBoardSelection == "Select extension board":
+                if self.__depBindings.get(connectorName) != None:
+                    del self.__depBindings[connectorName]
+                    del self.__connectedClickBoards[connectorName]
                     connectorAdaptorSymbol = self.__connectorAdaptorSymbols.get(connectorName)
-                    useHWAdaptor = False
                     if connectorAdaptorSymbol != None:
-                        if self.__checkConnectorAdaptor(connectorName, clickBoardCompatible) == True:
-                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard WITH ADAPTOR - {}".format(connectorAdaptorSymbol))
-                            connectorAdaptorSymbol.setVisible(True)
-                            useHWAdaptor = True
-                            clickBoardInterface.convertFromMikroBusToXplainProBoard()
-                        else:
-                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard WITHOUT ADAPTOR - {}".format(connectorAdaptorSymbol))
-                            connectorAdaptorSymbol.setVisible(False)
-                            clickBoardInterface.restoreFromXplainProToMikroBusBoard()
+                        connectorAdaptorSymbol.setVisible(False)
+                
+                self.__connectedClickBoards[connectorName] = None
 
-                    # Handle Bindings
-                    bindingList = clickBoardInterface.getDependencies()
-                    # self.__log.writeInfoMessage("SHD >> __connectClickBoard: bindingList - {}".format(bindingList))
-                    if bindingList != None:
-                        index = 0
-                        for binding in bindingList:
-                            if len(binding) == 1:
-                                bindingList[index] = binding
-                            elif len(binding) == 2:
-                                depIdCon, signalCon = binding
-                                pinControlConnector = self.getPinControlByConnectorName(connectorName)
-                                pinControlSignal = pinControlConnector.get(signalCon)
-                                if pinControlSignal != None:
-                                    rmiiConDetected = False
-                                    pinFunction = pinControlSignal.get("function")
-                                    if pinFunction == None: # this is a bus signals (usart, i2c, spi, rmii)
-                                        if signalCon == 'spi':
-                                            pinFunction = pinControlSignal.get("mosi").get("function")
-                                        elif signalCon == 'uart':
-                                            pinFunction = pinControlSignal.get("tx").get("function")
-                                        elif signalCon == 'i2c':
-                                            pinFunction = pinControlSignal.get("sda").get("function")
-                                        elif signalCon == 'ethphy':
-                                            rmiiConDetected = True
-                                            if clickBoardInterface.getConnectorCompatible() == "rgmii":
-                                                pinFunction = pinControlSignal.get("gtxen").get("function")
-                                            else:
-                                                pinFunction = pinControlSignal.get("txen").get("function")
+            else:
+                clickBoardInterface = None
+                for clickBoardFileName, (clickBoardName, clickBoardCompatible) in self.__clickBoardFileList.items():
+                    if clickBoardName == clickBoardSelection:
+                        clickBoardInterface = ClickBoard(clickBoardFileName)
+                        self.__connectedClickBoards[connectorName] = clickBoardInterface
+                        break
 
-                                    if pinFunction != None:
-                                        pinFunction = pinFunction.upper()
-                                        if pinFunction != 'GPIO':
-                                            plib = pinFunction.split("_")
-                                            if len(plib) > 1:
-                                                plib = plib[0]
-                                            # Overwrite the current element of the bindingList
-                                            if rmiiConDetected == False:
-                                                bindingList[index] = [depIdCon, plib.lower()]
-                                            else:
-                                                # RMII binding adaptation: depIdCon is the capability, PLIB includes the dependency (driver)
-                                                bindingList[index] = [plib.lower(), depIdCon]
-                                                
-                                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard added bindingList[{}]: {}".format(index, bindingList[index]))
-                            index = index + 1
-                            
-                        self.__depBindings.setdefault(connectorName, bindingList)
-                        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: __setAdditionalDependencies: {}".format(self.__depBindings))
+                if clickBoardInterface != None:
+                    # Check if multi-connection is allowed
+                    if self.__checkAvailableClickBoard(connectorName, clickBoardInterface) == True:
+                        self.__log.writeInfoMessage("SHD >> Connect Click Board: {}".format(clickBoardInterface.getName()))
+                        self.__log.writeInfoMessage("SHD >> For further information: {}".format(clickBoardInterface.getDocumentation()))
 
-                    # Get only the active signals from ClickBoard
-                    pinControlClickBoard = clickBoardInterface.getConnections()
-                    # self.__log.writeInfoMessage("SHD >> __connectClickBoard: pinControlClickBoard - {}".format(pinControlClickBoard))
+                        # Check if XplainPro to mikroBUS adapator board is needed
+                        connectorAdaptorSymbol = self.__connectorAdaptorSymbols.get(connectorName)
+                        useHWAdaptor = False
+                        if connectorAdaptorSymbol != None:
+                            if self.__checkConnectorAdaptor(connectorName, clickBoardCompatible) == True:
+                                # self.__log.writeInfoMessage("SHD >> __connectClickBoard WITH ADAPTOR - {}".format(connectorAdaptorSymbol))
+                                connectorAdaptorSymbol.setVisible(True)
+                                useHWAdaptor = True
+                                clickBoardInterface.convertFromMikroBusToXplainProBoard()
+                            else:
+                                # self.__log.writeInfoMessage("SHD >> __connectClickBoard WITHOUT ADAPTOR - {}".format(connectorAdaptorSymbol))
+                                connectorAdaptorSymbol.setVisible(False)
+                                clickBoardInterface.restoreFromXplainProToMikroBusBoard()
 
-                    # Set connector configuration
-                    self.setConnectorConfig(connectorName, pinControlClickBoard, useHWAdaptor)
-         
+                        # Handle Bindings
+                        bindingList = clickBoardInterface.getDependencies()
+                        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: bindingList - {}".format(bindingList))
+                        if bindingList != None:
+                            index = 0
+                            for binding in bindingList:
+                                if len(binding) == 1:
+                                    bindingList[index] = binding
+                                elif len(binding) == 2:
+                                    depIdCon, signalCon = binding
+                                    pinControlConnector = self.getPinControlByConnectorName(connectorName)
+                                    pinControlSignal = pinControlConnector.get(signalCon)
+                                    if pinControlSignal != None:
+                                        rmiiConDetected = False
+                                        pinFunction = pinControlSignal.get("function")
+                                        if pinFunction == None: # this is a bus signals (usart, i2c, spi, rmii)
+                                            if signalCon == 'spi':
+                                                pinFunction = pinControlSignal.get("mosi").get("function")
+                                            elif signalCon == 'uart':
+                                                pinFunction = pinControlSignal.get("tx").get("function")
+                                            elif signalCon == 'i2c':
+                                                pinFunction = pinControlSignal.get("sda").get("function")
+                                            elif signalCon == 'ethphy':
+                                                rmiiConDetected = True
+                                                if clickBoardInterface.getConnectorCompatible() == "rgmii":
+                                                    pinFunction = pinControlSignal.get("gtxen").get("function")
+                                                else:
+                                                    pinFunction = pinControlSignal.get("txen").get("function")
+
+                                        if pinFunction != None:
+                                            pinFunction = pinFunction.upper()
+                                            if pinFunction != 'GPIO':
+                                                plib = pinFunction.split("_")
+                                                if len(plib) > 1:
+                                                    plib = plib[0]
+                                                # Overwrite the current element of the bindingList
+                                                if rmiiConDetected == False:
+                                                    bindingList[index] = [depIdCon, plib.lower()]
+                                                else:
+                                                    # RMII binding adaptation: depIdCon is the capability, PLIB includes the dependency (driver)
+                                                    bindingList[index] = [plib.lower(), depIdCon]
+                                                    
+                                                # self.__log.writeInfoMessage("SHD >> __connectClickBoard added bindingList[{}]: {}".format(index, bindingList[index]))
+                                index = index + 1
+                                
+                            self.__depBindings.setdefault(connectorName, bindingList)
+                            # self.__log.writeInfoMessage("SHD >> __connectClickBoard: __setAdditionalDependencies: {}".format(self.__depBindings))
+
+                        # Get only the active signals from ClickBoard
+                        pinControlClickBoard = clickBoardInterface.getConnections()
+                        # self.__log.writeInfoMessage("SHD >> __connectClickBoard: pinControlClickBoard - {}".format(pinControlClickBoard))
+
+                        # Set connector configuration
+                        self.setConnectorConfig(connectorName, pinControlClickBoard, useHWAdaptor)
+            
+            # self.__log.writeInfoMessage("SHD >> __connectClickBoard: __connectedClickBoards: {}".format(self.__connectedClickBoards))
+
     def __updatePinConfiguration(self, config, newConfig):
         result = config.copy()
         # self.__log.writeInfoMessage("SHD >> __updatePinConfiguration: result: {}".format(result))
