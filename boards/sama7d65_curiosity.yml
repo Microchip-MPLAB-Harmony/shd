@@ -1,4 +1,4 @@
-name: sama7d65_curiosity
+name: sama7d65-curiosity
 config: sama7d65_curiosity.py
 documentation: https://www.microchip.com/en-us/development-tool/EV63J76A
 processor:

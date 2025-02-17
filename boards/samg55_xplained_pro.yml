@@ -1,4 +1,4 @@
-name: samg55_xplained_pro-ek
+name: samg55-xplained-pro-ek
 config: samg55_xplained_pro.py
 documentation: https://www.microchip.com/en-us/development-tool/ATSAMG55-XPRO
 processor:

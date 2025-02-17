@@ -1,5 +1,5 @@
-name: samd21_curiosity_cnano
-config: samd21_curiosity_cnano.py
+name: samd21-curiosity-nano-base
+config: samd21_curiosity_nano_base.py
 documentation: https://www.microchip.com/en-us/development-tool/DM320119
 processor:
   name: ATSAMD21G17D

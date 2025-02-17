@@ -1,4 +1,4 @@
-name: same51_curiosity_nano
+name: same51-curiosity-nano-base
 config: same51_curiosity_nano_base.py
 documentation: https://www.microchip.com/en-us/development-tool/EV76S68A
 processor:
