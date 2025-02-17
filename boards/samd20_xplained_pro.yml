@@ -185,7 +185,9 @@ connectors:
         cs:
           pinId: PA05
           name: EXT1_SPI_CS
-          function: SERCOM0_PAD1
+          function: GPIO
+          direction: out
+          latch: high
         sck:
           pinId: PA07
           name: EXT1_SPI_SCK
@@ -261,7 +263,9 @@ connectors:
         cs:
           pinId: PA17
           name: EXT2_SPI_CS
-          function: SERCOM1_PAD1
+          function: GPIO
+          direction: out
+          latch: high
         sck:
           pinId: PA19
           name: EXT2_SPI_SCK
@@ -337,7 +341,9 @@ connectors:
         cs:
           pinId: PB17
           name: EXT3_SPI_CS
-          function: SERCOM5_PAD1
+          function: GPIO
+          direction: out
+          latch: high
         sck:
           pinId: PB23
           name: EXT3_SPI_SCK
