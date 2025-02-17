@@ -77,7 +77,7 @@ This release introduces initial support for:
     - SAM C21N Xplained Pro
   - **SAM D21/DA1**
     - SAM D21 Xplained Pro
-    - SAM D21 Curiosity Nano
+    - SAM D21 Curiosity Nano - Nano Base
     - SAM D20 Xplained Pro
     - SAM DA1 Xplained Pro
   - **SAM D1x**
