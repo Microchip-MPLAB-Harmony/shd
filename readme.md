@@ -31,7 +31,7 @@ reference information.
 
 ## Documentation
 
-Click [here](https://onlinedocs.microchip.com/v2/keyword-lookup?keyword=shdMainBoardHelpKeyword&redirect=true) to view the online documentation of csp repository.
+Click [here](https://onlinedocs.microchip.com/v2/keyword-lookup?keyword=shdMainBoardHelpKeyword&redirect=true) to view the online documentation of shd repository.
 
 To view the documentation offline, follow these steps:
  - Download the publication as a zip file from [here](https://onlinedocs.microchip.com/download/GUID-72679332-5DB4-417E-ABF2-90DB2270509C?type=webhelp).
