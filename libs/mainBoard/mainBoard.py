@@ -262,6 +262,10 @@ class MainBoard:
                         value = "True" if value else "False"
                 else:
                     value = value.title()
+                    if key == 'direction' and value == 'In/Out':
+                        # Check compatibility with plib peripheral
+                        if self.__pioPeripheralID != 'PORT_U2210':
+                            value = 'Out'
                     
                 # Don't set any value in case of direction: input
                 # if key == 'direction' and value == 'In':
