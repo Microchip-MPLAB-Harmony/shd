@@ -222,7 +222,7 @@ class MainBoard:
         pinId = pinControl.get('pinId')
         pinNumber = self.__devicePinMap.get(pinId)
         pinFunction = pinControl.get('function')
-        if pinFunction.lower() != 'unused':
+        if pinFunction.lower() != 'unused' and pinId.upper() != 'NC':
             # Get function values list from the pinNumber
             functionList = getDeviceFunctionListByPinId(self.__db, self.__atdf, pinId)
             # self.__log.writeInfoMessage("SHD >> pin {} - functionList {}".format(pinId, functionList))
@@ -778,34 +778,35 @@ class MainBoard:
                             else:
                                 dependencies[depId] = capId
                             
-                # Set/Clear PIN configuration               
-                if event["value"] is True:
-                    # Check if that pin is already added                    
-                    if not pinId in self.__configuredPins:
-                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback set Pin {}".format(pinId))
-                        self.__configuredPins.append(pinId)
-                        self.__pinControlByPinId.setdefault(pinId, pinCtrl)
-                        self.__setPinConfig(pinCtrl)
-                        enabledPinIdList.setdefault(pinId, pinDescr)
-                else:
-                    # Check if that pin has to be removed
-                    if pinId in self.__configuredPins:
-                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback clear Pin {}".format(pinId))
-                        self.__configuredPins.remove(pinId)
-                        del self.__pinControlByPinId[pinId]
-                        self.__clearPinConfig(pinCtrl)
-                        disabledPinIdList.setdefault(pinId, pinDescr)
+                # Set/Clear PIN configuration    
+                if pinId.upper() is not "NC":           
+                    if event["value"] is True:
+                        # Check if that pin is already added                    
+                        if not pinId in self.__configuredPins:
+                            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback set Pin {}".format(pinId))
+                            self.__configuredPins.append(pinId)
+                            self.__pinControlByPinId.setdefault(pinId, pinCtrl)
+                            self.__setPinConfig(pinCtrl)
+                            enabledPinIdList.setdefault(pinId, pinDescr)
+                    else:
+                        # Check if that pin has to be removed
+                        if pinId in self.__configuredPins:
+                            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback clear Pin {}".format(pinId))
+                            self.__configuredPins.remove(pinId)
+                            del self.__pinControlByPinId[pinId]
+                            self.__clearPinConfig(pinCtrl)
+                            disabledPinIdList.setdefault(pinId, pinDescr)
 
             # self.__log.writeInfoMessage("SHD >> __signalEnableCallback dependencies: {}".format(dependencies))
 
             # Activate/Deactivate components and create connections
             self.__updateDriverConnections(event["value"], dependencies, connectorName)
 
-            # Configure settings of the drivers of each updated PinId if needed
-            self.__configureDriverSettings(enabledPinIdList, disabledPinIdList)
-                
-            # Check PIN Collisions
-            self.__shdCheckCollisionSymbol.setValue(event["value"])
+            if pinId.upper() is not "NC":  
+                # Configure settings of the drivers of each updated PinId if needed
+                self.__configureDriverSettings(enabledPinIdList, disabledPinIdList)
+                # Check PIN Collisions
+                self.__shdCheckCollisionSymbol.setValue(event["value"])
 
             self.__signalCallbackBusy = False
             # self.__log.writeInfoMessage("SHD >> __signalEnableCallback __configuredPins: {}".format(self.__configuredPins))
