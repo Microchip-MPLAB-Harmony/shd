@@ -9,9 +9,15 @@ dependencies: [[drvWifiWincS02, spi]]
 supported:
   rst:
     name: WDRV_WINC_RESETN
+    function: GPIO
+    direction: in/out
+    latch: high
   spi:
     cs:
-      name: WDRV_WINC_CHIP_EN
+      name: WDRV_WINC_SSN
+      function: GPIO
+      direction: out
+      latch: high
     sck:
       name: WDRV_WINC_SCK
     miso:
@@ -20,3 +26,9 @@ supported:
       name: WDRV_WINC_MOSI
   int:
     name: WDRV_WINC_INT
+    interrupt: falling edge
+  pwm:
+    name: WDRV_WINC_CHIP_EN
+    function: GPIO
+    direction: out
+    latch: high

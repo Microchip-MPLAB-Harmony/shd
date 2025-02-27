@@ -125,7 +125,7 @@ class MainBoard:
             
     def __setPLIBSettings(self, pinDescr, value):
         idActiveList = self.__db.getActiveComponentIDs()
-        for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
+        for signalId, (pinId, functionValue, nameValue, intMode) in pinDescr.items():
             if functionValue.lower() == 'unused':
                 continue
             
@@ -134,7 +134,7 @@ class MainBoard:
             functionValue = functionValue.replace(" (in/out)", "")
             settings = (signalId, pinId, functionValue, nameValue, value)
             # self.__log.writeInfoMessage("SHD >> __setPLIBSettings : {}".format(settings))
-            componentID, messageID, params = getDBMsgPLIBConfiguration(self.__atdf, settings)
+            componentID, messageID, params = getDBMsgPLIBConfiguration(self.__atdf, settings, intMode)
             if messageID != None and componentID in idActiveList:
                 # self.__log.writeInfoMessage("SHD >> __setPLIBSettings: sending message to {} : {}. params: {}".format(componentID, messageID, params))
                 res = self.__db.sendMessage(componentID, messageID, params)
@@ -146,7 +146,7 @@ class MainBoard:
     def __setDriverSettings(self, pinDescr, value):
         # self.__log.writeInfoMessage("SHD >> __setDriverSettings pinDescr: {}".format(pinDescr))
         # Find driver connection
-        for signalId, (pinId, functionValue, nameValue) in pinDescr.items():
+        for signalId, (pinId, functionValue, nameValue, pinInterruptMode) in pinDescr.items():
             if functionValue.lower() != 'unused':
                 for plib, driver in self.__connections.items():
                     settings = (driver, signalId, pinId, functionValue, nameValue, value)
@@ -717,9 +717,10 @@ class MainBoard:
                 pinId = pinCtrl.get('pinId')
                 pinName = pinCtrl.get('name')
                 pinFunction = pinCtrl.get('function')
+                pinInterruptMode = pinCtrl.get('interrupt')
                 
                 pinDescr = {}
-                pinDescr.setdefault(signalId, (pinId, pinFunction, pinName))
+                pinDescr.setdefault(signalId, (pinId, pinFunction, pinName, pinInterruptMode))
                 
                 # Autodetect dependencies if not found in configuration file
                 autodetectDeps = True

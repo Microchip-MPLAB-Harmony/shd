@@ -420,7 +420,7 @@ def __getConfigDatabaseMCSPI(periphID, settings):
 
     return configDB
 
-def __getConfigDatabaseEIC(periphID, settings):
+def __getConfigDatabaseEIC(periphID, settings, intMode):
     # fnValue format -> '{}_{}'.format(componentID, setting)
     signal, pinId, fnValue, pinNameValue, enable = settings
     componentID = fnValue.split('_')[0].lower()
@@ -450,7 +450,7 @@ def __getConfigDatabaseEIC(periphID, settings):
 
     if channel != "":
         configDB.setdefault('msgID', 'EIC_CONFIG_HW_IO')
-        configDB.setdefault('config', (channel, enable))
+        configDB.setdefault('config', (channel, intMode, enable))
 
     return configDB
 
@@ -677,7 +677,7 @@ def __getConfigDatabaseCMPDAC(periphID, settings):
 
     return configDB
 
-def getDBMsgPLIBConfiguration(ATDF, settings):
+def getDBMsgPLIBConfiguration(ATDF, settings, intMode):
     periphList = __getDevicePeripheralList(ATDF)
     msgID = None
     
@@ -751,7 +751,7 @@ def getDBMsgPLIBConfiguration(ATDF, settings):
             configDB = __getConfigDatabaseMCSPI(periphID, settings)
             
         elif plib == 'eic':
-            configDB = __getConfigDatabaseEIC(periphID, settings)
+            configDB = __getConfigDatabaseEIC(periphID, settings, intMode)
 
         elif plib == 'aic':
             componentID, configDB = __getConfigDatabaseAIC(periphID, settings)
