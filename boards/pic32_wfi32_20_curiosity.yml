@@ -3,7 +3,7 @@ config: pic32_wfi32_20_curiosity.py
 documentation: https://www.microchip.com/en-us/development-tool/EV67T15A
 part number: EV67T15A
 processor:
-  name: PIC32MZ2051W104132
+  name: WFI32E03
   architecture: MIPS
   family: PIC32MZW
   series: PIC32MZW

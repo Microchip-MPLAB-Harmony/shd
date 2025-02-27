@@ -3,7 +3,7 @@ config: wfi32e_iot_20_db.py
 documentation: https://www.microchip.com/en-us/development-tool/EV80S51A
 part number: EV80S51A
 processor:
-  name: PIC32MZ2051W104132
+  name: WFI32E03
   architecture: MIPS
   family: PIC32MZW
   series: PIC32MZW
@@ -96,11 +96,11 @@ interfaces:
             name: SST26_SPI_SCK1
             function: SPI1_SCK1
             
-  - name: Temperature sensor interface
-    description: Temperature sensor configuration - U402
+  - name: Sensors interface
+    description: Sensors configuration
     options:
-      - name: MCP9808 interface
-        description: Digital Temperature Sensor MCP9808
+      - name: Temperature sensor MCP9808 interface
+        description: Digital Temperature Sensor MCP9808 - U402
         pinctrl:
           sda:
             pinId: RA5
@@ -114,12 +114,8 @@ interfaces:
             pinId: RB7
             name: TEMPSENSOR_INT
             function: INT1
-            
-  - name: Ambient light sensor interface
-    description: Ambient light sensor configuration - U401
-    options:
-      - name: OPT3001 interface
-        description: Digital Temperature Sensor OPT3001
+      - name: Ambient light sensor OPT3001 interface
+        description: Digital Temperature Sensor OPT3001 - U401
         pinctrl:
           sda:
             pinId: RA5
@@ -133,19 +129,34 @@ interfaces:
             pinId: RB6
             name: AMBIENT_INT
             function: INT1
-            
-  - name: Virtual COM Port interface
-    description: Serial Debug Console UART3 configuration
-    dependencies: [[sys_console, uart3]]
-    pinctrl:
-      tx:
-        pinId: RC14
-        name: PKOB4_UART_TX
-        function: UART3_U3TX
-      rx:
-        pinId: RC13
-        name: PKOB4_UART_RX
-        function: UART3_U3RX
+
+  - name: Communication interfaces
+    description: Communication Ports options
+    options:
+      - name: Virtual COM Port MCP2200 interface
+        description: Virtual COM Port MCP2200 configuration
+        dependencies: [[sys_console, uart1]]
+        pinctrl:
+          tx:
+            pinId: NC
+            name: MCP2200_VCOM_TX
+            function: UART1_U1TX
+          rx:
+            pinId: NC
+            name: MCP2200_VCOM_RX
+            function: UART1_U1RX
+      - name: Virtual COM Port interface
+        description: Serial Debug Console UART3 configuration
+        dependencies: [[stdio, uart3]]
+        pinctrl:
+          tx:
+            pinId: RC14
+            name: PKOB4_UART_TX
+            function: UART3_U3TX
+          rx:
+            pinId: RC13
+            name: PKOB4_UART_RX
+            function: UART3_U3RX
 
 connectors:
   - compatible: mikrobus

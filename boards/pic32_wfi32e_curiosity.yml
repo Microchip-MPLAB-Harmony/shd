@@ -3,7 +3,7 @@ config: pic32_wfi32e_curiosity.py
 documentation: https://www.microchip.com/en-us/development-tool/ev12f11a
 part number: EV12F11A
 processor:
-  name: PIC32MZ1025W104132
+  name: WFI32E01
   architecture: MIPS
   family: PIC32MZW
   series: PIC32MZW
