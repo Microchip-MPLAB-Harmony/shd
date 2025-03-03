@@ -1,4 +1,4 @@
-{% macro generateOuputsHeaders(trustzone, core) %}
+{% macro generateOuputsHeaders(genSecure, core) %}
     {% set numPinTotal = core["PIO_PIN_TOTAL"] %}
     {% set numPinCount = core["PORT_PIN_COUNT"] %}
     {% for pinNumber in  range(1, numPinTotal + 1) %}
@@ -33,7 +33,7 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro generateInputsHeaders(trustzone, core) %}
+{% macro generateInputsHeaders(genSecure, core) %}
     {% set numPinTotal = core["PIO_PIN_TOTAL"] %}
     {% for pinNumber in  range(1, numPinTotal + 1) %}
         {% set funcTypeSymName = "PIN_{}_FUNCTION_TYPE".format(pinNumber) %}

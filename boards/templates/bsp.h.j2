@@ -51,11 +51,7 @@
 // *****************************************************************************
 {% set board = namespace() %}
 {% set deviceFamily = values["core"]["DeviceFamily"] %}
-{% if variables["__TRUSTZONE_ENABLED"] is defined %}
-    {% set trustZone = variables["__TRUSTZONE_ENABLED"] %}
-{% else %}
-    {% set trustZone = 'false' %}
-{% endif %}
+{% set genSecure = variables["__TEMPLATES_GEN_SECURE"] %}
 {% for component in values %}
   {% if "mainBoard_" in component %}
     {% set board.name = values[component]["SHD_MAINBOARD_NAME"] %}
@@ -103,8 +99,8 @@
 #define {{ board.name|upper()|replace("-", "_") }}
 #define BOARD_NAME    "{{ board.name|upper() }}"
 {{ getMainBoardSettings(values) }}
-{{ generateOuputsHeaders(trustZone, values.core) }}
-{{ generateInputsHeaders(trustZone, values.core) }}
+{{ generateOuputsHeaders(genSecure, values.core) }}
+{{ generateInputsHeaders(genSecure, values.core) }}
 
 // *****************************************************************************
 // *****************************************************************************
@@ -149,17 +145,3 @@ void BSP_Initialize(void);
 /*******************************************************************************
  End of File
 */
-{# 
-// Variables
-{% for var in variables %}
-// {{ var }}: {{ variables[var] }}
-{% endfor %}
-
-// Core Symbols
-{% for value in values %}
-  // {{ value }}
-  {% for symbol in values[value] %}
-    // {{ symbol }}: {{ values[value][symbol] }}
-  {% endfor %}
-{% endfor %} 
-#}

@@ -1,6 +1,5 @@
-{% macro generateOuputsHeaders(trustzone, core) %}
+{% macro generateOuputsHeaders(genSecure, core) %}
     {% set numPinCount = core["PORT_PIN_COUNT"] %}
-    {% set portRegName = core["PORT_REG_NAME"] %}
     {% set pinStatus = namespace() %}
     {% for pinNumber in  range(1, numPinCount + 1) %}
         {% set funcTypeSymName = "PIN_{}_FUNCTION_TYPE".format(pinNumber) %}
@@ -10,11 +9,21 @@
         {% if funcType == 'GPIO' %}
             {% if direction.lower() == 'out' %}
                 {% set pinStatus.visible = 'true' %}
-                {% if trustzone == 'true' %}
-                    {% set pinIsSecure = "PIN_{}_IS_NON_SECURE".format(pinNumber) %}
-                    {% set secure = core[pinIsSecure] %}
-                    {% if secure != 'SECURE' %}
+                {% set pinSecureSymbol = "PIN_{}_IS_NON_SECURE".format(pinNumber) %}
+                {% set pinSecure = core[pinSecureSymbol] %}
+                {% if genSecure == 'true' %}
+                    {% if pinSecure == 'SECURE' %}
+                        {% set portRegName = "PORT_SEC" %}
+                    {% else %}
                         {% set pinStatus.visible = 'false' %}
+                        {% set portRegName = "PORT" %}
+                    {% endif %}
+                {% else %}
+                    {% if pinSecure == 'SECURE' %}
+                        {% set pinStatus.visible = 'false' %}
+                        {% set portRegName = "PORT_SEC" %}
+                    {% else %}
+                        {% set portRegName = "PORT" %}
                     {% endif %}
                 {% endif %}
                 {% if pinStatus.visible == 'true' %}
@@ -27,7 +36,7 @@
                     {% set port = expName.split(":")[1][1] %}
                     {% set pin = core["PIN_{}_PORT_PIN".format(pinNumber)] %}
 /*** Macros for {{ funcName }} output pin ***/ 
-#define BSP_{{ funcName|upper() }}_PIN        {{ portRegName }}_PIN_P{{ port }}{{ pin }}
+#define BSP_{{ funcName|upper() }}_PIN        PORT_PIN_P{{ port }}{{ pin }}
 #define BSP_{{ funcName|upper() }}_Get()      (({{ portRegName }}_REGS->GROUP[{{ group }}].PORT_IN >> {{ pin }}U) & 0x01U)
 #define BSP_{{ funcName|upper() }}_Set()      ({{ portRegName }}_REGS->GROUP[{{ group }}].PORT_OUTSET = ((uint32_t)1U << {{ pin }}U))
 #define BSP_{{ funcName|upper() }}_Clear()    ({{ portRegName }}_REGS->GROUP[{{ group }}].PORT_OUTCLR = ((uint32_t)1U << {{ pin }}U))
@@ -48,9 +57,8 @@
     {% endfor %}
 {% endmacro %}
 
-{% macro generateInputsHeaders(trustzone, core) %}
+{% macro generateInputsHeaders(genSecure, core) %}
     {% set numPinCount = core["PORT_PIN_COUNT"] %}
-    {% set portRegName = core["PORT_REG_NAME"] %}
     {% set pinStatus = namespace() %}
     {% for pinNumber in  range(1, numPinCount + 1) %}
         {% set funcTypeSymName = "PIN_{}_FUNCTION_TYPE".format(pinNumber) %}
@@ -60,11 +68,21 @@
         {% if funcType == 'GPIO' %}
             {% if direction.lower() != 'out' %}
                 {% set pinStatus.visible = 'true' %}
-                {% if trustzone == 'true' %}
-                    {% set pinIsSecure = "PIN_{}_IS_NON_SECURE".format(pinNumber) %}
-                    {% set secure = core[pinIsSecure] %}
-                    {% if secure != 'SECURE' %}
+                {% set pinSecureSymbol = "PIN_{}_IS_NON_SECURE".format(pinNumber) %}
+                {% set pinSecure = core[pinSecureSymbol] %}
+                {% if genSecure == 'true' %}
+                    {% if pinSecure == 'SECURE' %}
+                        {% set portRegName = "PORT_SEC" %}
+                    {% else %}
                         {% set pinStatus.visible = 'false' %}
+                        {% set portRegName = "PORT" %}
+                    {% endif %}
+                {% else %}
+                    {% if pinSecure == 'SECURE' %}
+                        {% set pinStatus.visible = 'false' %}
+                        {% set portRegName = "PORT_SEC" %}
+                    {% else %}
+                        {% set portRegName = "PORT" %}
                     {% endif %}
                 {% endif %}
                 {% if pinStatus.visible == 'true' %}
@@ -79,7 +97,7 @@
                     {% set pullupSymName = "PIN_{}_PU".format(pinNumber) %}
                     {% set pullup = core[pullupSymName] %}
 /*** Macros for {{ funcName }} input pin ***/ 
-#define BSP_{{ funcName|upper() }}_PIN                    {{ portRegName }}_PIN_P{{ port }}{{ pin }}
+#define BSP_{{ funcName|upper() }}_PIN                    PORT_PIN_P{{ port }}{{ pin }}
 #define BSP_{{ funcName|upper() }}_Get()                  (({{ portRegName }}_REGS->GROUP[{{ group }}].PORT_IN >> {{ pin }}U) & 0x01U)
                     {% if pullup == "True" -%}   
 #define BSP_{{ funcName|upper() }}_STATE_PRESSED          0
@@ -107,8 +125,36 @@
                 {% set funcNameSymName = "PIN_{}_FUNCTION_NAME".format(pinNumber) %}
                 {% set funcName = core[funcNameSymName] %}
                 {% if 'led' in funcName.lower() %}
+                    {% set pinSecureSymbol = "PIN_{}_IS_NON_SECURE".format(pinNumber) %}
+                    {% set pinSecure = core[pinSecureSymbol] %}
+                    {% if pinSecure is not defined or pinSecure == 'NON-SECURE' %}
     /* Switch off {{ funcName|upper() }} */
     BSP_{{ funcName|upper() }}_Off();
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro generateSecureLedsInitialization(core) %}
+    {% set numPinTotal = core["PIO_PIN_TOTAL"] %}
+    {% for pinNumber in  range(1, numPinTotal + 1) %}
+        {% set funcTypeSymName = "PIN_{}_FUNCTION_TYPE".format(pinNumber) %}
+        {% set directionSymName = "PIN_{}_DIR".format(pinNumber) %}
+        {% set funcType = core[funcTypeSymName] %}
+        {% set direction = core[directionSymName] %}
+        {% if funcType == 'GPIO' %}
+            {% if direction.lower() == 'out' %}
+                {% set funcNameSymName = "PIN_{}_FUNCTION_NAME".format(pinNumber) %}
+                {% set funcName = core[funcNameSymName] %}
+                {% if 'led' in funcName.lower() %}
+                    {% set pinSecureSymbol = "PIN_{}_IS_NON_SECURE".format(pinNumber) %}
+                    {% set pinSecure = core[pinSecureSymbol] %}
+                    {% if pinSecure is defined and pinSecure == 'SECURE' %}
+    /* Switch off {{ funcName|upper() }} */
+    BSP_{{ funcName|upper() }}_Off();
+                    {% endif %}
                 {% endif %}
             {% endif %}
         {% endif %}

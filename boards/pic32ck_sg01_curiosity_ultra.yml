@@ -20,6 +20,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
+            trustzone: non-secure
       - name: User LED 1
         description: User LED 1
         pinctrl:
@@ -29,6 +30,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
+            trustzone: non-secure
       - name: User Switch 0
         description: User Switch 0
         pinctrl:
@@ -38,6 +40,7 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
+            trustzone: non-secure
       - name: User Switch 1
         description: User Switch 1
         pinctrl:
@@ -47,6 +50,7 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
+            trustzone: non-secure
 
   - name: Storage interface
     description: Storage on-board components configurations

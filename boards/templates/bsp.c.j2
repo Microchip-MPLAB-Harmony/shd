@@ -77,7 +77,7 @@
   {% endif %}
 {% endfor %}
 {% if board.ppio in ['PORT_U2210'] or board.ppio in ['PORT_03720'] %}
-  {% from 'macros_port_u2210.j2' import generateLedsInitialization %}
+  {% from 'macros_port_u2210.j2' import generateLedsInitialization, generateSecureLedsInitialization %}
 {% elif board.ppio in ['PIO_11264'] %}
   {% from 'macros_pio_11264.j2' import generateLedsInitialization %}
 {% elif board.ppio in ['PIO_11004'] %}
@@ -95,10 +95,16 @@
 {% elif board.ppio in ['GPIO_04928'] %}
   {% from 'macros_gpio_04928.j2' import generateLedsInitialization %}
 {% endif %}
+{% set genSecure = variables["__TEMPLATES_GEN_SECURE"] %}
 void BSP_Initialize(void )
 {
+{% if genSecure == 'true' %}
+{{ generateSecureLedsInitialization(values.core) }}
+{% else %}
 {{ generateLedsInitialization(values.core) }}
+{% endif %}
 }
+
 
 /*******************************************************************************
  End of File

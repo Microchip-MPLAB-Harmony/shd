@@ -20,6 +20,7 @@ interfaces:
             function: GPIO
             direction: out
             latch: high
+            trustzone: non-secure
       - name: Switch 1
         description: Switch 1 (PA02)
         pinctrl:
@@ -29,6 +30,7 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
+            trustzone: non-secure
 
   - name: QTouch interface
     description: QTouch Button
