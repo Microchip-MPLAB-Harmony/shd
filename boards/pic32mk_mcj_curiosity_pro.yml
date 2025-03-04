@@ -1,0 +1,448 @@
+name: pic32mk-mcj-curiosity-pro
+config: pic32mk_mcj_curiosity_pro.py
+documentation: https://www.microchip.com/en-us/development-tool/dt100113
+processor:
+  name: PIC32MK0512MCJ064
+  architecture: MIPS
+  family: PIC32MK
+  series: PIC32MK
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: Led 1
+        description: Yellow Led - active low
+        pinctrl:
+          gpio:
+            pinId: RE13
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Led 2
+        description: Green Led - active low
+        pinctrl:
+          gpio:
+            pinId: RA10
+            name: LED2
+            function: GPIO
+            direction: out
+            latch: high
+      - name: Switch 1
+        description: Switch 1 - active low
+        pinctrl:
+          gpio:
+            pinId: RB8
+            name: SW1
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Sensors interface
+    description: Sensors configuration
+    options:
+      - name: Temperature sensor MCP9808 interface
+        description: Digital Temperature Sensor MCP9808 - U402
+        pinctrl:
+          sda:
+            pinId: RA8
+            name: TEMPSENSOR_SDA
+            function: I2C2_SDA2
+          scl:
+            pinId: RB4
+            name: TEMPSENSOR_SCL
+            function: I2C2_SCL2
+
+  - name: CAN interface
+    description: Control Area Network - CAN
+    pinctrl:
+      tx:
+        pinId: RA15
+        name: CAN_TX
+        function: CAN1_C1TX
+      rx:
+        pinId: RE14
+        name: CAN_RX
+        function: CAN1_C1RX
+
+  - name: USB debugger interface
+    description: On-Board Debugger (PKOB4)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[sys_console, uart1]]
+        pinctrl:
+          tx:
+            pinId: RE0
+            name: VIRTUAL_COM_TX
+            function: UART1_U1TX
+          rx:
+            pinId: RG8
+            name: VIRTUAL_COM_RX
+            function: UART1_U1RX
+      - name: Data Gateway I2C interface
+        description: Data Gateway I2C interface
+        pinctrl:
+          sda:
+            pinId: RA8
+            name: DGI_I2C_SDA
+            function: I2C2_SDA2
+          scl:
+            pinId: RB4
+            name: DGI_I2CSCL
+            function: I2C2_SCL2
+
+connectors:
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header
+    pinctrl:
+      adc plus:
+        pinId: RA0
+        name: EXT1_ADC_PLUS
+        function: ADCHS_AN0
+      adc minus:
+        pinId: RC0
+        name: EXT1_ADC_MINUS
+        function: ADCHS_AN6
+      gpio1:
+        pinId: RA7
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: RG6
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: RB14
+        name: EXT1_PWM_PLUS
+        function: MCPWM_PWM1H
+      pwm minus:
+        pinId: RB15
+        name: EXT1_PWM_MINUS
+        function: MCPWM_PWM1L
+      irq:
+        pinId: RG7
+        name: EXT1_IRQ
+        function: GPIO
+        direction: in
+        pull up: True
+        change notification: True
+      gpio ss:
+        pinId: RA12
+        name: EXT1_GPIO_CS
+        function: GPIO
+        direction: out
+        latch: high
+      i2c:
+        sda:
+          pinId: RA8
+          name: EXT1_I2C_SDA
+          function: I2C2_SDA2
+        scl:
+          pinId: RB4
+          name: EXT1_I2C_SCL
+          function: I2C2_SCL2
+      uart:
+        tx:
+          pinId: RG9
+          name: EXT1_USART_TX
+          function: UART2_U2TX
+        rx:
+          pinId: RA14
+          name: EXT1_USART_RX
+          function: UART2_U2RX
+      spi:
+        cs:
+          pinId: RD8
+          name: EXT1_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RF0
+          name: EXT1_SPI_SCK
+          function: SPI2_SCK2
+        miso:
+          pinId: RD6
+          name: EXT1_SPI_MISO
+          function: SPI2_SDI2
+        mosi:
+          pinId: RC7
+          name: EXT1_SPI_MOSI
+          function: SPI2_SDO2
+
+  - compatible: xplainpro
+    name: Extension Header EXT2
+    description: Xplained Pro Standard Extension Header
+    pinctrl:
+      adc plus:
+        pinId: RA1
+        name: EXT2_ADC_PLUS
+        function: ADCHS_AN1
+      adc minus:
+        pinId: RC1
+        name: EXT2_ADC_MINUS
+        function: ADCHS_AN7
+      gpio1:
+        pinId: RA11
+        name: EXT2_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: RB1
+        name: EXT2_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: RB12
+        name: EXT2_PWM_PLUS
+        function: MCPWM_PWM2H
+      pwm minus:
+        pinId: RB13
+        name: EXT2_PWM_MINUS
+        function: MCPWM_PWM2L
+      irq:
+        pinId: RB2
+        name: EXT2_IRQ
+        function: GPIO
+        direction: in
+        pull up: True
+        change notification: True
+      gpio ss:
+        pinId: RE12
+        name: EXT2_GPIO_CS
+        function: GPIO
+        direction: out
+        latch: high
+      i2c:
+        sda:
+          pinId: RA8
+          name: EXT2_I2C_SDA
+          function: I2C2_SDA2
+        scl:
+          pinId: RB4
+          name: EXT2_I2C_SCL
+          function: I2C2_SCL2
+      uart:
+        tx:
+          pinId: RG9
+          name: EXT2_USART_TX
+          function: UART2_U2TX
+        rx:
+          pinId: RA14
+          name: EXT2_USART_RX
+          function: UART2_U2RX
+      spi:
+        cs:
+          pinId: RC6
+          name: EXT2_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RF0
+          name: EXT2_SPI_SCK
+          function: SPI2_SCK2
+        miso:
+          pinId: RD6
+          name: EXT2_SPI_MISO
+          function: SPI2_SDI2
+        mosi:
+          pinId: RC7
+          name: EXT2_SPI_MOSI
+          function: SPI2_SDO2
+
+  - compatible: xplainpro
+    name: Extension Header EXT3
+    description: Xplained Pro Standard Extension Header
+    pinctrl:
+      adc plus:
+        pinId: RB0
+        name: EXT3_ADC_PLUS
+        function: ADCHS_AN2
+      adc minus:
+        pinId: RC2
+        name: EXT3_ADC_MINUS
+        function: ADCHS_AN8
+      gpio1:
+        pinId: RE13
+        name: EXT3_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: RE14
+        name: EXT3_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: RB10
+        name: EXT3_PWM_PLUS
+        function: MCPWM_PWM3H
+      pwm minus:
+        pinId: RB11
+        name: EXT3_PWM_MINUS
+        function: MCPWM_PWM3L
+      irq:
+        pinId: RE15
+        name: EXT3_IRQ
+        function: GPIO
+        direction: in
+        pull up: True
+        change notification: True
+      gpio ss:
+        pinId: RA4
+        name: EXT3_GPIO_CS
+        function: GPIO
+        direction: out
+        latch: high
+      i2c:
+        sda:
+          pinId: RA8
+          name: EXT3_I2C_SDA
+          function: I2C2_SDA2
+        scl:
+          pinId: RB4
+          name: EXT3_I2C_SCL
+          function: I2C2_SCL2
+      uart:
+        tx:
+          pinId: RG9
+          name: EXT3_USART_TX
+          function: UART2_U2TX
+        rx:
+          pinId: RA14
+          name: EXT3_USART_RX
+          function: UART2_U2RX
+      spi:
+        cs:
+          pinId: RD5
+          name: EXT3_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RF0
+          name: EXT3_SPI_SCK
+          function: SPI2_SCK2
+        miso:
+          pinId: RD6
+          name: EXT3_SPI_MISO
+          function: SPI2_SDI2
+        mosi:
+          pinId: RC7
+          name: EXT3_SPI_MOSI
+          function: SPI2_SDO2
+
+  - compatible: arduino
+    name: Arduino Uno Header
+    description: Arduino Uno compatible header
+    pinctrl:
+      adc0:
+        pinId: RB10
+        name: Arduino_ADC0
+        function: GPIO
+        direction: in
+      adc1:
+        pinId: RB11
+        name: Arduino_ADC1
+        function: GPIO
+        direction: in
+      adc2:
+        pinId: RB12
+        name: Arduino_ADC2
+        function: GPIO
+        direction: in
+      adc3:
+        pinId: RA10
+        name: Arduino_ADC3
+        function: GPIO
+        direction: in
+      adc4:
+        pinId: RC11
+        name: Arduino_ADC4
+        function: ADCHS_AN11
+      adc5:
+        pinId: RB2
+        name: Arduino_ADC5
+        function: ADCHS_AN4
+      i2c:
+        sda:
+          pinId: RA8
+          name: Arduino_D14_I2C_SDA
+          function: I2C2_SDA2
+        scl:
+          pinId: RB4
+          name: Arduino_D15_I2C_SCL
+          function: I2C2_SCL2
+      uart:
+        tx:
+          pinId: RG9
+          name: Arduino_D1_UART_TX
+          function: UART2_U2TX
+        rx:
+          pinId: RA14
+          name: Arduino_D0_UART_RX
+          function: UART2_U2RX
+      spi:
+        cs:
+          pinId: RC15
+          name: Arduino_D10_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RF0
+          name: Arduino_D13_SPI_SCK
+          function: SPI2_SCK2
+        miso:
+          pinId: RD6
+          name: Arduino_D12_SPI_MISO
+          function: SPI2_SDI2
+        mosi:
+          pinId: RC7
+          name: Arduino_D11_SPI_MOSI
+          function: SPI2_SDO2
+      d2:
+        pinId: RF1
+        name: Arduino_D2
+        function: GPIO
+        direction: in
+      d3:
+        pinId: RC9
+        name: Arduino_D3
+        function: GPIO
+        direction: in
+      d4:
+        pinId: RC8
+        name: Arduino_D4
+        function: GPIO
+        direction: in
+      d5:
+        pinId: RB9
+        name: Arduino_D5
+        function: GPIO
+        direction: in
+      d6:
+        pinId: RE1
+        name: Arduino_D6
+        function: GPIO
+        direction: out
+      d7:
+        pinId: RA4
+        name: Arduino_D7
+        function: GPIO
+        direction: out
+      d8:
+        pinId: RE13
+        name: Arduino_D8
+        function: GPIO
+        direction: out
+      d9:
+        pinId: RE15
+        name: Arduino_D9
+        function: GPIO
+        direction: out
