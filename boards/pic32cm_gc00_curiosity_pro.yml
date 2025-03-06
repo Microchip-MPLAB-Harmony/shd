@@ -1,0 +1,340 @@
+name: pic32cm-gc00-curiosity-pro
+config: pic32cm_gc00_curiosity_pro.py
+documentation: https://www.microchip.com/en-us/development-tools-tools-and-software/development-tools-category-explorer
+processor:
+  name: PIC32CM5112GC00100
+  architecture: CORTEX-M23
+  family: PIC32CM
+  series: PIC32CMGC00
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User LED 0
+        description: User LED 0
+        pinctrl:
+          gpio:
+            pinId: PA20
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User LED 1
+        description: User LED 1
+        pinctrl:
+          gpio:
+            pinId: PA18
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: high
+      - name: User Switch 0
+        description: User Switch 0
+        pinctrl:
+          gpio:
+            pinId: PB07
+            name: USER_SWTICH0
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: User Switch 1
+        description: User Switch 1
+        pinctrl:
+          gpio:
+            pinId: PB11
+            name: USER_SWITCH1
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: CAN interface
+    description: Control Area Network - CAN
+    options:
+      - name: CAN0 Interface
+        description: CAN0 Interface - Connector J502
+        pinctrl:
+          tx:
+            pinId: PA11
+            name: CAN0_TX
+            function: CAN0_TX
+          rx:
+            pinId: PA10
+            name: CAN0_RX
+            function: CAN0_RX
+      - name: CAN1 Interface
+        description: CAN1 Interface - Connector J503
+        pinctrl:
+          tx:
+            pinId: PD13
+            name: CAN1_TX
+            function: CAN1_TX
+          rx:
+            pinId: PD12
+            name: CAN1_RX
+            function: CAN1_RX
+
+  - name: USB interface
+    description: USB configurations
+    options:
+      - name: USB
+        description: Target USB configuration
+        dependencies: [[drv_usbfs_v1]]
+        pinctrl:
+          usb_p:
+            pinId: PD03
+            function: USB_USBDP
+          usb_n:
+            pinId: PD02
+            function: USB_USBDM
+      - name: VBUS Sense Pin
+        description: USB VBUS Sense Pin
+        pinctrl:
+          gpio:
+            pinId: PD10
+            name: USB_VBUS_SENSE
+            function: GPIO
+            direction: in
+      - name: USB ID
+        description: USB ID
+        pinctrl:
+          gpio:
+            pinId: PC15
+            name: USB_ID
+            function: GPIO
+            direction: in
+
+  - name: USB debugger interface
+    description: On-Board Debugger (PKoB4)
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[sys_console, sercom4]]
+        pinctrl:
+          tx:
+            pinId: PD19
+            name: VIRTUAL_COM_TX
+            function: SERCOM4_PAD0
+          rx:
+            pinId: PD20
+            name: VIRTUAL_COM_RX
+            function: SERCOM4_PAD1
+
+connectors:
+  - compatible: mikrobus
+    name: mikroBUS Header
+    description: mikroBUS Standard Extension Header
+    pinctrl:
+      an:
+        pinId: PA07
+        name: mikroBUS_AN
+        function: ADC_ADC0_AIN4
+      rst:
+        pinId: PB17
+        name: mikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PC17
+          name: mikroBUS_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PC18
+          name: mikroBUS_SPI_SCK
+          function: SERCOM2_PAD1
+        miso:
+          pinId: PC16
+          name: mikroBUS_SPI_MISO
+          function: SERCOM2_PAD3
+        mosi:
+          pinId: PC19
+          name: mikroBUS_SPI_MOSI
+          function: SERCOM2_PAD0
+      pwm:
+        pinId: PC02
+        name: mikroBUS_PWM
+        function: TCC1_WO0
+      int:
+        pinId: PC03
+        name: mikroBUS_INT
+        function: EIC_EXTINT3
+        pull up: True
+      uart:
+        tx:
+          pinId: PD16
+          name: mikroBUS_UART_TX
+          function: SERCOM3_PAD0
+        rx:
+          pinId: PD15
+          name: mikroBUS_UART_RX
+          function: SERCOM3_PAD1
+      i2c:
+        sda:
+          pinId: PD01
+          name: mikroBUS_I2C_TWD
+          function: SERCOM1_PAD0
+        scl:
+          pinId: PD00
+          name: mikroBUS_I2C_TWCK
+          function: SERCOM1_PAD1
+
+  - compatible: xplainpro
+    name: Extension Header EXT1
+    description: Xplained Pro Standard Extension Header 1
+    pinctrl:
+      adc plus:
+        pinId: PA03
+        name: EXT1_ADC_PLUS
+        function: ADC_ADC0_AIN0
+      adc minus:
+        pinId: PA04
+        name: EXT1_ADC_MINUS
+        function: ADC_ADC0_AIN1/ADC0_ANN0
+      gpio1:
+        pinId: PC00
+        name: EXT1_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PC01
+        name: EXT1_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PA01
+        name: EXT1_PWM_PLUS
+        function: TCC6_WO0
+      pwm minus:
+        pinId: PA02
+        name: EXT1_PWM_MINUS
+        function: TCC6_WO1
+        direction: in
+      irq:
+        pinId: PA00
+        name: EXT1_IRQ
+        function: EIC_EXTINT0
+        pull up: True
+      gpio ss:
+        pinId: PC09
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PD01
+          name: EXT1_I2C_TWD
+          function: SERCOM1_PAD0
+        scl:
+          pinId: PD00
+          name: EXT1_I2C_TWCK
+          function: SERCOM1_PAD1
+      uart:
+        tx:
+          pinId: PB15
+          name: EXT1_USART_TX
+          function: SERCOM0_PAD0
+        rx:
+          pinId: PB16
+          name: EXT1_USART_RX
+          function: SERCOM0_PAD1
+      spi:
+        cs:
+          pinId: PC10
+          name: EXT1_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PA17
+          name: EXT1_SPI_SCK
+          function: SERCOM5_PAD1
+        miso:
+          pinId: PA15
+          name: EXT1_SPI_MISO
+          function: SERCOM5_PAD3
+        mosi:
+          pinId: PA16
+          name: EXT1_SPI_MOSI
+          function: SERCOM5_PAD0
+
+  - compatible: xplainpro
+    name: Extension Header EXT2
+    description: Xplained Pro Standard Extension Header 2
+    pinctrl:
+      adc plus:
+        pinId: PA05
+        name: EXT2_ADC_PLUS
+        function: ADC_ADC0_AIN2
+      adc minus:
+        pinId: PA06
+        name: EXT2_ADC_MINUS
+        function: ADC_ADC0_AIN3/ADC0_ANN2
+      gpio1:
+        pinId: PA12
+        name: EXT2_GPIO1
+        function: GPIO
+        direction: in
+      gpio2:
+        pinId: PA13
+        name: EXT2_GPIO2
+        function: GPIO
+        direction: in
+      pwm plus:
+        pinId: PA01
+        name: EXT2_PWM_PLUS
+        function: TCC6_WO0
+      pwm minus:
+        pinId: PA02
+        name: EXT2_PWM_MINUS
+        function: TCC6_WO1
+      irq:
+        pinId: PD08
+        name: EXT2_IRQ
+        function: EIC_EXTINT5
+        pull up: True
+      gpio ss:
+        pinId: PD09
+        name: EXT2_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PD01
+          name: EXT2_I2C_TWD
+          function: SERCOM1_PAD0
+        scl:
+          pinId: PD00
+          name: EXT2_I2C_TWCK
+          function: SERCOM1_PAD1
+      uart:
+        tx:
+          pinId: PB15
+          name: EXT2_USART_TX
+          function: SERCOM0_PAD0
+        rx:
+          pinId: PB16
+          name: EXT2_USART_RX
+          function: SERCOM0_PAD1
+      spi:
+        cs:
+          pinId: PA14
+          name: EXT2_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PA17
+          name: EXT2_SPI_SCK
+          function: SERCOM5_PAD1
+        miso:
+          pinId: PA15
+          name: EXT2_SPI_MISO
+          function: SERCOM5_PAD3
+        mosi:
+          pinId: PA16
+          name: EXT2_SPI_MOSI
+          function: SERCOM5_PAD0
