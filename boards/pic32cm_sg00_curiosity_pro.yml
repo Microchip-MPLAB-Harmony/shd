@@ -1,6 +1,6 @@
 name: pic32cm-sg00-curiosity-pro
 config: pic32cm_sg00_curiosity_pro.py
-documentation: https://www.microchip.com/en-us/development-tools-tools-and-software/development-tools-category-explorer
+documentation: https://www.microchip.com/en-us/development-tool/EA36K74A
 processor:
   name: PIC32CM5112SG00100
   architecture: CORTEX-M23
