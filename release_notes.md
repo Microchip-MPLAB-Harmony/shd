@@ -3,6 +3,35 @@
 
 # Microchip MPLAB® Harmony 3 Release Notes
 
+## SHD Release v1.1.0
+
+This release adds support for the following development kits and extension boards:
+
+- **Host boards support**
+  - **PIC32CM GC/SG**
+    - PIC32CM GC Curiosity Pro Development Board
+    - PIC32CM SG Curiosity Pro Development Board
+  - **PIC32MK MCJ**
+    - PIC32MK MCJ Curiosity Pro Development Board
+ 
+- **New Features and Enhancements**
+  - Added support for NC (non-configurable) pins in the board description files.
+  - Improved support for interrupt sense configuration.
+  
+- **Bug Fixes**
+  - Fixed file generation for Trustzone devices
+  - Fixed configuration values for Wincs02 add-on board.
+
+**Known issues**
+  - None.
+
+**Development Tools**
+
+- [MPLAB® X IDE v6.20](https://www.microchip.com/mplab/mplab-x-ide)
+- MPLAB® X IDE plug-ins:
+  - MPLAB® Code Configurator 5.5.1 or higher
+- MPLAB® Harmony3 Library 1.5.5-b or higher
+
 ## SHD Release v1.0.0
 
 This release adds support for the following development kits and extension boards:

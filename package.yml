@@ -10,6 +10,3 @@ package:
     - name: "csp"
       type: "package"
       version: "v3.21.0"
-    - name: "core"
-      type: "package"
-      version: "v3.14.2"
