@@ -25,7 +25,7 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
     functionList = []
     family = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
     architecture = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
-    if architecture == "MIPS" or architecture == "33Axxx":
+    if architecture == "MIPS" or architecture == "33Axxx" or "WBZ" in family:
         params = dict()
         params.setdefault('pinName', pinId)
         symbolDict = Database.sendMessage("core", "PIN_FUNCTION_LIST", params)

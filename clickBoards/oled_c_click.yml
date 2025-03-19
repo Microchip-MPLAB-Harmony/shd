@@ -1,0 +1,41 @@
+name: OLED C click
+description: >
+  OLED C Click is a compact add-on board that contains a 
+  small 96x96 high-color OLED display.
+documentation: https://www.mikroe.com/oled-c-click#/263-clickid-yes
+compatible: mikrobus
+multiconnection: False
+dependencies: [[drv_spi, spi]]
+supported:
+  an:
+    name: GFX_DISP_INTF_PIN_RW
+    function: GPIO
+    direction: out
+    latch: low
+  rst:
+    name: GFX_DISP_INTF_PIN_RESET
+    function: GPIO
+    direction: out
+    latch: high
+  spi:
+    cs:
+      name: GFX_DISP_INTF_PIN_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: GFX_DISP_INTF_PIN_SCK
+    miso:
+      name: GFX_DISP_INTF_PIN_MISO
+    mosi:
+      name: GFX_DISP_INTF_PIN_MOSI
+  int:
+    name: GFX_DISP_INTF_PIN_EN
+    function: GPIO
+    direction: out
+    latch: high
+  pwm:
+    name: GFX_DISP_INTF_PIN_RSDC
+    function: GPIO
+    direction: out
+    latch: high

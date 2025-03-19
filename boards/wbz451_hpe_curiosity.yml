@@ -1,0 +1,213 @@
+name: wbz451-hpe-curiosity
+config: wbz451_hpe_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/EV79Y91A
+part number: EV79Y91A
+processor:
+  name: WBZ451H
+  architecture: CORTEX-M4
+  family: WBZ45
+  series: BZ45
+
+interfaces:
+  - name: Digital interface
+    description: LEDs and Button configurations
+    options:
+      - name: User LED
+        description: User LED (D5)
+        pinctrl:
+          gpio:
+            pinId: RB7
+            name: USER_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LED - Red
+        description: LED - Red
+        pinctrl:
+          gpio:
+            pinId: RB0
+            name: LED_RED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LED - Green
+        description: LED - Green
+        pinctrl:
+          gpio:
+            pinId: RB3
+            name: LED_GREEN
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LED - Blue
+        description: LED - Blue
+        pinctrl:
+          gpio:
+            pinId: RB5
+            name: LED_BLUE
+            function: GPIO
+            direction: out
+            latch: high
+      - name: RGB LED - Red
+        description: RGB LED - Red
+        pinctrl:
+          gpio:
+            pinId: RB0
+            name: RGB_LED_RED
+            function: TCC0_WO0
+      - name: RGB LED - Green
+        description: RGB LED - Green
+        pinctrl:
+          gpio:
+            pinId: RB3
+            name: RGB_LED_GREEN
+            function: TCC0_WO1
+      - name: RGB LED - Blue
+        description: RGB LED - Blue
+        pinctrl:
+          gpio:
+            pinId: RB5
+            name: RGB_LED_BLUE
+            function: TCC0_WO2
+      - name: Switch
+        description: Switch (SW2)
+        pinctrl:
+          gpio:
+            pinId: RB4
+            name: USER_SW2
+            function: GPIO
+            direction: in
+            pull up: True
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B QSPI flash memory
+        dependencies: [[drv_sst26, qspi]]
+        pinctrl:
+          qsck:
+            pinId: RB11
+            function: QSPI_SCK (out)
+          qcs:
+            pinId: RB10
+            function: QSPI_CS (out)
+          sio0:
+            pinId: RB12
+            function: QSPI_DATA0 (in/out)
+          sio1:
+            pinId: RB13
+            function: QSPI_DATA1 (in/out)
+          sio2:
+            pinId: RA0
+            function: QSPI_DATA2 (in/out)
+          sio3:
+            pinId: RA1
+            function: QSPI_DATA3 (in/out)
+
+  - name: Temp sensor interface
+    description: On-board temp sensor configurations
+    options:
+      - name: MCP9700A interface
+        description: Temperature Sensor MCP9700A
+        pinctrl:
+          an:
+            pinId: RB6
+            name: MCP9700A_AN
+            function: ADCHS_AN2
+
+  - name: USB-to-UART interface
+    description: USB-to-UART configurations
+    options:
+      - name: USART console interface
+        description: USART console interface
+        dependencies: [[sys_console, sercom0]]
+        pinctrl:
+          tx:
+            pinId: RA5
+            name: CONSOLE_TX
+            function: SERCOM0_PAD0 (out)
+          rx:
+            pinId: RA6
+            name: CONSOLE_RX
+            function: SERCOM0_PAD1 (in)
+      - name: USART HW flow control
+        description: USART HW flow control
+        pinctrl:
+          tx:
+            pinId: RA5
+            name: USB_USART_TX
+            function: SERCOM0_PAD0 (out)
+          rx:
+            pinId: RA6
+            name: USB_USART_RX
+            function: SERCOM0_PAD1 (in)
+          rts:
+            pinId: RA3
+            name: USB_USART_RTS
+            function: SERCOM0_PAD2 (out)
+          cts:
+            pinId: RA4
+            name: USB_USART_CTS
+            function: SERCOM0_PAD3 (in)
+
+connectors:
+  - compatible: mikrobus
+    name: mikroBUS Header
+    description: mikroBUS headers configurations (J4)
+    pinctrl:
+      an:
+        pinId: RB6
+        name: mikroBUS_AN
+        function: ADCHS_AN2
+      rst:
+        pinId: RB2
+        name: mikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RB13
+          name: mikroBUS_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RB3
+          name: mikroBUS_SPI_SCK
+          function: SERCOM2_PAD1 (out)
+        miso:
+          pinId: RB5
+          name: mikroBUS_SPI_MISO
+          function: SERCOM2_PAD3 (in)
+        mosi:
+          pinId: RB4
+          name: mikroBUS_SPI_MOSI
+          function: SERCOM2_PAD0 (out)
+      int:
+        pinId: RA2
+        name: mikroBUS_INT
+        function: EIC_EXTINT0 (in)
+      pwm:
+        pinId: RB7
+        name: mikroBUS_PWM
+        function: TCC1_WO1
+      uart:
+        tx:
+          pinId: RA14
+          name: mikroBUS_UART_TX
+          function: SERCOM2_PAD1 (out)
+        rx:
+          pinId: RA13
+          name: mikroBUS_UART_RX
+          function: SERCOM2_PAD0 (in)
+      i2c:
+        sda:
+          pinId: RA7
+          name: mikroBUS_I2C_SDA
+          function: SERCOM1_PAD0 (in)
+        scl:
+          pinId: RA8
+          name: mikroBUS_I2C_SCL
+          function: SERCOM1_PAD1 (out)
