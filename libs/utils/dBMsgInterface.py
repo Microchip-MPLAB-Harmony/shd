@@ -430,7 +430,7 @@ def __getConfigDatabaseEIC(periphID, settings, intMode):
     
     periphID = periphID.upper()
     channel = ""
-    if periphID == 'EIC_U2254':
+    if periphID == 'EIC_U2254' or periphID == 'EIC_04714':
         if "NMI" in setting.upper():
             channel = "NMI"
         else:
