@@ -2,7 +2,7 @@ name: same51-curiosity-nano-base
 config: same51_curiosity_nano_base.py
 documentation: https://www.microchip.com/en-us/development-tool/EV76S68A
 processor:
-  name: ATSAME51N20A
+  name: ATSAME51J20A
   architecture: CORTEX-M4
   family: SAME
   series: SAME51
@@ -36,6 +36,7 @@ interfaces:
     options:
       - name: Virtual COM Port interface
         description: Serial Debug Console
+        dependencies: [[sys_console, sercom5]]
         pinctrl:
           tx:
             pinId: PB16
