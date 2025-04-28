@@ -580,7 +580,7 @@ class MainBoard:
                     updatePlibInstance = True
                 else:
                     # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver FALSE: {}".format(depId))
-                    if depId not in idActiveList:
+                    if (depId not in idActiveList) and (depId is not "NC"):
                         # Add new component/connection (single instance)
                         if self.__checkComponentAvailable(depId) == True:
                             newComponents.append(depId)
@@ -597,7 +597,7 @@ class MainBoard:
                             else:
                                 createConnection = False
                             
-                            if createConnection == True:
+                            if (createConnection == True) and (depId is not "NC"):
                                 # self.__log.writeInfoMessage("SHD >> __updateDriverConnections adding new connection {}: {}".format(createConnection, (depId, capId)))
                                 newConnections.append((depId, capId))
                             

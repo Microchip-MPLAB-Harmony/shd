@@ -351,21 +351,30 @@ def __getConfigDatabaseFLEXCOM(periphID, settings):
     setting = fnValue.split('_')[-1].split('/')[0].lower()
 
     configDB = dict()
+
+    mode = ""
+    cs = ""
+    if signalId in ['rx', 'tx', 'rts', 'cts', 'xck']:
+        mode = "USART"
+    elif signalId in ['cs', 'sck', 'miso', 'mosi']:
+        mode = "SPI"
+    elif signalId in ['sda', 'scl']:
+        mode = "I2C"
     
     periphID = periphID.upper()
     if periphID == 'FLEXCOM_11268':
         if setting == 'io3':
-            configDB.setdefault('msgID', 'FLEXCOM_CONFIG_HW_IO')
-            configDB.setdefault('config', ('NPCS0', enable))
+            cs = 'NPCS0'
         elif setting == 'io4':
-            configDB.setdefault('msgID', 'FLEXCOM_CONFIG_HW_IO')
-            configDB.setdefault('config', ('NPCS1', enable))
+            cs = 'NPCS1'
     elif periphID == 'FLEXCOM_11277':
         if 'npcs' in setting:
-            configDB.setdefault('msgID', 'FLEXCOM_CONFIG_HW_IO')
-            configDB.setdefault('config', (setting.upper(), enable))
+            cs = setting.upper()
     # else:
     #     print("SHD >> getConfigDatabaseFLEXCOM {} NOT FOUND!!!".format(periphID))
+
+    configDB.setdefault('msgID', 'FLEXCOM_CONFIG_HW_IO')
+    configDB.setdefault('config', (mode, cs, enable))
 
     return configDB
 
@@ -383,8 +392,8 @@ def __getConfigDatabaseSERCOM(periphID, settings):
     pinCtrl = dict()
     if periphID == 'SERCOM_U2201' or periphID == 'SERCOM_03715'  or periphID == 'SERCOM_04707':
         # Add exceptions for SERCOM_SDL/SDA in WBZ family
-        if setting == 'sda' or setting == 'scl':
-            return configDB
+        # if setting == 'sda' or setting == 'scl':
+        #     return configDB
         
         pinCtrl.setdefault('signalId', signalId)
         pinCtrl.setdefault('padId', int(fnValue[-1]))
@@ -393,6 +402,8 @@ def __getConfigDatabaseSERCOM(periphID, settings):
             mode = "USART"
         elif signalId in ['cs', 'sck', 'miso', 'mosi']:
             mode = "SPI"
+        elif signalId in ['sda', 'scl']:
+            mode = "I2C"
 
         if mode != "":
             configDB.setdefault('config', (mode, pinCtrl, enable))

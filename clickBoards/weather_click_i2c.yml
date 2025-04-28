@@ -1,0 +1,16 @@
+name: Weather I2C click
+description: >
+  Weather Click is a compact add-on board that contains an integrated environmental sensor. 
+  This board features the BME280, a combined humidity and pressure sensor from Bosch Sensortec.
+documentation: https://www.mikroe.com/weather-click#/263-clickid-yes
+compatible: mikrobus
+dependencies: [["NC", i2c]]
+multiconnection: False
+supported:
+  rst:
+    name: WEATHER_CLICK_RST
+  i2c:
+    sda:
+      name: WEATHER_CLICK_SDA
+    scl:
+      name: WEATHER_CLICK_SCL

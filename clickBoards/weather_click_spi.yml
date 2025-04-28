@@ -1,0 +1,23 @@
+name: Weather SPI click
+description: >
+  Weather Click is a compact add-on board that contains an integrated environmental sensor. 
+  This board features the BME280, a combined humidity and pressure sensor from Bosch Sensortec.
+documentation: https://www.mikroe.com/weather-click#/263-clickid-yes
+compatible: mikrobus
+dependencies: [["NC", spi]]
+multiconnection: False
+supported:
+  rst:
+    name: WEATHER_CLICK_RST
+  spi:
+    cs:
+      name: WEATHER_CLICK_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: WEATHER_CLICK_SCK
+    miso:
+      name: WEATHER_CLICK_MISO
+    mosi:
+      name: WEATHER_CLICK_MOSI
