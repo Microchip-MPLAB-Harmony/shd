@@ -1,0 +1,15 @@
+name: Heart Rate 9 Click
+description: >
+  The Heart Rate 9 click is a Click board™ which features PIC16F1779 8-bit MCU 
+  and SFH 7060 heart rate and pulse oximetry monitoring sensor. 
+documentation: https://www.mikroe.com/heart-rate-9-click
+compatible: mikrobus
+dependencies: [["NC", uart]]
+supported:
+  rst:
+    name: HEART_RATE_RST
+  uart:
+    tx:
+      name: HEART_RATE_TX
+    rx:
+      name: HEART_RATE_RX
