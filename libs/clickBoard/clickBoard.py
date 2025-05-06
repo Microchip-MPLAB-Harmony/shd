@@ -76,6 +76,9 @@ class ClickBoard:
     def getDependencies(self):
         return self.__currentConfig.get('dependencies')
 
+    def getWarning(self):
+        return self.__currentConfig.get('warning')
+
     def getMulticonnection(self):
         return self.__currentConfig.get('multiconnection')
     

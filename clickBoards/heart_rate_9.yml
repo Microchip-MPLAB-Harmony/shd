@@ -4,6 +4,7 @@ description: >
   and SFH 7060 heart rate and pulse oximetry monitoring sensor. 
 documentation: https://www.mikroe.com/heart-rate-9-click
 compatible: mikrobus
+warning: WARNING!! A timer module must be manually configured to be used in the reset sequence
 dependencies: [["NC", uart]]
 supported:
   rst:

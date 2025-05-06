@@ -55,6 +55,7 @@ class MainBoard:
         self.__pioPeripheralID = 0
         self.__symbolInterfaceByPin = {}
         self.__symbolNamesByConnector = {}
+        self.__warningsByConnector = {}
         self.__symbolPinByParent = {}
         self.__collisionsByPinID = {}
         self.__devicePinMap = getDevicePinMap(self.__db, self.__atdf)
@@ -872,6 +873,9 @@ class MainBoard:
                         connectorAdaptorSymbol.setVisible(False)
                 
                 self.__connectedClickBoards[connectorName] = None
+                # Hide Warnings
+                warningSymbol = self.__warningsByConnector.get(connectorName)
+                warningSymbol.setVisible(False)
 
             else:
                 clickBoardInterface = None
@@ -955,6 +959,14 @@ class MainBoard:
 
                         # Set connector configuration
                         self.setConnectorConfig(connectorName, pinControlClickBoard, useHWAdaptor)
+
+                        # Check Warnings
+                        warningMsg = clickBoardInterface.getWarning()
+                        if warningMsg != None:
+                            warningSymbol = self.__warningsByConnector.get(connectorName)
+                            if warningSymbol != None:
+                                warningSymbol.setLabel(warningMsg)
+                                warningSymbol.setVisible(True)
             
             # self.__log.writeInfoMessage("SHD >> __connectClickBoard: __connectedClickBoards: {}".format(self.__connectedClickBoards))
 
@@ -1596,6 +1608,11 @@ class MainBoard:
                     shdConnectorSymbol.setReadOnly(True)
                 shdConnectorSymbol.setHelp(shdMainBoardHelp)
                 self.__symbolConnectors.setdefault(connectorSymbolName, shdConnectorSymbol)
+
+                shdConnectorSymbolWarning = boardInterface.createCommentSymbol(conName + "_WARNING", shdConnectorSymbol)
+                shdConnectorSymbolWarning.setLabel("")
+                shdConnectorSymbolWarning.setVisible(False)
+                self.__warningsByConnector.setdefault(conName, shdConnectorSymbolWarning)
 
                 if boardConnectors[conIndex].get('compatible') == 'xplainpro':
                     shdConnectorSymbolAdaptor = boardInterface.createCommentSymbol(connectorSymbolName + "_ADAPTOR", shdConnectorSymbol)
