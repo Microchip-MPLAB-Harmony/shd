@@ -296,6 +296,23 @@ __connectorSpec = {
             'scl': 60
         },
         'alert': 62
+    },
+    'servomotor': {
+        'pwma': 1,
+        'pwmb': 2,
+        'pwmc': 3
+    },
+    'grove': {
+        'i2c': {
+            'sda': 1,
+            'scl': 2
+        }
+    },
+    'qwiic': {
+        'i2c': {
+            'sda': 1,
+            'scl': 2
+        }
     }
 }
 

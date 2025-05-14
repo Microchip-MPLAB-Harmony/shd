@@ -694,6 +694,10 @@ def getDBMsgPLIBConfiguration(ATDF, settings, intMode):
     msgID = None
     
     signalId, pinId, fnValue, pinNameValue, enable = settings
+
+    if "/" in fnValue:
+        fnValue = fnValue.split('/')[0]
+
     # fnValue format -> '{}_{}'.format(componentID, setting)
     splitedComp = fnValue.split('_')
     if len(splitedComp) > 2:

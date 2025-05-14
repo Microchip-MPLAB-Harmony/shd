@@ -505,6 +505,8 @@ class MainBoard:
                 dependency = dependency.replace("adc", "ad")
                 if dependency in pinFunction.lower():
                     updateList = True
+            elif dependency in pinFunction.lower():
+                    updateList = True
 
             if updateList == True:
                 pinIdList.append(pinId)
