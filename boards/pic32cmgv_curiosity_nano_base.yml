@@ -11,7 +11,7 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: Led
+      - name: User Led
         description: Yellow Led - latch high
         pinctrl:
           gpio:
@@ -21,7 +21,7 @@ interfaces:
             direction: out
             latch: high
 
-      - name: Switch
+      - name: User Switch
         description: Switch 0 - raising edge
         pinctrl:
           gpio:
@@ -31,7 +31,7 @@ interfaces:
             direction: in
             pull up: True
 
-      - name: Switch INT
+      - name: User Switch INT
         description: Switch with Interrupt configuration
         pinctrl:
           int:
@@ -170,7 +170,7 @@ connectors:
         name: mikroBUS1_AN
         function: ADC_AIN13
       rst:
-        pinId: PB06
+        pinId: PA06
         name: mikroBUS1_RST
         function: GPIO
         direction: out

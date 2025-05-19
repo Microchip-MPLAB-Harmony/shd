@@ -11,8 +11,8 @@ interfaces:
   - name: Digital interface
     description: Button and Led configurations
     options:
-      - name: Led
-        description: Yellow Led (PA19) - latch high
+      - name: User Led
+        description: Yellow Led - latch high
         pinctrl:
           gpio:
             pinId: PA19
@@ -21,8 +21,8 @@ interfaces:
             direction: out
             latch: high
 
-      - name: Switch
-        description: Switch 1 (PA27)
+      - name: User Switch
+        description: User Switch - raising edge
         pinctrl:
           gpio:
             pinId: PA27
@@ -31,8 +31,8 @@ interfaces:
             direction: in
             pull up: True
 
-      - name: Switch INT
-        description: Switch with Interrupt configuration (PA27)
+      - name: User Switch INT
+        description: User Switch with Interrupt configuration
         pinctrl:
           int:
             pinId: PA27
