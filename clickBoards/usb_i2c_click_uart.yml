@@ -1,0 +1,14 @@
+name: USB I2C click - UART
+description: >
+  This board features the MCP2221A, a USB 2.0 to UART protocol converter 
+  with additional GPIO functionality from Microchip
+documentation: https://www.mikroe.com/usb-i2c-click
+compatible: mikrobus
+dependencies: [["NC", uart]]
+multiconnection: False
+supported:
+  uart:
+    tx:
+      name: USB_I2C_CLICK_TX
+    rx:
+      name: USB_I2C_CLICK_RX
