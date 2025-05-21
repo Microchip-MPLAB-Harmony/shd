@@ -1,0 +1,33 @@
+name: USB SPI click
+description: >
+   This board features the MCP2210, a USB-to-SPI Master converter that 
+   enables USB connectivity in applications with an SPI interface from Microchip
+documentation: https://www.mikroe.com/usb-spi-click
+compatible: mikrobus
+dependencies: [["NC", spi]]
+multiconnection: False
+supported:
+  an:
+    name: USB_SPI_CLICK_USB_STATE
+    function: GPIO
+    direction: in
+  spi:
+    cs:
+      name: USB_SPI_CLICK_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: USB_SPI_CLICK_SCK
+    miso:
+      name: USB_SPI_CLICK_MISO
+    mosi:
+      name: USB_SPI_CLICK_MOSI
+  pwm:
+    name: USB_SPI_CLICK_USB_ENUM
+    function: GPIO
+    direction: in
+  int:
+    name: USB_SPI_CLICK_USB_CONFIG
+    function: GPIO
+    direction: in
