@@ -1,0 +1,45 @@
+name: GSM GPS click
+description: >
+  GSM-GPS Click is a compact add-on board that combines a GSM/GPRS 
+  and a GPS into a single device. This board features the SIM808, 
+  a GSM/GPRS+GPS module from SIMCom
+documentation: https://www.mikroe.com/gsm-gps-click
+compatible: mikrobus
+dependencies: [["NC", uart], ["NC", spi]]
+multiconnection: False
+supported:
+  an:
+    name: GSM_GPS_CLICK_STA
+    function: GPIO
+    direction: in
+  rst:
+    name: GSM_GPS_CLICK_PWK
+    function: GPIO
+    direction: out
+    latch: high
+  uart:
+    tx:
+      name: GSM_GPS_CLICK_TX
+    rx:
+      name: GSM_GPS_CLICK_RX
+  int:
+    name: GSM_GPS_CLICK_CTS
+    function: GPIO
+    direction: in
+    pull up: True
+  spi:
+    cs:
+      name: GSM_GPS_CLICK_RTS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      function: "NC"
+    miso:
+      function: "NC"
+    mosi:
+      function: "NC"
+  pwm:
+    name: GSM_GPS_CLICK_RI
+    function: GPIO
+    direction: in
