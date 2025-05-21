@@ -1,0 +1,41 @@
+name: USB UART click
+description: >
+  USB UART Click is a compact add-on board with 
+  a general-purpose USB to UART serial interface
+documentation: https://www.mikroe.com/usb-uart-click
+compatible: mikrobus
+dependencies: [["NC", uart], ["NC", spi]]
+multiconnection: False
+supported:
+  uart:
+    tx:
+      name: USB_UART_CLICK_TX
+    rx:
+      name: USB_UART_CLICK_RX
+  rst:
+    name: USB_UART_CLICK_CTS
+    function: GPIO
+    direction: in
+    pull up: True
+  int:
+    name: USB_UART_CLICK_RTS
+    function: GPIO
+    direction: out
+    latch: high
+  spi:
+    cs:
+      name: USB_UART_CLICK_SLP
+      function: GPIO
+      direction: out
+      latch: low
+    sck:
+      function: "NC"
+    miso:
+      function: "NC"
+    mosi:
+      function: "NC"
+  pwm:
+    name: USB_UART_CLICK_PWR
+    function: GPIO
+    direction: out
+    latch: low

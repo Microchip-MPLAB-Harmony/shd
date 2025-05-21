@@ -717,8 +717,10 @@ class MainBoard:
                 signalId, pinCtrl = pinControl
                 pinId = pinCtrl.get('pinId')
                 pinName = pinCtrl.get('name')
-                pinFunction = pinCtrl.get('function')
                 pinInterruptMode = pinCtrl.get('interrupt')
+                pinFunction = pinCtrl.get('function')
+                if pinFunction == "NC":
+                    pinFunction = None
                 
                 pinDescr = {}
                 pinDescr.setdefault(signalId, (pinId, pinFunction, pinName, pinInterruptMode))
@@ -729,7 +731,7 @@ class MainBoard:
                 capId = ""
                 # Extract DRIVER dependencies from Pin Name
                 pinName = pinCtrl.get('name')
-                if pinName != None:
+                if pinName != None and pinFunction != None:
                     newDep = getDriverDependencyFromPin(pinName, pinFunction)
                     if (newDep != ""):
                         # self.__log.writeInfoMessage("SHD >> __signalEnableCallback newDep: {}".format((newDep)))
@@ -781,7 +783,7 @@ class MainBoard:
                                 dependencies[depId] = capId
                             
                 # Set/Clear PIN configuration    
-                if pinId.upper() is not "NC":           
+                if pinId.upper() is not "NC" and pinFunction != None:           
                     if event["value"] is True:
                         # Check if that pin is already added                    
                         if not pinId in self.__configuredPins:
@@ -804,7 +806,7 @@ class MainBoard:
             # Activate/Deactivate components and create connections
             self.__updateDriverConnections(event["value"], dependencies, connectorName)
 
-            if pinId.upper() is not "NC":  
+            if pinId.upper() is not "NC" and pinFunction != None:  
                 # Configure settings of the drivers of each updated PinId if needed
                 self.__configureDriverSettings(enabledPinIdList, disabledPinIdList)
                 # Check PIN Collisions
@@ -1261,6 +1263,12 @@ class MainBoard:
                                 signalSpiCsPinSymbol.setVisible(True)
                                 if function.lower() == "gpio":
                                     signalSpiCsPinSymbol.setValue(True)
+
+                    if function == "NC":
+                        # Show "NOT_CONNECTED" in the label for "NC" functions from click boards
+                        label_split = label.split(":")
+                        label_split[0] = "NOT_CONNECTED"
+                        label = ":".join(label_split)
 
                     signalPinSymbol = board.getSymbolByID(self.__symbolNamesByConnector[connectorName][pinId][signal])
                     signalPinSymbol.setLabel(label)
