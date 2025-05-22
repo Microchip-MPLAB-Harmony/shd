@@ -1,0 +1,22 @@
+name: Thumbstick Click
+description: >
+  Thumbstick Click is a compact add-on board that can fulfill your directional analog input needs. 
+  This board features COM-09032, a high-quality 2-axis analog output thumbstick from Sparkfun
+documentation: https://www.mikroe.com/eeprom-4-click
+compatible: mikrobus
+dependencies: [["NC", spi]]
+multiconnection: False
+supported:
+  spi:
+    cs:
+      name: THUMBSTICK_CLICK_CS
+      function: GPIO
+      latch: high
+    sck:
+      name: THUMBSTICK_CLICK_SCK
+    miso:
+      name: THUMBSTICK_CLICK_MISO
+    mosi:
+      name: THUMBSTICK_CLICK_MOSI
+  int:
+    name: THUMBSTICK_CLICK_HOLD
