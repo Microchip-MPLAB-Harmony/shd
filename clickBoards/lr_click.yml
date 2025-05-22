@@ -1,0 +1,36 @@
+name: LR click
+description: >
+  LR Click is a compact add-on board that contains a low-power, long-range transceiver. 
+  This board features the RN2483, RF technology-based SRD transceiver, 
+  which operates at a frequency of 433/868MHz from Microchip Technology
+documentation: https://www.mikroe.com/lr-click
+compatible: mikrobus
+dependencies: [["NC", uart]]
+supported:
+  rst:
+    name: LR_CLICK_RST
+    function: GPIO
+    direction: out
+    latch: low
+  spi:
+    cs:
+      name: LR_CLICK_RTS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      function: "NC"
+    miso:
+      function: "NC"
+    mosi:
+      function: "NC"
+  int:
+    name: LR_CLICK_CTS
+    function: GPIO
+    direction: in
+    pull up: True
+  uart:
+    tx:
+      name: LR_CLICK_TX
+    rx:
+      name: LR_CLICK_RX
