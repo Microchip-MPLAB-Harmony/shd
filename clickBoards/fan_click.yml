@@ -1,0 +1,16 @@
+name: Fan click
+description: >
+  Fan Click is a compact add-on board specially designed for fan speed management. 
+  This board features EMS2301, a single/multiple RPM-based PWM fan controller from Microchip
+documentation: https://www.mikroe.com/fan-click
+compatible: mikrobus
+dependencies: [["NC", i2c]]
+multiconnection: False
+supported:
+  i2c:
+    sda:
+      name: FAN_CLICK_SDA
+    scl:
+      name: FAN_CLICK_SCL
+  int:
+    name: FAN_CLICK_INT
