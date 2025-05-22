@@ -1,0 +1,15 @@
+name: Grid-EYE click
+description: >
+  Grid-EYE Click is a compact add-on board with an 8x8 thermal array detector
+documentation: https://www.mikroe.com/grid-eye-click
+compatible: mikrobus
+dependencies: [["NC", i2c]]
+multiconnection: False
+supported:
+  i2c:
+    sda:
+      name: GRID_EYE_CLICK_SDA
+    scl:
+      name: GRID_EYE_CLICK_SCL
+  int:
+    name: GRID_EYE_CLICK_INT
