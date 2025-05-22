@@ -1,0 +1,25 @@
+name: microSD click
+description: >
+  microSD Click is a compact add-on board that lets you interface a microSD card with your application
+documentation: https://www.mikroe.com/microsd-click
+compatible: mikrobus
+dependencies: [["NC", spi]]
+multiconnection: False
+supported:
+  an:
+    name: MICROSD_CLICK_CD
+    function: GPIO
+    direction: in
+    pull up: True
+  spi:
+    cs:
+      name: MICROSD_CLICK_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: MICROSD_CLICK_SCK
+    miso:
+      name: MICROSD_CLICK_MISO
+    mosi:
+      name: MICROSD_CLICK_MOSI
