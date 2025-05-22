@@ -1,0 +1,30 @@
+name: BLE2 click
+description: >
+  BLE2 Click is a compact add-on board that provides 
+  BT/BLE connectivity for any embedded application. 
+  This board features the RN4020, a Bluetooth Low Energy module 
+  from Microchip
+documentation: https://www.mikroe.com/ble-2-click
+compatible: mikrobus
+dependencies: [["NC", uart]]
+supported:
+  an:
+    name: BLE2_CLICK_CON
+    function: GPIO
+    direction: in
+  rst:
+    name: BLE2_CLICK_WKE
+    function: GPIO
+    direction: out
+    latch: low
+    pull up: True
+  uart:
+    tx:
+      name: BLE2_CLICK_TX
+    rx:
+      name: BLE2_CLICK_RX
+  pwm:
+    name: BLE2_CLICK_CMD
+    function: GPIO
+    direction: out
+    latch: low
