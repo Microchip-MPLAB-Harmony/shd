@@ -1,0 +1,14 @@
+name: LED Driver 3 click
+description: >
+  LED Driver 3 click is an RGB LED driver, capable of driving RGB LEDs 
+  with up to 30mA per segment, via the digital I2C interface
+documentation: https://www.mikroe.com/led-driver-3-click
+compatible: mikrobus
+dependencies: [["NC", i2c]]
+multiconnection: False
+supported:
+  i2c:
+    sda:
+      name: LED_DRIVER3_CLICK_SDA
+    scl:
+      name: LED_DRIVER3_CLICK_SCL
