@@ -1,0 +1,20 @@
+name: DRAM click
+description: >
+  DRAM Click is a compact add-on board representing a dynamic random-access memory solution
+documentation: https://www.mikroe.com/dram-click
+compatible: mikrobus
+dependencies: [["NC", spi]]
+multiconnection: False
+supported:
+  spi:
+    cs:
+      name: DRAM_CLICK_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: DRAM_CLICK_SCK
+    miso:
+      name: DRAM_CLICK_MISO
+    mosi:
+      name: DRAM_CLICK_MOSI
