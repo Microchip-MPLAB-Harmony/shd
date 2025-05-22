@@ -1,0 +1,32 @@
+name: eINK click
+description: >
+  eINK Click is an adapter Click board™, used to interface a compatible 
+  eINK display with the host MCU
+documentation: https://www.mikroe.com/eink-click-without-display
+compatible: mikrobus
+dependencies: [["NC", spi]]
+supported:
+  rst:
+    name: EINK_CLICK_RST
+    function: GPIO
+    direction: out
+    latch: low
+  spi:
+    cs:
+      name: EINK_CLICK_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: EINK_CLICK_SCK
+    miso:
+      function: "NC"
+    mosi:
+      name: EINK_CLICK_MOSI
+  pwm:
+    name: EINK_CLICK_DC
+    function: GPIO
+    direction: out
+    latch: low
+  int:
+    name: EINK_CLICK_BSY
