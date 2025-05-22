@@ -1,0 +1,33 @@
+name: WiFi 7 click
+description: >
+  WiFi 7 Click is a compact add-on board with a wireless combo module. 
+  This board features the ATWINC1510-MR210PB, an IEEE 802.11 b/g/n IoT Module 
+  from Microchip
+documentation: https://www.mikroe.com/wifi-7-click
+compatible: mikrobus
+dependencies: [[drvWifiWinc, spi]]
+supported:
+  rst:
+    name: WIFI7_CLICK_RESETN
+    function: GPIO
+    direction: out
+    latch: high
+  spi:
+    cs:
+      name: WIFI7_CLICK_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: WIFI7_CLICK_SCK
+    miso:
+      name: WIFI7_CLICK_MISO
+    mosi:
+      name: WIFI7_CLICK_MOSI
+  int:
+    name: WIFI7_CLICK_INT
+  pwm:
+    name: WIFI7_CLICK_ENABLE
+    function: GPIO
+    direction: out
+    latch: low

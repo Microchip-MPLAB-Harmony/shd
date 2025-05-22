@@ -51,6 +51,7 @@ __drvDependencies = {
     'le_gfx_slcd': 'SLCD',
     'ptc': 'ADC',
     'drvWifiWincS02': 'SPI',
+    'drvWifiWinc': 'SPI',
     'RNBD_Dependency' : 'UART',
     'atecc108a': 'I2C',
     'atecc508a': 'I2C',
@@ -921,6 +922,18 @@ def __getConfigDatabaseDrvWINCS02(settings):
     
     return configDB
 
+def __getConfigDatabaseDrvWINC(settings):
+    driver, signalId, pinId, functionValue, nameValue, enable = settings
+
+    configDB = dict()
+    if (signalId == 'irq') or (signalId == 'int') or (signalId == 'hostwake'):
+        plib = functionValue.split("_")[0]
+        setting = functionValue.split('_')[-1]
+        configDB.setdefault('msgID', 'WINC_CONFIG_HW_IO')
+        configDB.setdefault('config', (signalId, pinId, plib, setting, enable))
+    
+    return configDB
+
 def __getConfigDatabaseWirelessRNWF(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
 
@@ -977,6 +990,8 @@ def getDBMsgDriverConfiguration(settings):
         configDB = __getConfigDatabaseDrvAT25DF(settings)
     elif driver == 'drvWifiWincS02':
         configDB = __getConfigDatabaseDrvWINCS02(settings)
+    elif driver == 'drvWifiWinc':
+        configDB = __getConfigDatabaseDrvWINC(settings)
     elif driver == 'sysWifiRNWF':
         configDB = __getConfigDatabaseWirelessRNWF(settings)
     elif driver == 'RNBD_Dependency':
@@ -1085,6 +1100,9 @@ def getAutoconnectTable(atdf, idDependency, idCapability):
                     exception = True
                     depType = "lib_acquire"
                 elif 'drvWifiWincS02' == depId:
+                    exception = True
+                    depType = "spi_dependency"
+                elif 'drvWifiWinc' == depId:
                     exception = True
                     depType = "spi_dependency"
                 elif 'drv_sst26' == depId:
