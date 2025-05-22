@@ -1,0 +1,22 @@
+name: RFid click
+description: >
+  RFid Click is a compact add-on board that equips any embedded application with an RFID reader/writer
+documentation: https://www.mikroe.com/rfid-click
+compatible: mikrobus
+dependencies: [["NC", uart]]
+supported:
+  an:
+    name: RFID_CLICK_SI1
+    function: GPIO
+    direction: out
+    latch: low
+  rst:
+    name: RFID_CLICK_SI0
+    function: GPIO
+    direction: out
+    latch: low
+  uart:
+    tx:
+      name: RFID_CLICK_TX
+    rx:
+      name: RFID_CLICK_RX
