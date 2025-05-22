@@ -1,0 +1,31 @@
+name: Flash 2 click
+description: >
+  Flash 2 click features a 64 Mbit Flash memory IC, 
+  manufactured by using the proprietary high-performance CMOS Super-Flash® technology
+documentation: https://www.mikroe.com/flash-2-click
+compatible: mikrobus
+dependencies: [["NC", spi]]
+multiconnection: False
+supported:
+  rst:
+    name: FLASH2_CLICK_HOLD
+    function: GPIO
+    direction: out
+    latch: low
+  spi:
+    cs:
+      name: FLASH2_CLICK_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: FLASH2_CLICK_SCK
+    miso:
+      name: FLASH2_CLICK_MISO
+    mosi:
+      name: FLASH2_CLICK_MOSI
+  pwm:
+    name: FLASH2_CLICK_WP
+    function: GPIO
+    direction: out
+    latch: low
