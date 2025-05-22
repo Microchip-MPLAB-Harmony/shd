@@ -1,0 +1,16 @@
+name: IrThermo 2 click
+description: >
+  IrThermo 2 Click is a compact add-on board that allows 
+  contactless measurement of the object’s temperature.
+documentation: https://www.mikroe.com/irthermo-2-click
+compatible: mikrobus
+dependencies: [["NC", i2c]]
+multiconnection: False
+supported:
+  i2c:
+    sda:
+      name: IRTHERMO2_CLICK_SDA
+    scl:
+      name: IRTHERMO2_CLICK_SCL
+  int:
+    name: IRTHERMO2_CLICK_ALERT
