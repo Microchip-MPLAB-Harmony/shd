@@ -1,0 +1,16 @@
+name: 13DOF click
+description: >
+  13DOF Click is an advanced 13-axis motion tracking Click board™, 
+  which utilizes three different sensor ICs onboard: BME680, a digital gas, 
+  humidity, pressure and temperature sensor and BMM150, a geomagnetic sensor 
+  and a BMI088, small, versatile 6DoF sensor module
+documentation: https://www.mikroe.com/13dof-click
+compatible: mikrobus
+dependencies: [["NC", i2c]]
+multiconnection: False
+supported:
+  i2c:
+    sda:
+      name: 13DOF_CLICK_SDA
+    scl:
+      name: 13DOF_CLICK_SCL
