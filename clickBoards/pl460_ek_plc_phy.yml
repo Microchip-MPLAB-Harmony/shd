@@ -24,6 +24,7 @@ supported:
     latch: high
   irq:
     name: PL460_EXTINT
+    pull down: True
     description: PL460 External Interrupt (IRQ)
   gpio ss:
     name: PL460_NTHW0
