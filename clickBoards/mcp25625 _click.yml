@@ -1,0 +1,45 @@
+name: MCP25625 click
+description: >
+  MCP25625 click is a mikroBUS™ add-on board carrying a 
+  Microchip CAN controller with an integrated transceiver. 
+  It meets the automotive requirement for high speed operation (up to 1 Mb/s)
+documentation: https://www.mikroe.com/mcp25625-click
+compatible: mikrobus
+dependencies: [["NC", spi], ["NC", uart], ["NC", i2c]]
+supported:
+  an:
+    name: MCP25625_CLICK_STBY
+    function: GPIO
+    direction: out
+    latch: low
+  rst:
+    name: MCP25625_CLICK_RST
+    function: GPIO
+    direction: out
+    latch: low
+  spi:
+    cs:
+      name: MCP25625_CLICK_CS
+      function: GPIO
+      direction: out
+      latch: high
+    sck:
+      name: MCP25625_CLICK_SCK
+    miso:
+      name: MCP25625_CLICK_MISO
+    mosi:
+      name: MCP25625_CLICK_MOSI
+  pwm:
+    name: MCP25625_CLICK_CLKOUT
+  int:
+    name: MCP25625_CLICK_INT
+  uart:
+    tx:
+      name: MCP25625_CLICK_TX
+    rx:
+      name: MCP25625_CLICK_RX
+  i2c:
+    sda:
+      name: MCP25625_CLICK_SDA
+    scl:
+      name: MCP25625_CLICK_SCL
