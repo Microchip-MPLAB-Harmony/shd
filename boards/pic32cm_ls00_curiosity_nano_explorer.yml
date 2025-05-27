@@ -1,0 +1,570 @@
+name: pic32cm-ls00-curiosity-nano-explorer
+config: pic32cm_ls00_curiosity_nano_explorer.py
+documentation: https://www.microchip.com/en-us/development-tool/EV41C56A
+processor:
+  name: PIC32CM5164LS00048
+  architecture: CORTEX-M23
+  family: PIC32CM
+  series: PIC32CMLS00
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: Led
+        description: Yellow Led (PA15) - latch high
+        pinctrl:
+          gpio:
+            pinId: PA15
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: Switch
+        description: Switch 1 (PA23) - raising edge
+        pinctrl:
+          gpio:
+            pinId: PA23
+            name: SW1
+            function: GPIO
+            direction: in
+            pull up: True
+
+      - name: Switch INT
+        description: Switch with Interrupt configuration
+        pinctrl:
+          int:
+            pinId: PA23
+            name: SW1_INT
+            function: EIC_EXTINT2
+
+  - name: QTouch interface
+    description: QTouch Button
+    options:
+      - name: QTouch Button
+        description: QTouch Button
+        pinctrl:
+          gpio:
+            pinId: PA22
+            name: QTOUCH_BUTTON
+            function: PTC_X16/Y16
+      - name: QTouch Button Shield
+        description: QTouch Button Shield
+        pinctrl:
+          gpio:
+            pinId: PA21
+            name: QTOUCH_BUTTON_SHLD
+            function: PTC_X23/Y23
+
+  - name: USB interface
+    description: USB configurations
+    options:
+      - name: USB
+        description: Target USB configuration
+        dependencies: [[drv_usbfs_v1]]
+        pinctrl:
+          usb_p:
+            pinId: PA25
+            function: USB_DP
+          usb_n:
+            pinId: PA24
+            function: USB_DM
+          
+  - name: On-Board Nano Debugger interface
+    description: On-Board Nano Debugger
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[stdio, sercom3]]
+        pinctrl:
+          tx:
+            pinId: PB08
+            name: VIRTUAL_COM_TX
+            function: SERCOM3_PAD0
+          rx:
+            pinId: PB09
+            name: VIRTUAL_COM_RX
+            function: SERCOM3_PAD1
+
+      - name: Data Gateway GPIO 0
+        description: Data Gateway GPIO 0 interface
+        pinctrl:
+          gpio0:
+            pinId: PA31
+            name: DGI_DBG0
+            function: GPIO
+            direction: out
+            latch: high 
+
+      - name: Data Gateway GPIO 1
+        description: Data Gateway GPIO 1 interface
+        pinctrl:
+          gpio0:
+            pinId: PA30
+            name: DGI_DBG1
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: Data Gateway GPIO 2
+        description: Data Gateway GPIO 2 interface
+        pinctrl:
+          gpio0:
+            pinId: PB23
+            name: DGI_DBG2
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Nano Explorer Digital interface
+    description: Button and Led configurations in Nano Explorer board
+    options:
+      - name: Addressable Led Circuit
+        description: Addressable Led Circuit in Nano Explorer board
+        pinctrl:
+          gpio:
+            pinId: PB23
+            name: NANO_EXP_WS2812B_RGB
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: RGB Led
+        description: RGB Led in Nano Explorer board
+        pinctrl:
+          pwma:
+            pinId: PA03
+            name: NANO_EXP_RGBLED_PWMA
+            function: TCC3_WO1
+          pwmb:
+            pinId: PA06
+            name: NANO_EXP_RGBLED_PWMB
+            function: TCC3_WO4
+
+      - name: IO Expander 1
+        description: "IO Expander 1 in Nano Explorer board (7-bit I2C address: 0x25)"
+        warning: NANO_EXP_IOEXP1_RST pin should be wired to a separate pin header (J113) corresponding to pin ADC6
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_IOEXP1_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_IOEXP1_SCL
+            function: SERCOM2_PAD1
+          reset:
+            pinId: PA14
+            name: NANO_EXP_IOEXP1_RST
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: Led Row LED0
+        description: Led Row LED0 in Nano Explorer board
+        warning: From the 1x8 pin header (J301)
+        pinctrl:
+          gpio:
+            pinId: PA16
+            name: NANO_EXP_LED0
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: Led Row LED1
+        description: Led Row LED1 in Nano Explorer board
+        warning: From the 1x8 pin header (J301)
+        pinctrl:
+          gpio:
+            pinId: PA17
+            name: NANO_EXP_LED1
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: Led Row LED2
+        description: Led Row LED2 in Nano Explorer board
+        warning: From the 1x8 pin header (J301)
+        pinctrl:
+          gpio:
+            pinId: PA00
+            name: NANO_EXP_LED2
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: Led Row LED3
+        description: Led Row LED3 in Nano Explorer board
+        warning: From the 1x8 pin header (J301)
+        pinctrl:
+          gpio:
+            pinId: PA01
+            name: NANO_EXP_LED3
+            function: GPIO
+            direction: out
+            latch: high
+          
+      - name: IO Expander 2
+        description: "IO Expander 2 in Nano Explorer board (7-bit I2C address: 0x24)"
+        warning: NANO_EXP_IOEXP2_RST pin should be wired to a separate pin header (J113) corresponding to pin ADC6.
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_IOEXP2_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_IOEXP2_SCL
+            function: SERCOM2_PAD1
+          int:
+            pinId: PA02
+            name: NANO_EXP_IOEXP2_INT
+            function: EIC_EXTINT2
+          reset:
+            pinId: PA14
+            name: NANO_EXP_IOEXP2_RST
+            function: GPIO
+            direction: out
+            latch: high         
+      
+      - name: Touch Switch SW1
+        description: Touch Switch SW1 in Nano Explorer board
+        pinctrl:
+          gpio:
+            pinId: PB02
+            name: NANO_EXP_TOUCH_SW1
+            function: GPIO
+            direction: in
+
+  - name: Nano Explorer Power Monitor
+    description: Power Monitor
+    options:
+      - name: Quad Channel Precision Power Monitor
+        description: Quad Channel Precision Power Monitor (PAC1944) in Nano Explorer board
+        warning: Set the I2C slide switch to the "MCP2221A" position to connect the PAC1944 and MCP2221A to the rest of the I2C bus on the board. NANO_EXP_PAC_INT pin should be wired to a separate pin header (J113) corresponding to pin ADC7. 
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_PAC_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_PAC_SCL
+            function: SERCOM2_PAD1
+          int:
+            pinId: PA20
+            name: NANO_EXP_PAC_INT
+            function: EIC_EXTINT4
+
+  - name: Nano Explorer USB Bridge
+    description: USB Bridge to UART/I2C (MCP2221A)
+    options:
+      - name: USB to UART serial converter
+        description: USB to UART serial converter (MCP2221A) in Nano Explorer board
+        warning: Use slide switch S501 to select the USB Bridge UART (shared with mikroBUS socket). BRIDGE RESET pin should be wired to a separate pin header (J113) corresponding to pin ADC7. 
+        pinctrl:
+          tx:
+            pinId: PA04
+            name: NANO_EXP_USB_TO_UART_TX
+            function: SERCOM0_PAD0
+          rx:
+            pinId: PA05
+            name: NANO_EXP_USB_TO_UART_RX
+            function: SERCOM0_PAD1
+
+      - name: USB to I2C serial converter
+        description: USB to I2C serial converter (MCP2221A) in Nano Explorer board
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_USB_TO_I2C_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_USB_TO_I2C_SCL
+            function: SERCOM2_PAD1
+
+      - name: USB Bridge Reset
+        description: USB to UART/I2C bridge reset (MCP2221A) in Nano Explorer board
+        pinctrl:
+          gpio:
+            pinId: PA20
+            name: NANO_EXP_USB_BRIDGE_RESET
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Nano Explorer I2C peripherals
+    description: Nano Explorer I2C peripherals
+    options:
+      - name: Temperature Sensor (address 0x1C)
+        description: Temperature Sensor (MCP9808) in Nano Explorer board
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_TEMP_I2C_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_TEMP_I2C_SCL
+            function: SERCOM2_PAD1
+          int:
+            pinId: PB22
+            name: NANO_EXP_TEMP_INT
+            function: EIC_EXTINT6
+
+      - name: Crypto Authentication (address 0x58)
+        description: Crypto Authentication (ATECC608B) in Nano Explorer board
+        dependencies: [[atecc608, sercom2]]
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_AUTH_I2C_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_AUTH_I2C_SCL
+            function: SERCOM2_PAD1
+
+      - name: Proximity and Ambient Light Sensor (address 0x51)
+        description: Proximity and Ambient Light Sensor (VCNL4200) in Nano Explorer board
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_LIGHT_I2C_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_LIGHT_I2C_SCL
+            function: SERCOM2_PAD1
+          int:
+            pinId: PA15
+            name: NANO_EXP_LIGHT_INT
+            function: EIC_EXTINT4
+
+      - name: 2 Mb Serial EEPROM (address 0x54)
+        description: Serial EEPROM (AT24CM02) in Nano Explorer board
+        dependencies: [[drv_at24, sercom2]]
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_EEPROM_I2C_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_EEPROM_I2C_SCL
+            function: SERCOM2_PAD1
+
+      - name: OLED Display Module (address 0x3D)
+        description: OLED Display Module (SSD1306) in Nano Explorer board
+        warning: NANO_EXP_OLED_RST pin should be wired to a separate pin header (J113) corresponding to pin ADC6.
+        pinctrl:
+          sda:
+            pinId: PA12
+            name: NANO_EXP_OLED_I2C_SDA
+            function: SERCOM2_PAD0
+          scl:
+            pinId: PA13
+            name: NANO_EXP_OLED_I2C_SCL
+            function: SERCOM2_PAD1
+          reset:
+            pinId: PA14
+            name: NANO_EXP_OLED_RST
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Nano Explorer SPI peripherals
+    description: Nano Explorer SPI peripherals
+    options:
+      - name: Digital to Analog Converter
+        description: DAC (MCP4821) in Nano Explorer board
+        warning: NANO_EXP_DAC_LDAC pin should be wired to a separate pin header (J114) corresponding to pin IO 15.
+        pinctrl:
+          cs:
+            pinId: PA19
+            name: NANO_EXP_DAC_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: PA09
+            name: NANO_EXP_DAC_SPI_SCK
+            function: SERCOM1_PAD1
+          mosi:
+            pinId: PA08
+            name: NANO_EXP_DAC_SPI_MOSI
+            function: SERCOM1_PAD0
+          ldac:
+            pinId: PA01
+            name: NANO_EXP_DAC_LDAC
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: 4 Mb Serial EEPROM
+        description: Serial EEPROM (25CSM04) in Nano Explorer board
+        pinctrl:
+          cs:
+            pinId: PA10
+            name: NANO_EXP_EEPROM_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: PA09
+            name: NANO_EXP_EEPROM_SPI_SCK
+            function: SERCOM1_PAD1
+          miso:
+            pinId: PA11
+            name: NANO_EXP_EEPROM_SPI_MISO
+            function: SERCOM1_PAD3
+          mosi:
+            pinId: PA08
+            name: NANO_EXP_EEPROM_SPI_MOSI
+            function: SERCOM1_PAD0
+          hold:
+            pinId: PA07
+            name: NANO_EXP_EEPROM_SPI_HOLD
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: microSD Card Socket
+        description: microSD Card Socket in Nano Explorer board
+        dependencies: [[drv_sdspi, sercom5]]
+        pinctrl:
+          cs:
+            pinId: PA07
+            name: NANO_EXP_SDCARD_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high
+          sck:
+            pinId: PA09
+            name: NANO_EXP_SDCARD_SPI_SCK
+            function: SERCOM1_PAD1
+          miso:
+            pinId: PA11
+            name: NANO_EXP_SDCARD_SPI_MISO
+            function: SERCOM1_PAD3
+          mosi:
+            pinId: PA08
+            name: NANO_EXP_SDCARD_SPI_MOSI
+            function: SERCOM1_PAD0
+
+  - name: Nano Explorer Analog peripherals
+    description: Nano Explorer Analog peripherals
+    options:     
+      - name: Speaker
+        description: Speaker Circuit in Nano Explorer board
+        pinctrl:
+          enable:
+            pinId: PA18
+            name: NANO_EXP_SPEAKER_ENABLE           
+            function: GPIO
+            direction: out
+            latch: high
+
+connectors:
+  - compatible: mikrobus
+    name: Curiosity Nano Explorer mikroBUS
+    description: Curiosity Nano Base mikroBUS Standard Extension Header
+    pinctrl:
+      an:
+        pinId: PB03
+        name: mikroBUS_AN
+        function: ADC_AIN11
+      rst:
+        pinId: PA21
+        name: mikroBUS_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PA23
+          name: mikroBUS_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PA09
+          name: mikroBUS_SPI_SCK
+          function: SERCOM1_PAD1
+        miso:
+          pinId: PA11
+          name: mikroBUS_SPI_MISO
+          function: SERCOM1_PAD3
+        mosi:
+          pinId: PA08
+          name: mikroBUS_SPI_MOSI
+          function: SERCOM1_PAD0
+      pwm:
+        pinId: PA03
+        name: mikroBUS_PWM
+        function: TCC3_WO1
+      int:
+        pinId: PA22
+        name: mikroBUS_INT
+        function: EIC_EXTINT1
+      uart:
+        tx:
+          pinId: PA04
+          name: mikroBUS_UART_TX
+          function: SERCOM0_PAD0
+        rx:
+          pinId: PA05
+          name: mikroBUS_UART_RX
+          function: SERCOM0_PAD1
+      i2c:
+        sda:
+          pinId: PA12
+          name: mikroBUS_I2C_SDA
+          function: SERCOM2_PAD0
+        scl:
+          pinId: PA13
+          name: mikroBUS_I2C_SCL
+          function: SERCOM2_PAD1
+
+  - compatible: servomotor
+    name: Curiosity Nano Explorer SERVOMOTOR
+    description: Curiosity Nano Explorer SERVOMOTOR Extension Header
+    pinctrl:
+      pwma:
+        pinId: PA03
+        name: SERVOMOTOR_PWMA
+        function: TCC3_WO1
+      pwmb:
+        pinId: PA06
+        name: SERVOMOTOR_PWMB
+        function: TCC3_WO4
+
+  - compatible: grove
+    name: Curiosity Nano Explorer GROVE
+    description: Curiosity Nano Explorer GROVE connector
+    pinctrl:
+      i2c:
+        sda:
+          pinId: PA12
+          name: GROVE_I2C_SDA
+          function: SERCOM2_PAD0
+        scl:
+          pinId: PA13
+          name: GROVE_I2C_SCL
+          function: SERCOM2_PAD1
+
+  - compatible: qwiic
+    name: Curiosity Nano Explorer QWIIC
+    description: Curiosity Nano Explorer QWIIC connector
+    pinctrl:
+      i2c:
+        sda:
+          pinId: PA12
+          name: QWIIC_I2C_SDA
+          function: SERCOM2_PAD0
+        scl:
+          pinId: PA13
+          name: QWIIC_I2C_SCL
+          function: SERCOM2_PAD1
