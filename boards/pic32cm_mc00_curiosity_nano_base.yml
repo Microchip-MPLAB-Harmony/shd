@@ -1,0 +1,310 @@
+name: pic32cm-mc00-curiosity-nano-base
+config: pic32cm_mc00_curiosity_nano_base.py
+documentation: https://www.microchip.com/en-us/development-tool/EV10N93A
+processor:
+  name: PIC32CM1216MC00032
+  architecture: CORTEX-M0PLUS
+  family: PIC32CM
+  series: PIC32CMMC00
+
+interfaces:
+  - name: Digital interface
+    description: Button and Led configurations
+    options:
+      - name: User Led
+        description: Yellow Led - latch high
+        pinctrl:
+          gpio:
+            pinId: PA23
+            name: LED0
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: User Switch
+        description: Switch 0 - raising edge
+        pinctrl:
+          gpio:
+            pinId: PA22
+            name: SW0
+            function: GPIO
+            direction: in
+            pull up: True
+
+      - name: User Switch INT
+        description: Switch with Interrupt configuration
+        pinctrl:
+          int:
+            pinId: PA22
+            name: SW0_INT
+            function: EIC_EXTINT6
+
+  - name: On-Board Nano Debugger interface
+    description: On-Board Nano Debugger
+    options:
+      - name: Virtual COM Port interface
+        description: Serial Debug Console
+        dependencies: [[stdio, sercom1]]
+        pinctrl:
+          tx:
+            pinId: PA01
+            name: VIRTUAL_COM_TX
+            function: SERCOM1_PAD1
+          rx:
+            pinId: PA00
+            name: VIRTUAL_COM_RX
+            function: SERCOM1_PAD0
+
+      - name: Data Gateway GPIO 0
+        description: Data Gateway GPIO 0 interface
+        pinctrl:
+          gpio:
+            pinId: PA31
+            name: DGI_DBG0
+            function: GPIO
+            direction: out
+            latch: high
+            
+      - name: Data Gateway GPIO 1
+        description: Data Gateway GPIO 1 interface
+        pinctrl:
+          gpio:
+            pinId: PA30
+            name: DGI_DBG1
+            function: GPIO
+            direction: out
+            latch: high
+
+      - name: Data Gateway GPIO 2
+        description: Data Gateway GPIO 2 interface
+        pinctrl:
+          gpio:
+            pinId: PA22
+            name: DGI_DBG2
+            function: GPIO
+            direction: out
+            latch: low            
+
+connectors:
+  - compatible: xplainpro
+    name: Curiosity Nano Base Xplain Pro EXT1
+    description: Curiosity Nano Base Xplained Pro Extension Header 1
+    pinctrl:
+      adc plus:
+        pinId: PA03
+        name: EXT1_ADC_PLUS
+        function: ADC0_AIN1
+      adc minus:
+        pinId: PA04
+        name: EXT1_ADC_MINUS
+        function: ADC0_AIN4
+      pwm plus:
+        pinId: PA06
+        name: EXT1_PWM_PLUS
+        function: TCC1_WO0
+      pwm minus:
+        pinId: PA07
+        name: EXT1_PWM_MINUS
+        function: TCC1_WO1
+      gpio ss:
+        pinId: PA28
+        name: EXT1_GPIO_SS
+        function: GPIO
+        direction: in
+      i2c:
+        sda:
+          pinId: PA08
+          name: EXT1_I2C_SDA
+          function: SERCOM0_PAD0
+        scl:
+          pinId: PA09
+          name: EXT1_I2C_SCL
+          function: SERCOM0_PAD1
+      uart:
+        tx:
+          pinId: PA24
+          name: EXT1_USART_TX
+          function: SERCOM3_PAD2
+        rx:
+          pinId: PA25
+          name: EXT1_USART_RX
+          function: SERCOM3_PAD3
+      spi:
+        cs:
+          pinId: PA27
+          name: EXT1_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PA17
+          name: EXT1_SPI_SCK
+          function: SERCOM1_PAD1
+        miso:
+          pinId: PA16
+          name: EXT1_SPI_MISO
+          function: SERCOM1_PAD0
+        mosi:
+          pinId: PA19
+          name: EXT1_SPI_MOSI
+          function: SERCOM1_PAD3
+
+  - compatible: mikrobus
+    name: Curiosity Nano Base mikroBUS 1
+    description: Curiosity Nano Base mikroBUS Standard Extension Header 1
+    pinctrl:
+      an:
+        pinId: PA02
+        name: mikroBUS1_AN
+        function: ADC0_AIN0
+      rst:
+        pinId: PA11
+        name: mikroBUS1_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PA18
+          name: mikroBUS1_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PA17
+          name: mikroBUS1_SPI_SCK
+          function: SERCOM1_PAD1
+        miso:
+          pinId: PA16
+          name: mikroBUS1_SPI_MISO
+          function: SERCOM1_PAD0
+        mosi:
+          pinId: PA19
+          name: mikroBUS1_SPI_MOSI
+          function: SERCOM1_PAD3
+      pwm:
+        pinId: PA05
+        name: mikroBUS1_PWM
+        function: TCC0_WO1
+      int:
+        pinId: PA10
+        name: mikroBUS1_INT
+        function: EIC_EXTINT10
+      uart:
+        tx:
+          pinId: PA14
+          name: mikroBUS1_UART_TX
+          function: SERCOM2_PAD2
+        rx:
+          pinId: PA15
+          name: mikroBUS1_UART_RX
+          function: SERCOM2_PAD3
+      i2c:
+        sda:
+          pinId: PA08
+          name: mikroBUS1_I2C_SDA
+          function: SERCOM0_PAD0
+        scl:
+          pinId: PA09
+          name: mikroBUS1_I2C_SCL
+          function: SERCOM0_PAD1
+
+  - compatible: mikrobus
+    name: Curiosity Nano Base mikroBUS 2
+    description: Curiosity Nano Base mikroBUS Standard Extension Header 2
+    pinctrl:
+      an:
+        pinId: PA03
+        name: mikroBUS2_AN
+        function: ADC0_AIN1
+      spi:
+        cs:
+          pinId: PA27
+          name: mikroBUS2_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PA17
+          name: mikroBUS2_SPI_SCK
+          function: SERCOM1_PAD1
+        miso:
+          pinId: PA16
+          name: mikroBUS2_SPI_MISO
+          function: SERCOM1_PAD0
+        mosi:
+          pinId: PA19
+          name: mikroBUS2_SPI_MOSI
+          function: SERCOM1_PAD3
+      pwm:
+        pinId: PA06
+        name: mikroBUS2_PWM
+        function: TCC1_WO0
+      uart:
+        tx:
+          pinId: PA24
+          name: mikroBUS2_UART_TX
+          function: SERCOM3_PAD2
+        rx:
+          pinId: PA25
+          name: mikroBUS2_UART_RX
+          function: SERCOM3_PAD3
+      i2c:
+        sda:
+          pinId: PA08
+          name: mikroBUS2_I2C_SDA
+          function: SERCOM0_PAD0
+        scl:
+          pinId: PA09
+          name: mikroBUS2_I2C_SCL
+          function: SERCOM0_PAD1
+
+  - compatible: mikrobus
+    name: Curiosity Nano Base mikroBUS 3
+    description: Curiosity Nano Base mikroBUS Standard Extension Header 3
+    pinctrl:
+      an:
+        pinId: PA04
+        name: mikroBUS3_AN
+        function: ADC0_AIN4
+      spi:
+        cs:
+          pinId: PA28
+          name: mikroBUS3_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PA17
+          name: mikroBUS3_SPI_SCK
+          function: SERCOM1_PAD1
+        miso:
+          pinId: PA16
+          name: mikroBUS3_SPI_MISO
+          function: SERCOM1_PAD0
+        mosi:
+          pinId: PA19
+          name: mikroBUS3_SPI_MOSI
+          function: SERCOM1_PAD3
+      pwm:
+        pinId: PA07
+        name: mikroBUS3_PWM
+        function: TCC1_WO1
+      uart:
+        tx:
+          pinId: PA14
+          name: mikroBUS3_UART_TX
+          function: SERCOM2_PAD2
+        rx:
+          pinId: PA15
+          name: mikroBUS3_UART_RX
+          function: SERCOM2_PAD3
+      i2c:
+        sda:
+          pinId: PA08
+          name: mikroBUS3_I2C_SDA
+          function: SERCOM0_PAD0
+        scl:
+          pinId: PA09
+          name: mikroBUS3_I2C_SCL
+          function: SERCOM0_PAD1
