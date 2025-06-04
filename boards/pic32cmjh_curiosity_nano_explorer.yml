@@ -602,7 +602,7 @@ connectors:
         name: SERVOMOTOR_PWMB
         function: TC3_WO0
       pwmc:
-        pinId: PB01				
+        pinId: PB01
         name: SERVOMOTOR_PWMC
         function: TC3_WO1
 

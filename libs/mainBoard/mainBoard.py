@@ -72,6 +72,7 @@ class MainBoard:
         self.__architecture = self.__atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
         self.__family = self.__atdf.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
         self.__connectorAdaptorSymbols = {}
+        self.__enabledSymbolsByFunction = {}
 
         # self.__log.writeInfoMessage("SHD >> __devicePinMap: {}".format(self.__devicePinMap))
         # self.__log.writeInfoMessage("SHD >> __architecture: {}".format(self.__architecture))
@@ -292,39 +293,47 @@ class MainBoard:
         else:
             return True
     
-    def __showSymbol(self, symbol, event):
+    def __showWarningSymbol(self, symbol, event):
+        symbol.setVisible(event['value'])
+
+    def __showCSASGPIOSymbol(self, symbol, event):
         eventSymbolID = event['id']
         eventValue = event['value']
-        # self.__log.writeInfoMessage("SHD >> __showSymbol eventSymbolID: {} - {}".format(eventSymbolID, eventValue))
-        if "CSASGPIO" in eventSymbolID:
-            # self.__log.writeInfoMessage("SHD >> __showSymbol eventSymbolID: {}".format(eventSymbolID))
-            global mainBoard
-            connectorName = self.getConnectorNameFromSymbolID(eventSymbolID)
-            newPinControl = {"spi":{"cs":{"function": "GPIO","direction": "out","latch": "high"}}}
-            if eventValue == True:
-                # Update the pin function
-                self.updatePinControlByConnector(connectorName, newPinControl)
-            else:
-                # Restore the pin function by default
-                self.restorePinControlByConnector(connectorName)
-                
-            # Set Pin configuration
-            spiPinControlList = self.getPinControlListByConnectorSignal(connectorName, 'spi')
-            for spiPinControl in spiPinControlList:
-                signal, pinControl = spiPinControl
-                if signal == 'cs':
-                    self.__clearPinConfig(pinControl)
-                    self.__setPinConfig(pinControl)
-                    newLabel = self.__updateFunctionInSymbolLabel(pinControl['function'], symbol.getLabel())
-                    symbol.setLabel(newLabel)
-                    # self.__log.writeInfoMessage("SHD >> __showSymbol cs detected. Set newlabel: {}".format(newLabel))
+        connectorName = self.getConnectorNameFromSymbolID(eventSymbolID)
+        newPinControl = {"spi":{"cs":{"function": "GPIO","direction": "out","latch": "high"}}}
+        if eventValue == True:
+            # Update the pin function
+            self.updatePinControlByConnector(connectorName, newPinControl)
         else:
-            # self.__log.writeInfoMessage("SHD >> __showSymbol {} setVisible: {}".format(symbol.getLabel(), eventValue))
-            if 'unused' not in symbol.getLabel().lower():
-                symbol.setVisible(eventValue)
+            # Restore the pin function by default
+            self.restorePinControlByConnector(connectorName)
+            
+        # Set Pin configuration
+        spiPinControlList = self.getPinControlListByConnectorSignal(connectorName, 'spi')
+        for spiPinControl in spiPinControlList:
+            signal, pinControl = spiPinControl
+            if signal == 'cs':
+                self.__clearPinConfig(pinControl)
+                self.__setPinConfig(pinControl)
+                newLabel = self.__updateFunctionInSymbolLabel(pinControl['function'], symbol.getLabel())
+                symbol.setLabel(newLabel)
+                # self.__log.writeInfoMessage("SHD >> __showSymbol cs detected. Set newlabel: {}".format(newLabel))
+
+    def __showSymbol(self, symbol, event):
+        # self.__log.writeInfoMessage("SHD >> __showSymbol {} setVisible: {}".format(symbol.getLabel(), eventValue))
+        if 'unused' in symbol.getLabel().lower():
+            # self.__log.writeInfoMessage("SHD >> __showSymbol detected unused function: {}".format(symbol.getLabel()))
+            symbol.setVisible(False)
+        else:
+            enable = event['value']
+            if enable == True:
+                symbol.setVisible(True)
             else:
-                # self.__log.writeInfoMessage("SHD >> __showSymbol detected unused function: {}".format(symbol.getLabel()))
-                symbol.setVisible(False)
+                # if pinId is in collision list, skip it. Handled by checkCollistions
+                pinId = symbol.getID().split("_")[-1]
+                if self.__collisionsByPinID.get(pinId) == None:
+                    # self.__log.writeInfoMessage("SHD >> __showSymbol setVisible: {} visible: {}".format(symbol.getLabel(), event['value']))
+                    symbol.setVisible(False)
 
     def __showSettingSymbol(self, symbol, event):
         eventSymbolID = event['id']
@@ -332,15 +341,51 @@ class MainBoard:
         symbolName = symbol.getID()
         symbol.setVisible(symbolName == "{}_{}".format(eventSymbolID, eventValue))
 
-    def __setVisibleSignals(self, enable, parentSymbol, pinId):
+    def __setAllVisibleSignals(self, parentSymbol):
+        # return TRUE if symbol must be read only, otherwise FALSE
         board = self.__db.getComponentByID(self.__interfaceID)
         symbolList = self.__symbolPinByParent.get(parentSymbol)
+        # self.__log.writeInfoMessage("SHD >> __setAllVisibleSignals symbolList -> {}".format(symbolList))
+        pinIdList = []
+        pinIdVisibleList = []
         for symbol in symbolList:
-            if pinId in symbol:
-                symbolInterface = board.getSymbolByID(symbol)
-                symbolInterface.setVisible(enable)
-                # self.__log.writeInfoMessage("SHD >> __setVisibleSignals {} -> {}".format(symbol, enable))
-                
+            symbolInterface = board.getSymbolByID(symbol)
+            pinId = symbol.split("_")[-1]
+            # Build the list of PinIDs used by the parent symbol
+            pinIdList.append(pinId)
+            # self.__log.writeInfoMessage("SHD >> __setAllVisibleSignals pinId:{}  self.__configuredPins:{}".format(pinId, self.__configuredPins))
+            if pinId in self.__configuredPins:
+                # self.__log.writeInfoMessage("SHD >> __setAllVisibleSignals symbolInterface.getLabel(): {}".format(symbolInterface.getLabel()))
+                function = symbolInterface.getLabel().split(":")[1]
+                pinIdVisibleList.append((pinId, function))
+                symbolInterface.setVisible(True)
+                # self.__log.writeInfoMessage("SHD >> __setAllVisibleSignals {} -> TRUE".format(symbol))
+            else:
+                symbolInterface.setVisible(False)
+                # self.__log.writeInfoMessage("SHD >> __setAllVisibleSignals {} -> FALSE".format(symbol))
+
+
+        # If all pins are in configured list, set as read only
+        if len(pinIdVisibleList) == len(pinIdList):
+            # self.__log.writeInfoMessage("SHD >> __setAllVisibleSignals all pins configured - setAsReadOnly -> TRUE")
+            return True
+        
+        # If any visible pin has been configured as different FUNCTION, set as read only
+        for pinId, function in pinIdVisibleList:
+            # Read function from GPIO
+            params = dict()
+            pinNumber = self.__devicePinMap.get(pinId)
+            params.setdefault('pinNumber', pinNumber)
+            params.setdefault('setting', 'function')
+            ret = self.__db.sendMessage("core", "PIN_GET_CONFIG_VALUE", params)
+            pinFunction = ret.get("value")
+            # self.__log.writeInfoMessage("SHD >> __setAllVisibleSignals function: {} pinFunction: {}".format(function, pinFunction))
+            if function != pinFunction:
+                # self.__log.writeInfoMessage("SHD >> __setAllVisibleSignals - setAsReadOnly -> TRUE")
+                return True
+            
+        return False
+
     def __checkAllSignalsDisabled(self, symbol):
         symbolSignals = self.__symbolPinByParent.get(symbol)
         # self.__log.writeInfoMessage("SHD >> __checkAllSignalsDisabled {}: {}".format(symbol, symbolSignals))
@@ -353,6 +398,7 @@ class MainBoard:
         return True
 
     def __checkGlobalCollisions(self, symbol, event):
+        # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions event: {}".format(event))
         enablePin = event['value']
         if enablePin == True:
             # Pin Callback selects TRUE. Set rest of the signals with the same Pin as Read Only
@@ -366,9 +412,8 @@ class MainBoard:
                         if symbolInterface != None:
                             if symbolInterface.getValue() == False:
                                 # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions set Read Only - symbolId: {}".format(symbolId))
-                                if symbolId.find('SPI') == -1:
+                                if self.__setAllVisibleSignals(symbolId) == True:
                                     symbolInterface.setReadOnly(True)
-                                self.__setVisibleSignals(True, symbolId, pinId)
         else:
             # Pin Callback selects False. Clear Read Only values
             for pinId, symbolList in self.__collisionsByPinID.items():
@@ -376,17 +421,18 @@ class MainBoard:
                     # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions pind is still configured: {}".format(pinId))
                     continue
                 
+                # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions DISABLE pind: {} symbolList: {}".format(pinId, symbolList))
                 # If collision Pin has not been configured. Free Symbol if all subsignals are disabled.
                 for symbolId in symbolList:
                     symbolInterface = self.__symbolInterfaces.get(symbolId)
                     if symbolInterface != None:
                         if symbolInterface.getReadOnly() == True:
-                            if self.__checkAllSignalsDisabled(symbolId) == True:
-                                # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions clear Read Only - symbolId: {}".format(symbolId))
+                            if self.__setAllVisibleSignals(symbolId) == False:
                                 symbolInterface.setReadOnly(False)
-                                self.__setVisibleSignals(False, symbolId, pinId)
-                        elif symbolId.find('SPI') != -1:
-                            self.__setVisibleSignals(False, symbolId, pinId)
+                        else:
+                            # self.__log.writeInfoMessage("SHD >> __checkGlobalCollisions readonly FALSE: pinId {} symbolId: {} collSymbolId: {}".format(pinId, symbolId, self.__shdCheckCollisionSymbol.getLabel()))
+                            # if symbolId == self.__shdCheckCollisionSymbol.getLabel():
+                            self.__setAllVisibleSignals(symbolId)
 
     def __connectComponentDependencies(self, connection):
         depId, capId = connection
@@ -414,7 +460,7 @@ class MainBoard:
 
         return False
 
-    def __getDriverMultiInstanceNumber(self, idActiveList, driver):
+    def __getDriverMultiInstanceFreeNumber(self, idActiveList, driver):
         drvInstances = []
         drvInstancesUnused = []
         for id in idActiveList:
@@ -429,10 +475,21 @@ class MainBoard:
                     drvInstancesUnused.remove(instance)
                     break
                 
+      # self.__log.writeInfoMessage("SHD >> __getDriverMultiInstanceFreeNumber drvInstancesUnused: {}".format(drvInstancesUnused))
+
         if len(drvInstancesUnused) > 0:
-            return int("".join(filter(lambda x: x.isdigit(), drvInstancesUnused[0])))
+            return int(drvInstancesUnused[0][-1])
         else:                
             return int(str(idActiveList).count(driver + "_"))
+
+    def __getDriverMultiInstanceOrderedList(self, idActiveList, driver):
+        drvInstances = []
+        for id in idActiveList:
+            if driver[:-1] in id:
+                drvInstances.append(id)
+        
+        drvInstances.sort()
+        return drvInstances
 
     def __overlapDependencies(self, dependencies, connectorName):
         # self.__log.writeInfoMessage("SHD >> __overlapDependencies {}: {}".format(connectorName, dependencies))
@@ -489,7 +546,7 @@ class MainBoard:
             params.setdefault('setting', 'function')
             ret = self.__db.sendMessage("core", "PIN_GET_CONFIG_VALUE", params)
             pinFunction = ret.get("value")
-            # self.__log.writeInfoMessage("SHD >> __getPinListByMultiPinDriver {}: {} in {}".format(pinId, dependency, pinFunction))
+          # self.__log.writeInfoMessage("SHD >> __getPinListByMultiPinDriver {}: {} in {}".format(pinId, dependency, pinFunction))
             # Handle exceptions: MCPWM, ADCHS, ADC(dsPIC33A)
             updateList = False
             if dependency == 'mcpwm':
@@ -514,11 +571,11 @@ class MainBoard:
         return pinIdList
 
     def __updateDriverConnections(self, addDependency, dependencyList, connectorName):
-        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections[{}]: {}".format(addDependency, dependencyList))
+      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections[{}]: {}".format(addDependency, dependencyList))
 
         # Check overlap bindings
         dependencyList = self.__overlapDependencies(dependencyList, connectorName)
-        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections new dependencyList: {}".format(dependencyList))
+      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections new dependencyList: {}".format(dependencyList))
         
         # Check if capability is already in use (this is needed because setReadOnly triggers callback)
         dependencyListFiltered = {}
@@ -527,12 +584,15 @@ class MainBoard:
                 if capId == "":
                     dependencyListFiltered.setdefault(depId, capId)
                     continue
+                elif self.__connections.get(capId) != None:
+                  # self.__log.writeInfoMessage("SHD >> __updateDriverConnections skip capId: {} already connected".format(capId))
+                    continue
                 
                 driverInstance = self.__shdDependenciesPlibMultiInstance.get(capId)
                 if driverInstance != None:
-                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections checking {} in {}".format(depId, driverInstance))
+                  # self.__log.writeInfoMessage("SHD >> __updateDriverConnections checking {} in {}".format(depId, driverInstance))
                     if depId in driverInstance: 
-                        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections already in use ({})".format(capId))
+                      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections already in use ({})".format(capId))
                         continue
 
                 dependencyListFiltered.setdefault(depId, capId)
@@ -541,26 +601,27 @@ class MainBoard:
 
         # Get Active components    
         idActiveList = self.__db.getActiveComponentIDs()
-        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections idActiveList: {}".format(idActiveList))
+      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections idActiveList: {}".format(idActiveList))
 
         # Adapt Dependency List according to PIO peripheral ID 
         dependencyList = adaptDevicePeripheralDependencies(self.__atdf, dependencyListFiltered)
-        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections PIO adapted dependencyList: {}".format(dependencyList))
+      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections PIO adapted dependencyList: {}".format(dependencyList))
 
         newConnections = []
         newComponents = []
         multiInstanceComponent = []
-        removeComponents = []
+        removePLIBComponents = []
+        removeDriverComponents = []
         updatePlibInstance = False
         
         for depId, capId in dependencyList.items():
             createConnection = True
-            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections dependencyList.items: {} {}".format(depId, capId))
+          # self.__log.writeInfoMessage("SHD >> __updateDriverConnections dependencyList.items: {} {}".format(depId, capId))
             if addDependency is True:
                 if self.__checkIsMultiInstanceDriver(depId) == True:
-                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver TRUE: {}".format(depId))
+                  # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver TRUE: {}".format(depId))
                     # Add new component/connection (multi instance)
-                    newInstanceNumber = self.__getDriverMultiInstanceNumber(idActiveList, depId)
+                    newInstanceNumber = self.__getDriverMultiInstanceFreeNumber(idActiveList, depId)
                     newDep ="{}_{}".format(depId, newInstanceNumber)
                     
                     if self.__checkComponentAvailable(capId) == True:
@@ -582,35 +643,35 @@ class MainBoard:
                         
                     updatePlibInstance = True
                 else:
-                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver FALSE: {}".format(depId))
+                  # self.__log.writeInfoMessage("SHD >> __updateDriverConnections __checkIsMultiInstanceDriver FALSE: {}".format(depId))
                     if (depId not in idActiveList) and (depId is not "NC"):
                         # Add new component/connection (single instance)
                         if self.__checkComponentAvailable(depId) == True:
                             newComponents.append(depId)
                         else:
                             createConnection = False
-                        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections depId NOT IN idActiveList - adding {}".format(depId))
+                      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections depId NOT IN idActiveList - adding {}".format(depId))
                         
                     if capId != "" and capId not in idActiveList:
                         # Check if depId has not been previously added
                         if depId not in idActiveList:
-                            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections capId NOT IN idActiveList - adding {}".format(capId))
+                          # self.__log.writeInfoMessage("SHD >> __updateDriverConnections capId NOT IN idActiveList - adding {}".format(capId))
                             if self.__checkComponentAvailable(capId) == True:
                                 newComponents.append(capId)
                             else:
                                 createConnection = False
                             
                             if (createConnection == True) and (depId is not "NC"):
-                                # self.__log.writeInfoMessage("SHD >> __updateDriverConnections adding new connection {}: {}".format(createConnection, (depId, capId)))
+                              # self.__log.writeInfoMessage("SHD >> __updateDriverConnections adding new connection {}: {}".format(createConnection, (depId, capId)))
                                 newConnections.append((depId, capId))
                             
             else:
                 if capId in idActiveList:
                     # Check MultiPin drivers (driver that uses more than 1 pin)
                     pinList = self.__getPinListByMultiPinDriver(capId)
-                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver 1 pinList: {}".format(pinList))
+                  # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver 1 pinList: {}".format(pinList))
                     if len(pinList) == 0:
-                        removeComponents.append(capId)
+                        removePLIBComponents.append(capId)
 
                 # Handle exceptions (don't be automatically removed): PMSM_FOC,
                 if depId == 'pmsm_foc':
@@ -621,20 +682,20 @@ class MainBoard:
                         # MultiInstance drivers are removed in removeComponents loop (Deactivate components)
                         # Check MultiPin drivers (driver that uses more than 1 pin)
                         pinList = self.__getPinListByMultiPinDriver(depId)
-                        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver 2 pinList: {}".format(pinList))
+                      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections MultiPinDriver 2 pinList: {}".format(pinList))
                         if len(pinList) == 0:
-                            removeComponents.append(depId)
+                            removeDriverComponents.append(depId)
                 
         # This is needed because multiInstance components cannot be enabled with other components
         if len(multiInstanceComponent) > 0:
             self.__db.activateComponents(multiInstanceComponent)
             
         if len(newComponents) > 0:
-            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections newComponents: {}".format(newComponents))
+          # self.__log.writeInfoMessage("SHD >> __updateDriverConnections newComponents: {}".format(newComponents))
             self.__db.activateComponents(newComponents)
 
         # Add new dependencies (Activate components)
-        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections newConnections: {}".format(newConnections))
+      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections newConnections: {}".format(newConnections))
         for connection in newConnections:
             self.__connectComponentDependencies(connection)
             # Update PLIB MultiInstance information
@@ -642,34 +703,48 @@ class MainBoard:
                 depId, capId = connection
                 self.__shdDependenciesPlibMultiInstance.setdefault(capId, depId)
 
-        # Remove Components (Deactivate components)
-        for component in removeComponents:
-            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections remove Components: {}".format(component))
-            res = self.__db.deactivateComponents([component])
-            if res == True:
-                if self.__connections.get(component) != None:
-                    del self.__connections[component]
-                if self.__drvUnconnected.get(component) != None:
-                    del self.__drvUnconnected[component]
-                    
-            # Check multiinstance driver connection
-            driver = self.__shdDependenciesPlibMultiInstance.get(component)
-            if driver != None:
-                driverInstance = int(driver[-1])
-                instancesNumber = self.__getDriverMultiInstanceNumber(idActiveList, driver[0:-2])
-                # self.__log.writeInfoMessage("SHD >> __updateDriverConnections remove multiInstance: {} {} {}".format(driver, driverInstance, instancesNumber))
-                if instancesNumber == 1:
-                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections deactivate component 1: {}".format(driver[0:-2]))
-                    self.__db.deactivateComponents([driver[0:-2]])
-                elif driverInstance == (instancesNumber - 1):
-                    # self.__log.writeInfoMessage("SHD >> __updateDriverConnections deactivate component 2: {}".format(driver))
-                    self.__db.deactivateComponents([driver])
+        # Remove PLIB Components (Deactivate components)
+        for component in removePLIBComponents:
+          # self.__log.writeInfoMessage("SHD >> __updateDriverConnections remove Components: {}".format(component))
+            for function, symbolList in self.__enabledSymbolsByFunction.items():
+                if component.upper() in function:
+                    if len(symbolList) == 0:
+                        res = False
+                        driver = self.__shdDependenciesPlibMultiInstance.get(component)
+                        if driver == None:
+                            # Single instance driver. Remove PLIB. Driver will be removed by removeDriverComponents list
+                            res = self.__db.deactivateComponents([component])
+                        else:
+                            # Check multiinstance driver connection. Remove PLIB and Driver instance
+                            driverInstance = int(driver[-1])
+                            instanceOrderedList = self.__getDriverMultiInstanceOrderedList(idActiveList, driver)
+                          # self.__log.writeInfoMessage("SHD >> __updateDriverConnections remove multiInstance - driver:{} instance: {} list: {}".format(driver, driverInstance, instanceOrderedList))
+                            if str(self.__shdDependenciesPlibMultiInstance).count(driver[0:-1]) == 1:
+                              # self.__log.writeInfoMessage("SHD >> __updateDriverConnections deactivate component PLIB + DRV: {}".format(driver))
+                                res = self.__db.deactivateComponents([component, driver[0:-2]])
+                            elif instanceOrderedList[-1] == driver:
+                              # self.__log.writeInfoMessage("SHD >> __updateDriverConnections deactivate component PLIB + MAX_INSTANCE: {}".format(driver))
+                                res = self.__db.deactivateComponents([component, driver])
+                            else:
+                              # self.__log.writeInfoMessage("SHD >> __updateDriverConnections deactivate component PLIB: {}".format(driver[0:-2]))
+                                res = self.__db.deactivateComponents([component])
 
-                del self.__shdDependenciesPlibMultiInstance[component]
+                            del self.__shdDependenciesPlibMultiInstance[component]
+
+                        if res == True:
+                            if self.__connections.get(component) != None:
+                                del self.__connections[component]
+                            if self.__drvUnconnected.get(component) != None:
+                                del self.__drvUnconnected[component]
+                            break
+
+        for component in removeDriverComponents:
+            # Deactivate single instance drivers    
+            self.__db.deactivateComponents([component])
                 
-        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__shdDependenciesPlibMultiInstance: {}".format(self.__shdDependenciesPlibMultiInstance))
-        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__connections: {}".format(self.__connections))
-        # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__drvUnconnected: {}".format(self.__drvUnconnected))
+      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__shdDependenciesPlibMultiInstance: {}".format(self.__shdDependenciesPlibMultiInstance))
+      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__connections: {}".format(self.__connections))
+      # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__drvUnconnected: {}".format(self.__drvUnconnected))
         
     def __signalEnableCallback(self, symbol, event):
         dependencies = {}
@@ -794,14 +869,49 @@ class MainBoard:
                             self.__pinControlByPinId.setdefault(pinId, pinCtrl)
                             self.__setPinConfig(pinCtrl)
                             enabledPinIdList.setdefault(pinId, pinDescr)
+
+                        # Adapt pinFunction in case of GPIO
+                        if pinFunction == "GPIO":
+                            pinFunction = "{}_{}".format(pinFunction, pinId)
+
+                        fnSymList = self.__enabledSymbolsByFunction.get(pinFunction)
+                        if fnSymList == None:
+                            self.__enabledSymbolsByFunction.setdefault(pinFunction, [event["id"]])
+                        else:
+                            fnSymList.append(event["id"])
+                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback upd+ self.__enabledSymbolsByFunction: {}".format(self.__enabledSymbolsByFunction))
                     else:
+                        # Update Enabled Symbols List
+                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback upd- self.__enabledSymbolsByFunction: {}".format(self.__enabledSymbolsByFunction))
+                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback self.__collisionsByPinID: {}".format(self.__collisionsByPinID))
+                        # Adapt pinFunction in case of GPIO
+                        if pinFunction == "GPIO":
+                            pinFunction = "{}_{}".format(pinFunction, pinId)
+
+                        fnSymList = self.__enabledSymbolsByFunction.get(pinFunction)
+                        if fnSymList != None and event["id"] in fnSymList:
+                            fnSymList.remove(event["id"])
+                            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback remove: {}".format(event["id"]))
+
                         # Check if that pin has to be removed
                         if pinId in self.__configuredPins:
-                            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback clear Pin {}".format(pinId))
-                            self.__configuredPins.remove(pinId)
-                            del self.__pinControlByPinId[pinId]
-                            self.__clearPinConfig(pinCtrl)
-                            disabledPinIdList.setdefault(pinId, pinDescr)
+                            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback remove Pin {}".format(pinId))
+                            # Check collisions and enabled symbols to know if pin has to be removed
+                            removePinId = True
+                            symbolList = self.__collisionsByPinID.get(pinId)
+                            if symbolList != None:
+                                for symbolID in symbolList:
+                                    # self.__log.writeInfoMessage("SHD >> __signalEnableCallback check symbolID: {} in {}".format(symbolID, self.__enabledSymbolsByFunction.get(pinFunction)))
+                                    if symbolID in str(self.__enabledSymbolsByFunction.get(pinFunction)):
+                                        removePinId = False
+                                        break
+
+                            if removePinId == True:
+                                # self.__log.writeInfoMessage("SHD >> __signalEnableCallback clear Pin {}".format(pinId))
+                                self.__configuredPins.remove(pinId)
+                                del self.__pinControlByPinId[pinId]
+                                self.__clearPinConfig(pinCtrl)
+                                disabledPinIdList.setdefault(pinId, pinDescr)
 
             # self.__log.writeInfoMessage("SHD >> __signalEnableCallback dependencies: {}".format(dependencies))
 
@@ -812,11 +922,16 @@ class MainBoard:
                 # Configure settings of the drivers of each updated PinId if needed
                 self.__configureDriverSettings(enabledPinIdList, disabledPinIdList)
                 # Check PIN Collisions
+                self.__shdCheckCollisionSymbol.setLabel(event["id"])
                 self.__shdCheckCollisionSymbol.setValue(event["value"])
 
             self.__signalCallbackBusy = False
             # self.__log.writeInfoMessage("SHD >> __signalEnableCallback __configuredPins: {}".format(self.__configuredPins))
-
+            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback __collisionsByPinID: {}".format(self.__collisionsByPinID))
+            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__connections: {}".format(self.__connections))
+            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__drvUnconnected: {}".format(self.__drvUnconnected))
+            # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__enabledSymbolsByFunction: {}".format(self.__enabledSymbolsByFunction))
+        
     def __getSymbolLabel(self, name, function, subSignal, pinNumber, pinId):
         if subSignal is None:
             return "{}:{}:Pin[{}]:{}".format(name, function, pinNumber, pinId)
@@ -1036,12 +1151,12 @@ class MainBoard:
         index = 0
         if self.isPinSignal(pinControl):
             # Single pin signal
-            pinList.append((index, pinControl.get('function'), pinControl.get('pinId')))
+            pinList.append((index, 'NONE', pinControl.get('name'), pinControl.get('function'), pinControl.get('pinId')))
             index = index + 1
         else:
             for key, value in pinControl.items():
                 # Multi pin signal
-                pinList.append((index, value.get('function'), value.get('pinId')))
+                pinList.append((index, key.upper(), value.get('name'), value.get('function'), value.get('pinId')))
                 index = index + 1
 
         return pinList 
@@ -1493,16 +1608,19 @@ class MainBoard:
                             warnSymbol = boardInterface.createCommentSymbol(warnSymbolName, symbol)
                             warnSymbol.setLabel("WARNING!! {}".format(warnComment))
                             warnSymbol.setVisible(False)
-                            warnSymbol.setDependencies(self.__showSymbol, [optionSymbolName])
+                            warnSymbol.setDependencies(self.__showWarningSymbol, [optionSymbolName])
 
                         pinControlList = self.getDescriptionListByInterface(interfaceIndex, optionIndex)
                         # self.__log.writeInfoMessage("SHD >> option pinControlList: {}".format(pinControlList))
                         for pinControl in pinControlList:
                             # self.__log.writeInfoMessage("SHD >> option pinControl: {}".format(pinControl))
-                            pinControlIndex, function, pinId = pinControl
-                            symbolName = "{}_{}_{}".format(optionSymbolName, pinControlIndex, pinId)
+                            pinControlIndex, signal, name, function, pinId = pinControl
+                            symbolName = "{}_{}_{}_{}".format(optionSymbolName, pinControlIndex, signal, pinId)
                             shdConfigComment = boardInterface.createCommentSymbol(symbolName, symbol)
-                            shdConfigComment.setLabel(function.upper() + ": " + pinId.upper())
+                            if name == None:
+                                shdConfigComment.setLabel("{}:{}".format(function.upper(), pinId.upper()))
+                            else:
+                                shdConfigComment.setLabel("{}:{}:{}".format(name.upper(), function.upper(), pinId.upper()))
                             shdConfigComment.setVisible(False)
                             shdConfigComment.setDependencies(self.__showSymbol, [optionSymbolName])
 
@@ -1535,16 +1653,19 @@ class MainBoard:
                         warnSymbol = boardInterface.createCommentSymbol(warnSymbolName, symbol)
                         warnSymbol.setLabel("WARNING!! {}".format(warnComment))
                         warnSymbol.setVisible(False)
-                        warnSymbol.setDependencies(self.__showSymbol, [interfaceSymbolName])
+                        warnSymbol.setDependencies(self.__showWarningSymbol, [interfaceSymbolName])
 
                     pinControlList = self.getDescriptionListByInterface(interfaceIndex)
                     # self.__log.writeInfoMessage("SHD >> pinControlList: {}".format(pinControlList))
                     for pinControl in pinControlList:
                         # self.__log.writeInfoMessage("SHD >> pinControl: {}".format(pinControl))
-                        pinControlIndex, function, pinId = pinControl
-                        symbolName = "{}_{}_{}".format(interfaceSymbolName, pinControlIndex, pinId)
+                        pinControlIndex, signal, name, function, pinId = pinControl
+                        symbolName = "{}_{}_{}_{}".format(interfaceSymbolName, pinControlIndex, signal, pinId)
                         shdConfigComment = boardInterface.createCommentSymbol(symbolName, symbol)
-                        shdConfigComment.setLabel(function.upper() + ": " + pinId.upper())
+                        if name == None:
+                            shdConfigComment.setLabel("{}:{}".format(function.upper(), pinId.upper()))
+                        else:
+                            shdConfigComment.setLabel("{}:{}:{}".format(name.upper(), function.upper(), pinId.upper()))
                         shdConfigComment.setVisible(False)
                         shdConfigComment.setDependencies(self.__showSymbol, [interfaceSymbolName])
 
@@ -1704,7 +1825,7 @@ class MainBoard:
                             self.__symbolInterfaces.setdefault(shdSpiCSConfigSymbolName, shdSpiCSConfigSymbol)
 
                             # self.__log.writeInfoMessage("SHD >> spiCSdetected connectorSignalName: {} shdSpiCSConfigSymbolName: {}".format(connectorSignalName, shdSpiCSConfigSymbolName))
-                            shdConPinControlSymbol.setDependencies(self.__showSymbol, [connectorSignalName, shdSpiCSConfigSymbolName])
+                            shdConPinControlSymbol.setDependencies(self.__showCSASGPIOSymbol, [connectorSignalName, shdSpiCSConfigSymbolName])
 
                         else:
                             shdConPinControlSymbol.setDependencies(self.__showSymbol, [connectorSignalName])

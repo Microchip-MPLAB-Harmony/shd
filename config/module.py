@@ -48,7 +48,7 @@ def loadModule():
             if mainBoardYaml['processor']['name'] == processor:
                 mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'))) 
         except Exception as error:
-            print("SHD >> ERROR loading main board : {}".format(mainBoardFile))
+            print("SHD >> ERROR loading main board : {} error: {}".format(mainBoardFile, error))
             continue
     
     for mainBoard in mainBoardCompatibleList:
