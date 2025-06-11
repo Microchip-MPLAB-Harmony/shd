@@ -1,0 +1,698 @@
+name: wbz653-curiosity
+config: wbz653_curiosity.py
+documentation: https://www.microchip.com/en-us/development-tool/EV31U42A
+processor:
+  name: PIC32WM_BZ6204
+  architecture: CORTEX-M4
+  family: PIC32WM_BZ
+  series: PIC32WM_BZ6
+
+interfaces:
+  - name: Digital interface
+    description: LEDs and Button configurations
+    options:
+      - name: User LED
+        description: User LED
+        pinctrl:
+          gpio:
+            pinId: RB7
+            name: USER_LED
+            function: GPIO
+            direction: out
+            latch: high
+      - name: LED - Red
+        description: LED - Red
+        pinctrl:
+          gpio:
+            pinId: RC7
+            name: LED_RED
+            function: GPIO
+            direction: out
+            latch: low
+      - name: LED - Green
+        description: LED - Green
+        pinctrl:
+          gpio:
+            pinId: RC10
+            name: LED_GREEN
+            function: GPIO
+            direction: out
+            latch: low
+      - name: LED - Blue
+        description: LED - Blue
+        pinctrl:
+          gpio:
+            pinId: RE0
+            name: LED_BLUE
+            function: GPIO
+            direction: out
+            latch: low
+      - name: RGB LED - Red
+        description: RGB LED - Red
+        pinctrl:
+          gpio:
+            pinId: RC7
+            name: RGB_LED_RED
+            function: TCC1_WO1
+      - name: RGB LED - Green
+        description: RGB LED - Green
+        pinctrl:
+          gpio:
+            pinId: RC10
+            name: RGB_LED_GREEN
+            function: TCC1_WO2
+      - name: RGB LED - Blue
+        description: RGB LED - Blue
+        pinctrl:
+          gpio:
+            pinId: RE0
+            name: RGB_LED_BLUE
+            function: TCC1_WO4
+      - name: Switch BTN1
+        description: Switch BTN1
+        pinctrl:
+          gpio:
+            pinId: RB9
+            name: BTN1
+            function: GPIO
+            direction: in
+      - name: Switch BTN2
+        description: Switch BTN2
+        pinctrl:
+          gpio:
+            pinId: RE3
+            name: BTN2
+            function: GPIO
+            direction: in
+      - name: Switch BTN1 INT
+        description: Switch BTN1 INT
+        pinctrl:
+          gpio:
+            pinId: RB9
+            name: BTN1_INT
+            function: EXTINT2
+      - name: Switch BTN2 INT
+        description: Switch BTN2 INT
+        pinctrl:
+          gpio:
+            pinId: RE3
+            name: BTN2_INT
+            function: EXTINT3
+            
+  - name: PTA Header
+    description: Packet Traffic Arbitration (PTA) Header for Wi-FI coexistence
+    pinctrl:
+      bt active:
+        pinId: RE0
+        name: PTA_BT_STATE
+        function: COEX_BT_STATE
+      bt prio:
+        pinId: RA3
+        name: PTA_RF_ACT
+        function: COEX_RF_ACT
+      wlan active:
+        pinId: RB11
+        name: PTA_WLAN_ACT
+        function: COEX_WLAN_ACT  
+        
+  - name: Battery Monitor
+    description: Battery Monitor
+    warning: R778 should be soldered to use BAT_MONITOR
+    pinctrl:
+      gpio:
+        pinId: RB5
+        name: BAT_MONITOR
+        function: GPIO
+        direction: in
+ 
+  - name: Low Battery Status Indicator
+    description: Low Battery Status Indicator 
+    pinctrl:
+      gpio:
+        pinId: RD0
+        name: LBO
+        function: GPIO
+        direction: in
+        
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B QSPI flash memory
+        warning: R739, R742, R744, R746, R749 and R752 should be soldered to use QSPI
+        dependencies: [[drv_sst26, qspi]]
+        pinctrl:
+          qsck:
+            pinId: RA1
+            name: SST26VF_SCK
+            function: QSPI_SCK
+          qcs:
+            pinId: RB13
+            name: SST26VF_CS
+            function: QSPI_CS
+          sio0:
+            pinId: RA0
+            name: SST26VF_DATA0
+            function: QSPI_DATA0
+          sio1:
+            pinId: RB12
+            name: SST26VF_DATA1
+            function: QSPI_DATA1
+          sio2:
+            pinId: RB11
+            name: SST26VF_DATA2
+            function: QSPI_DATA2
+          sio3:
+            pinId: RB2
+            name: SST26VF_DATA3
+            function: QSPI_DATA3 (in)
+
+  - name: Temp sensor interface
+    description: On-board temp sensor configurations
+    options:
+      - name: MCP9700A interface
+        description: Temperature Sensor MCP9700A
+        warning: Short jumper to use Temperature sensor
+        pinctrl:
+          an:
+            pinId: RD4
+            name: TEMP SENSOR
+            function: ADCHS_AIN10
+
+  - name: Crypto Authentication
+    description: Crypto Authentication (ATECC608B)
+    warning: U802 (ATECC608A-MAHDA-T) should be soldered to use Crypto Authentication
+    dependencies: [[atecc608, sercom1]]
+    pinctrl:
+      sda:
+        pinId: RA7
+        name: AUTH_I2C_SDA
+        function: SERCOM1_PAD0
+      scl:
+        pinId: RA8
+        name: AUTH_I2C_SCL
+        function: SERCOM1_PAD1
+
+  - name: Target USB
+    description: Target USB
+    warning: R702 should be soldered to use TGT_USB_FAULT_CTRL
+    pinctrl:
+      fault ctrl:
+        pinId: RB0
+        name: TGT_USB_FAULT_CTRL
+        function: GPIO
+        direction: in
+      usb_drp_ctrl:
+        pinId: RB1
+        name: TGT_USB_DRP_CTRL
+        function: GPIO
+        direction: out
+      cc_id:
+        pinId: RA4
+        name: TGT_USB_CC_ID
+        function: GPIO
+        direction: in
+      vbuson:
+        pinId: RA7
+        name: TGT_USB_VBUSON
+        function: GPIO
+        direction: out
+
+  - name: USB-to-UART interface
+    description: USB-to-UART configurations
+    options:
+      - name: USART console interface
+        description: USART console interface
+        dependencies: [[stdio, sercom0]]
+        pinctrl:
+          tx:
+            pinId: RA5
+            name: CONSOLE_TX
+            function: SERCOM0_PAD0
+          rx:
+            pinId: RA6
+            name: CONSOLE_RX
+            function: SERCOM0_PAD1
+      - name: USART HW flow control
+        description: USART HW flow control
+        dependencies: [[sys_console, sercom0]]
+        pinctrl:
+          tx:
+            pinId: RA5
+            name: USB_USART_TX
+            function: SERCOM0_PAD0 (out)
+          rx:
+            pinId: RA6
+            name: USB_USART_RX
+            function: SERCOM0_PAD1 (in)
+          rts:
+            pinId: RA3
+            name: USB_USART_RTS
+            function: SERCOM0_PAD2 (out)
+          cts:
+            pinId: RB4
+            name: USB_USART_CTS
+            function: SERCOM0_PAD3 (in)
+            
+  - name: Graphics interface
+    description: Graphics Data and Control configuration
+    warning: R786, R789, R790, R793, R795, R798, R805, R807, R808, R812, R862, R883, and R884 should be soldered to use Graphics interface
+    options:
+      - name: Parallel Data Interface
+        description: GFX Parallel data interface
+        pinctrl:
+          lcden:
+            pinId: RB14
+            name: GFX_LCD_EN
+            function: GPIO
+            direction: out
+            latch: high
+          lcdhsync:
+            pinId: RB13
+            name: GFX_LCDHSYNC
+            function: GPIO
+            direction: out
+            latch: high
+          lcdvsync:
+            pinId: RE3
+            name: GFX_LCDVSYNC
+            function: GPIO
+            direction: out
+            latch: high
+          lcdpclk:
+            pinId: RD3
+            name: GFX_LCDPCK
+            function: GPIO
+            direction: out
+            latch: high
+          lcdd0:
+            pinId: RB0
+            name: GFX_LCDD0
+            function: GPIO
+            direction: out
+            latch: low           
+          lcdd1:
+            pinId: RB1
+            name: GFX_LCDD1
+            function: GPIO
+            direction: out
+            latch: low
+          lcdd2:
+            pinId: RB2
+            name: GFX_LCDD2
+            function: GPIO
+            direction: out
+            latch: low
+          lcdd3:
+            pinId: RB3
+            name: GFX_LCDD3
+            function: GPIO
+            direction: out
+            latch: low
+          lcdd4:
+            pinId: RB4
+            name: GFX_LCDD4
+            function: GPIO
+            direction: out
+            latch: low
+          lcdd5:
+            pinId: RB5
+            name: GFX_LCDD5
+            function: GPIO
+            direction: out
+            latch: low
+          lcdd6:
+            pinId: RB6
+            name: GFX_LCDD6
+            function: GPIO
+            direction: out
+            latch: low
+          lcdd7:
+            pinId: RB7
+            name: GFX_LCDD7
+            function: GPIO
+            direction: out
+            latch: high
+      - name: GFX Control
+        description: GFX Control
+        pinctrl:
+          irq1:
+            pinId: RD2
+            name: GFX_IRQ_LCDTOUCH
+            function: GPIO
+            direction: in
+          irq3:
+            pinId: RC11
+            name: GFX_IRQ3
+            function: GPIO        
+            direction: in
+            change notification: True
+          pwm lcd:
+            pinId: RE6
+            name: GFX_LCDPWM
+            function: GPIO
+            direction: out
+            latch: high 
+          pwm2:
+            pinId: RC7
+            name: GFX_PWM2
+            function: GPIO
+            direction: out
+            latch: high 
+      - name: Touch I2C interface
+        description: GFX Touch I2C interface
+        pinctrl:
+          sda:
+            pinId: RA7
+            name: GFX_TOUCH_I2C_SDA
+            function: SERCOM1_PAD0
+          scl:
+            pinId: RA8
+            name: GFX_TOUCH_I2C_SCL
+            function: SERCOM1_PAD1 
+      - name: SPI interface
+        description: GFX SPI interface
+        pinctrl:
+          cs:
+            pinId: RD5
+            name: GFX_SPI_CS
+            function: GPIO
+            direction: out
+            latch: high    
+          sck:
+            pinId: RE5
+            name: GFX_SPI_SCK
+            function: SERCOM4_PAD1 (out)
+          miso:
+            pinId: RA4
+            name: GFX_SPI_MISO
+            function: SERCOM4_PAD0 (in)
+          mosi:
+            pinId: RA9
+            name: GFX_SPI_MOSI
+            function: SERCOM4_PAD3 (out)
+      - name: GPIO 1
+        description: GFX GPIO 1 control
+        pinctrl:
+          gpio:
+            pinId: RE2
+            name: GFX_GPIO1
+            function: GPIO
+            direction: out
+            latch: low
+      - name: GPIO 2
+        description: GFX GPIO 2 control
+        pinctrl:
+          gpio:
+            pinId: RD7
+            name: GFX_GPIO2
+            function: GPIO
+            direction: out
+            latch: low
+      - name: GPIO 3
+        description: GFX GPIO 3 control
+        pinctrl:
+          gpio:
+            pinId: RB15
+            name: GFX_GPIO3
+            function: GPIO
+            direction: out
+            latch: low
+      - name: GPIO 4
+        description: GFX GPIO 4 control
+        pinctrl:
+          gpio:
+            pinId: RC10
+            name: GFX_GPIO4
+            function: GPIO
+            direction: out
+            latch: high            
+      - name: STBYRST
+        description: GFX STBY/RST control
+        pinctrl:
+          reset:
+            pinId: RD6
+            name: GFX_LCD_GPIO5
+            function: GPIO
+            direction: out
+            latch: high
+
+connectors:
+  - compatible: xplainpro_cvd
+    name: Xplain Pro Header CVD EXT1 
+    description: Xplained Pro Extension Header 1 for CVD Support
+    pinctrl:
+      cvd:
+        touch1:
+          pinId: RB3
+          name: TOUCH1
+          function: CVD7
+        touch2:
+          pinId: RB14
+          name: TOUCH2
+          function: CVD18
+        touch3:
+          pinId: RB15
+          name: TOUCH3
+          function: CVD17
+        touch4:
+          pinId: RE6
+          name: TOUCH4
+          function: CVD14
+        touch5:
+          pinId: RD2
+          name: TOUCH5
+          function: CVD16
+        touch6:
+          pinId: RD3
+          name: TOUCH6
+          function: CVD9
+        touch7:
+          pinId: RD4
+          name: TOUCH7
+          function: CVD10
+        touch8:
+          pinId: RD5
+          name: TOUCH8
+          function: CVD11
+        touch9:
+          pinId: RB0
+          name: TOUCH9
+          function: CVD4
+        touch10:
+          pinId: RB1
+          name: TOUCH10
+          function: CVD5
+      i2c:
+        sda:
+          pinId: RA7
+          name: EXT1_I2C_SDA
+          function: SERCOM1_PAD0
+        scl:
+          pinId: RA8
+          name: EXT1_I2C_SCL
+          function: SERCOM1_PAD1
+      uart:
+        tx:
+          pinId: RA0
+          name: EXT1_USART_TX
+          function: SERCOM5_PAD0 (out)  
+        rx:
+          pinId: RA1
+          name: EXT1_USART_RX
+          function: SERCOM5_PAD3 (in)
+      gpio18:
+        pinId: RE5
+        name: GPIO
+        function: GPIO
+        direction: out
+      gpio17:
+        pinId: RA4
+        name: GPIO     
+        function: GPIO
+        direction: in        
+  - compatible: mikrobus
+    name: mikroBUS Header 1
+    description: mikroBUS headers configurations 1 (J903)
+    pinctrl:
+      an:
+        pinId: RB10
+        name: mikroBUS1_AN
+        function: ADCHS_AIN0
+      rst:
+        pinId: RA15
+        name: mikroBUS1_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RA10
+          name: mikroBUS1_SPI_CS
+          function: SERCOM4_PAD2 (out)
+        sck:
+          pinId: RE5
+          name: mikroBUS1_SPI_SCK
+          function: SERCOM4_PAD1 (out)
+        miso:
+          pinId: RA4
+          name: mikroBUS1_SPI_MISO
+          function: SERCOM4_PAD0 (in)
+        mosi:
+          pinId: RA9
+          name: mikroBUS1_SPI_MOSI
+          function: SERCOM4_PAD3 (out)
+      int:
+        pinId: RE4
+        name: mikroBUS1_INT
+        function: EXTINT0
+      pwm:
+        pinId: RD1
+        name: mikroBUS1_PWM
+        function: TCC0_WO1
+      uart:
+        tx:
+          pinId: RB2
+          name: mikroBUS1_UART_TX
+          function: SERCOM2_PAD0 (out)
+        rx:
+          pinId: RA2
+          name: mikroBUS1_UART_RX
+          function: SERCOM2_PAD3 (in)
+      i2c:
+        sda:
+          pinId: RA7
+          name: mikroBUS1_I2C_SDA
+          function: SERCOM1_PAD0 
+        scl:
+          pinId: RA8
+          name: mikroBUS1_I2C_SCL
+          function: SERCOM1_PAD1
+
+  - compatible: mikrobus
+    name: mikroBUS Header 2
+    description: mikroBUS headers configurations 2 (J905)
+    pinctrl:
+      an:
+        pinId: RB5
+        name: mikroBUS2_AN
+        function: ADCHS_AIN1
+      rst:
+        pinId: RC10
+        name: mikroBUS2_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: RB9
+          name: mikroBUS2_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high         
+        sck:
+          pinId: RE5
+          name: mikroBUS2_SPI_SCK
+          function: SERCOM4_PAD1 (out)
+        miso:
+          pinId: RA4
+          name: mikroBUS2_SPI_MISO
+          function: SERCOM4_PAD0 (in)
+        mosi:
+          pinId: RA9
+          name: mikroBUS2_SPI_MOSI
+          function: SERCOM4_PAD3 (out)
+      int:
+        pinId: RE3
+        name: mikroBUS2_INT
+        function: EXTINT3
+      pwm:
+        pinId: RC11
+        name: mikroBUS2_PWM
+        function: TCC0_WO2
+      uart:
+        tx:
+          pinId: RA0
+          name: mikroBUS2_UART_TX
+          function: SERCOM5_PAD0 (out)
+        rx:
+          pinId: RA1
+          name: mikroBUS2_UART_RX
+          function: SERCOM5_PAD3 (in)
+      i2c:
+        sda:
+          pinId: RA7
+          name: mikroBUS2_I2C_SDA
+          function: SERCOM1_PAD0
+        scl:
+          pinId: RA8
+          name: mikroBUS2_I2C_SCL
+          function: SERCOM1_PAD1
+
+  - compatible: rmii
+    name: Ethernet PHY Header
+    description: Ethernet PHY Header configurations
+    warning: R722 should be soldered to use RMII_EN, R724 should be soldered to use RMII_WAKE, R726 should be soldered to use RMII_NINT
+    pinctrl:
+      ethphy:
+        txen:
+          pinId: RC9
+          name: RMII_TX_EN
+          function: GMAC_GTXEN
+        txd0:
+          pinId: RC0
+          name: RMII_TXD0
+          function: GMAC_GTX0
+        txd1:
+          pinId: RE1
+          name: RMII_TXD1
+          function: GMAC_GTX1
+        refck:
+          pinId: RC1
+          name: RMII_CLK_OUT
+          function: GMAC_CLK_OUT
+        rxd1:
+          pinId: RA13
+          name: RMII_RXD1
+          function: GMAC_GRX1
+        rxd0:
+          pinId: RA14
+          name: RMII_RXD0
+          function: GMAC_GRX0
+        rxer:
+          pinId: RC8
+          name: RMII_RX_ER
+          function: GMAC_GRXER
+        rxdv:
+          pinId: RE2
+          name: RMII_CRS_DV
+          function: GMAC_GCRS_DV
+        mdc:
+          pinId: RD7
+          name: RMII_MDC
+          function: GMAC_GMDC
+        mdio:
+          pinId: RD6
+          name: RMII_MDIO
+          function: GMAC_GMDIO
+      nint:
+        pinId: RC7
+        name: RMII_NINT
+        function: EXTINT1
+      nrst:
+        pinId: RD0
+        name: RMII_NRST
+        function: GPIO
+        direction: out
+        latch: low
+      wake:
+        pinId: RB1
+        name: RMII_WAKE
+        function: GPIO
+        direction: out
+      en:
+        pinId: RC11
+        name: RMII_EN        
+        function: GPIO    
+        direction: out
+        latch: high        
