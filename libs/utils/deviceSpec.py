@@ -25,7 +25,7 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
     functionList = []
     family = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("family")
     architecture = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("architecture")
-    if architecture == "MIPS" or architecture == "33Axxx" or "WBZ" in family:
+    if architecture == "MIPS" or architecture == "33Axxx" or "WBZ" in family or family == "PIC32WM_BZ":
         params = dict()
         params.setdefault('pinName', pinId)
         symbolDict = Database.sendMessage("core", "PIN_FUNCTION_LIST", params)
@@ -50,13 +50,6 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
                     for signal in signalList:
                         signalPad = signal.getAttribute("pad")
                         # print("SHD >> getDeviceFunctionListByPinId signalPad1:{}".format(signalPad))
-                        
-                        # Adapt nomeclature used in Pin Configurator (PlugIn) for WBZ devices
-                        if "WBZ" in family:
-                            signalPad = signalPad.replace("P", "R")
-
-                        # print("SHD >> getDeviceFunctionListByPinId signalPad2:{} = {}".format(signalPad, pinId))
-                             
                         # Handle multiple signals on the same pad
                         if pinId == signalPad:
                             signalFunction = signal.getAttribute("function")
