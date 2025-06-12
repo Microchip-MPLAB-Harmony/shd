@@ -66,6 +66,30 @@ __connectorSpec = {
             'scl': 12,
         }
     },
+    'xplainpro_cvd': {
+        'cvd':{
+            'touch1': 16,
+            'touch2': 5,
+            'touch3': 4,
+            'touch4': 8,
+            'touch5': 6,
+            'touch6': 10,
+            'touch7': 3,
+            'touch8': 7,
+            'touch9': 9,
+            'touch10': 15
+        },
+        'i2c': {
+            'sda': 11,
+            'scl': 12,
+        },
+        'uart': {
+            'tx': 14,
+            'rx': 13,
+        }, 
+        'gpio18': 18,
+        'gpio17': 17
+    },
     'arduino': {
         'adc0': 9,
         'adc1': 10,
