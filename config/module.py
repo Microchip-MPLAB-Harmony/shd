@@ -45,7 +45,9 @@ def loadModule():
     for mainBoardFile in mainBoardFileList:
         try:
             mainBoardYaml = yaml.safe_load(open(mainBoardFile, 'r'))
-            if mainBoardYaml['processor']['name'] == processor:
+            proc = mainBoardYaml['processor']['name']
+            procList = proc.replace(" ", "").split(",")
+            if processor in procList:
                 mainBoardCompatibleList.append((mainBoardYaml['name'], mainBoardYaml.get('config'))) 
         except Exception as error:
             print("SHD >> ERROR loading main board : {} error: {}".format(mainBoardFile, error))
