@@ -123,64 +123,6 @@ interfaces:
             name: SDCARD_DAT3
             function: SDMMC0_SDDAT3
 
-  - name: Ethernet interface
-    description: Modular Ethernet PHY system
-    options:
-      - name: Ethernet Media Access Controller interface
-        description: Ethernet Media Access configuration
-        dependencies: [[drvGmac, drvExtPhyKsz8091]]
-        pinctrl:
-          rxd0:
-            pinId: PC07
-            name: ETH_RXD0
-            function: ETH_RXD0
-          txd0:
-            pinId: PC12
-            name: ETH_TXD0
-            function: ETH_TXD0
-          rxd1:
-            pinId: PC06
-            name: ETH_RXD1
-            function: ETH_RXD1
-          txd1:
-            pinId: PC13
-            name: ETH_TXD1
-            function: ETH_TXD1
-          txen:
-            pinId: PC11
-            name: ETH_TXEN
-            function: ETH_TXEN
-          mdc:
-            pinId: PC03
-            name: ETH_MDC
-            function: ETH_MDC
-          mdio:
-            pinId: PC04
-            name: ETH_MDIO
-            function: ETH_MDIO
-          rxdv:
-            pinId: PC10
-            name: ETH_RXDV
-            function: ETH_RXDV
-          rxer:
-            pinId: PC09
-            name: ETH_RXER
-            function: ETH_RXER
-          refclk:
-            pinId: PC00
-            name: ETH_REF_CLK
-            function: ETH_REF_CLK
-          reset:
-            pinId: PD21
-            name: ETH_RESET
-            function: GPIO
-            direction: out
-            latch: high
-          int:
-            pinId: PC14
-            name: ETH_INT
-            function: EIC_EXTINT14
-
   - name: X32 Audio interface
     description: X32 Audio Signal configuration
     options:
@@ -300,7 +242,7 @@ interfaces:
             name: QDI_1
             function: PDEC_QDI1
       - name: QDI2 Interface
-        description: QDI0 Interface - Connector J503
+        description: QDI2 Interface - Connector J503
         pinctrl:
           qdi:
             pinId: PB13
@@ -682,7 +624,9 @@ connectors:
         cs:
           pinId: PC23
           name: EXT2_SPI_CS
-          function: SPI0_NPCS3
+          function: GPIO
+          direction: out
+          latch: high
         sck:
           pinId: PC16
           name: EXT2_SPI_SCK
@@ -749,7 +693,7 @@ connectors:
         direction: out
         latch: low
       d3:
-        pinId: PA19
+        pinId: PD19
         name: Arduino_D3
         function: GPIO
         direction: out
@@ -814,3 +758,59 @@ connectors:
         function: GPIO
         direction: out
         latch: low
+
+  - compatible: rmii
+    name: Ethernet Media Access Controller interface
+    description: Ethernet Media Access configuration
+    pinctrl:
+      ethphy:
+        txen:
+          pinId: PC11
+          name: ETH_TXEN
+          function: ETH_TXEN
+        txd0:
+          pinId: PC12
+          name: ETH_TXD0
+          function: ETH_TXD0
+        txd1:
+          pinId: PC13
+          name: ETH_TXD1
+          function: ETH_TXD1
+        refclk:
+          pinId: PC00
+          name: ETH_REF_CLK
+          function: ETH_REF_CLK 
+        rxd1:
+          pinId: PC06
+          name: ETH_RXD1
+          function: ETH_RXD1
+        rxd0:
+          pinId: PC07
+          name: ETH_RXD0
+          function: ETH_RXD0
+        rxer:
+          pinId: PC09
+          name: ETH_RXER
+          function: ETH_RXER
+        rxdv:
+          pinId: PC10
+          name: ETH_RXDV
+          function: ETH_RXDV
+        mdc:
+          pinId: PC03
+          name: ETH_MDC
+          function: ETH_MDC
+        mdio:
+          pinId: PC04
+          name: ETH_MDIO
+          function: ETH_MDIO
+      nrst:
+        pinId: PD21
+        name: ETH_RESET
+        function: GPIO
+        direction: out
+        latch: high
+      int:
+        pinId: PC14
+        name: ETH_INT
+        function: EIC_EXTINT14

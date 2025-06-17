@@ -47,8 +47,8 @@ interfaces:
             function: GPIO
             direction: out
             latch: low
-      - name: Switch 1 (SW2)
-        description: Switch 1 (SW2)
+      - name: Switch 2 (SW2)
+        description: Switch 2 (SW2)
         pinctrl:
           gpio:
             pinId: RB9
@@ -56,8 +56,8 @@ interfaces:
             function: GPIO
             direction: in
             pull up: True
-      - name: Switch 2 (SW3)
-        description: Switch 2 (SW3)
+      - name: Switch 3 (SW3)
+        description: Switch 3 (SW3)
         pinctrl:
           gpio:
             pinId: RA4
@@ -114,11 +114,11 @@ interfaces:
           tx:
             pinId: RA5
             name: CONSOLE_TX
-            function: SERCOM3_PAD1 (out)
+            function: SERCOM0_PAD0
           rx:
             pinId: RA6
             name: CONSOLE_RX
-            function: SERCOM3_PAD0 (in)
+            function: SERCOM0_PAD1
       - name: USART HW flow control
         description: USART HW flow control
         pinctrl:
@@ -133,11 +133,11 @@ interfaces:
           rts:
             pinId: RB4
             name: USB_USART_RTS
-            function: SERCOM0_PAD2
+            function: SERCOM0_PAD2 (out)
           cts:
             pinId: RA3
             name: USB_USART_CTS
-            function: SERCOM0_PAD3
+            function: SERCOM0_PAD3 (in)
 
 connectors:
   - compatible: mikrobus
@@ -176,7 +176,7 @@ connectors:
         name: mikroBUS_INT
         function: EIC_EXTINT2
       pwm:
-        pinId: PB10
+        pinId: RB10
         name: mikroBUS_PWM
         function: TCC0_WO2
       uart:
@@ -223,11 +223,11 @@ connectors:
       pwm plus:
         pinId: RB5
         name: EXT1_PWM_PLUS
-        function: TCC0_WO0
+        function: TCC0_WO1
       pwm minus:
         pinId: RB1
         name: EXT1_PWM_MINUS
-        function: TCC0_WO1
+        function: TCC0_WO0
       irq:
         pinId: RB2
         name: EXT1_IRQ

@@ -3,7 +3,7 @@ config: pic32_wfi32_20_curiosity.py
 documentation: https://www.microchip.com/en-us/development-tool/EV67T15A
 part number: EV67T15A
 processor:
-  name: WFI32E03
+  name: WFI32E03, PIC32MZ2051W104132 
   architecture: MIPS
   family: PIC32MZW
   series: PIC32MZW
@@ -154,7 +154,7 @@ connectors:
         refck:
           pinId: RC12
           name: RMII_CLK_OUT
-          function: ETH_CLK_OUT
+          function: ETHMAC_ETH_CLK_OUT
         rxd1:
           pinId: RC10
           name: RMII_RXD1
@@ -206,12 +206,12 @@ connectors:
         pinId: RB12
         name: EXT1_GPIO1
         function: GPIO
-        direction: in/out
+        direction: out
       gpio2:
         pinId: RK6
         name: EXT1_GPIO2
         function: GPIO
-        direction: in/out
+        direction: out
       pwm plus:
         pinId: RB8
         name: EXT1_PWM_PLUS

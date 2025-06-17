@@ -3,7 +3,7 @@ config: wfi32e_iot_20_db.py
 documentation: https://www.microchip.com/en-us/development-tool/EV80S51A
 part number: EV80S51A
 processor:
-  name: WFI32E03
+  name: WFI32E03, PIC32MZ2051W104132
   architecture: MIPS
   family: PIC32MZW
   series: PIC32MZW
@@ -23,7 +23,7 @@ interfaces:
             latch: high
             
       - name: Yellow LED
-        description: Green LED (RPK13)- Active high - D401
+        description: Yellow LED (RPK13)- Active high - D401
         pinctrl:
           gpio:
             pinId: RK13
@@ -128,7 +128,7 @@ interfaces:
           int:
             pinId: RB6
             name: AMBIENT_INT
-            function: INT1
+            function: INT2
 
   - name: Communication interfaces
     description: Communication Ports options

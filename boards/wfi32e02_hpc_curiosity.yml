@@ -3,7 +3,7 @@ config: wfi32e02_hpc_curiosity.py
 documentation: https://www.microchip.com/en-us/development-tool/ev89y10a
 part number: EV89Y10A
 processor:
-  name: WFI32E02
+  name: WFI32E02, PIC32MZ1025W104132
   architecture: MIPS
   family: PIC32MZW
   series: PIC32MZW
@@ -249,8 +249,8 @@ connectors:
           function: ETHMAC_ETXD1
         refck:
           pinId: RC12
-          name: RMII_CLK_IN
-          function: ETH_CLK_IN
+          name: RMII_CLK_OUT
+          function: ETHMAC_ETH_CLK_OUT
         rxd1:
           pinId: RC10
           name: RMII_RXD1
@@ -302,12 +302,12 @@ connectors:
         pinId: RB9
         name: EXT_GPIO1
         function: GPIO
-        direction: in/out
+        direction: out
       gpio2:
         pinId: RA13
         name: EXT_GPIO2
         function: GPIO
-        direction: in/out
+        direction: out
       pwm plus:
         pinId: RB8
         name: EXT_PWM_PLUS

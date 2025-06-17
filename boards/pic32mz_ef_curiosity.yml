@@ -159,109 +159,7 @@ interfaces:
             pinId: RF3
             name: USB_ID
             function: USBID
-
-  - name: Ethernet interface
-    description: Modular Ethernet PHY system
-    options:
-      - name: Ethernet RMII interface
-        description: LAN8740A PHY Daugther board
-        dependencies: [[drvPic32mEthmac, drvExtPhyLan8740]]
-        pinctrl:
-          etxen:
-            pinId: RD6
-            function: ETHMAC_ETXEN
-          erefclk:
-            pinId: RJ11
-            function: ETHMAC_EREF_CLK
-          etxd0:
-            pinId: RJ8
-            function: ETHMAC_ETXD0
-          etxd1:
-            pinId: RJ9
-            function: ETHMAC_TXD1
-          erxerr:
-            pinId: RH4
-            function: ETHMAC_ERXERR
-          erxd0:
-            pinId: RH8
-            function: ETHMAC_ERXD0
-          erxd1:
-            pinId: RH5
-            function: ETHMAC_ERXD1
-          ecrsdv:
-            pinId: RH13
-            function: ETHMAC_ECRSDV
-          emdc:
-            pinId: RD11
-            function: ETHMAC_EMDC
-          emdio:
-            pinId: RJ1
-            function: ETHMAC_EMDIO
-      - name: Ethernet SPI interface
-        description: Ethernet SPI3 configuration
-        pinctrl:
-          cs:
-            pinId: RD9
-            name: ETH_SPI_CS3
-            function: GPIO
-            direction: out
-            latch: high
-          sck:
-            pinId: RD1
-            name: ETH_SPI_SCK
-            function: SPI3_SCK3
-          miso:
-            pinId: RD14
-            name: ETH_SPI_MISO
-            function: SPI3_SDI3
-          mosi:
-            pinId: RD7
-            name: ETH_SPI_MOSI
-            function: SPI3_SDO3
-      - name: Ethernet nIRQ interface
-        description: Ethernet nIRQ interface
-        pinctrl:
-          nirq:
-            pinId: RJ2
-            name: ETH_nIRQ
-            function: GPIO
-            direction: in
-            pull up: True
-            change notification: True
-      - name: Ethernet nRST interface
-        description: Ethernet nRST configuration
-        pinctrl:
-          nreset:
-            pinId: RJ0
-            name: ETH_nRESET
-            function: GPIO
-            direction: out
-            latch: high
-      - name: Ethernet GPIO0 interface
-        description: Ethernet GPIO0 interface
-        pinctrl:
-          gpio:
-            pinId: RH12
-            name: ETH_GPIO0
-            function: GPIO
-            direction: in/out
-      - name: Ethernet GPIO1 interface
-        description: Ethernet GPIO1 interface
-        pinctrl:
-          gpio:
-            pinId: RH14
-            name: ETH_GPIO1
-            function: GPIO
-            direction: in/out
-      - name: Ethernet GPIO2 interface
-        description: Ethernet GPIO2 interface
-        pinctrl:
-          gpio:
-            pinId: RH15
-            name: ETH_GPIO2
-            function: GPIO
-            direction: in/out
-
+    
   - name: X32 Audio interface 1
     description: X32 Audio Signal configuration
     options:
@@ -774,12 +672,12 @@ connectors:
         pinId: RK4
         name: EXT1_GPIO1
         function: GPIO
-        direction: in/out
+        direction: out
       gpio2:
         pinId: RK5
         name: EXT1_GPIO2
         function: GPIO
-        direction: in/out
+        direction: out
       irq:
         pinId: RK0
         name: EXT1_IRQ
@@ -867,10 +765,7 @@ connectors:
       int:
         pinId: RF12
         name: mikroBUS1_INT
-        function: GPIO
-        direction: in
-        pull up: True
-        change notification: True
+        function: INT_INT2
       uart:
         tx:
           pinId: RC4
@@ -928,10 +823,7 @@ connectors:
       int:
         pinId: RD10
         name: mikroBUS2_INT
-        function: GPIO
-        direction: in
-        pull up: True
-        change notification: True
+        function: INT_INT3
       uart:
         tx:
           pinId: RG9
@@ -1018,39 +910,132 @@ connectors:
         pinId: RE8
         name: Arduino_D2
         function: GPIO
-        direction: in/out
+        direction: out
       d3:
         pinId: RF12
         name: Arduino_D3
         function: GPIO
-        direction: in/out
+        direction: out
       d4:
         pinId: RJ12
         name: Arduino_D4
         function: GPIO
-        direction: in/out
+        direction: out
       d5:
         pinId: RK4
         name: Arduino_D5
         function: GPIO
-        direction: in/out
+        direction: out
       d6:
         pinId: RK5
         name: Arduino_D6
         function: GPIO
-        direction: in/out
+        direction: out
       d7:
         pinId: RH12
         name: Arduino_D7
         function: GPIO
-        direction: in/out
+        direction: out
       d8:
         pinId: RH14
         name: Arduino_D8
         function: GPIO
-        direction: in/out
+        direction: out
       d9:
         pinId: RH15
         name: Arduino_D9
         function: GPIO
-        direction: in/out
+        direction: out
+
+  - compatible: rmii
+    name: Ethernet MAC
+    description: Ethernet PHY Daugther board
+    pinctrl:
+      ethphy:
+        txen:
+          pinId: RD6
+          name: ETHMAC_TX_EN
+          function: ETHMAC_ETXEN
+        txd0:
+          pinId: RJ8
+          name: ETHMAC_ETXD0_TXD0
+          function: ETHMAC_ETXD0
+        txd1:
+          pinId: RJ9
+          name: ETHMAC_TXD1
+          function: ETHMAC_ETXD1
+        refck:
+          pinId: RJ11
+          name: ETHMAC_CLK_OUT
+          function: ETHMAC_EREFCLK
+        rxd1:
+          pinId: RH5
+          name: ETHMAC_RXD1
+          function: ETHMAC_ERXD1
+        rxd0:
+          pinId: RH8
+          name: ETHMAC_RXD0
+          function: ETHMAC_ERXD0
+        rxer:
+          pinId: RH4
+          name: ETHMAC_RX_ER
+          function: ETHMAC_ERXERR
+        rxdv:
+          pinId: RH13
+          name: ETHMAC_CRS_DV
+          function: ETHMAC_ECRSDV
+        mdc:
+          pinId: RD11
+          name: ETHMAC_MDC
+          function: ETHMAC_EMDC
+        mdio:
+          pinId: RJ1
+          name: ETHMAC_MDIO
+          function: ETHMAC_EMDIO
+      nirq:
+        pinId: RJ2
+        name: ETH_nIRQ
+        function: GPIO
+        direction: in
+        pull up: True
+        change notification: True
+      nrst:
+        pinId: RJ0
+        name: ETH_nRESET
+        function: GPIO
+        direction: out
+        latch: high 
+      spi:        
+        cs:
+          pinId: RD9
+          name: ETH_SPI_CS3
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: RD1
+          name: ETH_SPI_SCK
+          function: SPI3_SCK1
+        miso:
+          pinId: RD14
+          name: ETH_SPI_MISO
+          function: SPI3_SDI3
+        mosi:
+          pinId: RD7
+          name: ETH_SPI_MOSI
+          function: SPI3_SDO3
+      gpio0:
+        pinId: RH12
+        name: ETH_GPIO0
+        function: GPIO
+        direction: out
+      gpio1:
+        pinId: RH14
+        name: ETH_GPIO1
+        function: GPIO
+        direction: out
+      gpio2:
+        pinId: RH15
+        name: ETH_GPIO2
+        function: GPIO
+        direction: out

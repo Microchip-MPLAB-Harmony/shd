@@ -3,7 +3,7 @@ config: pic32_wfi32e_curiosity.py
 documentation: https://www.microchip.com/en-us/development-tool/ev12f11a
 part number: EV12F11A
 processor:
-  name: WFI32E01
+  name: WFI32E01, PIC32MZ1025W104132
   architecture: MIPS
   family: PIC32MZW
   series: PIC32MZW
@@ -152,7 +152,7 @@ connectors:
         refck:
           pinId: RC12
           name: RMII_CLK_OUT
-          function: ETH_CLK_OUT
+          function: ETHMAC_ETH_CLK_OUT
         rxd1:
           pinId: RC10
           name: RMII_RXD1
@@ -204,12 +204,12 @@ connectors:
         pinId: RB12
         name: EXT_GPIO1
         function: GPIO
-        direction: in/out
+        direction: out
       gpio2:
         pinId: RK6
         name: EXT_GPIO2
         function: GPIO
-        direction: in/out
+        direction: out
       pwm plus:
         pinId: RB8
         name: EXT_PWM_PLUS

@@ -236,11 +236,11 @@ connectors:
           pinId: RC2
           name: mikroBUS_I2C_BB_SDA
           function: GPIO
-          direction: in/out
+          direction: out
           open drain: True
         scl:
           pinId: RC1
           name: mikroBUS_I2C_BB_SCL
           function: GPIO
-          direction: in/out
+          direction: out
           open drain: True

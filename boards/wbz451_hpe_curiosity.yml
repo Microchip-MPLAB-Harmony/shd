@@ -88,22 +88,22 @@ interfaces:
         pinctrl:
           qsck:
             pinId: RB11
-            function: QSPI_SCK (out)
+            function: QSPI_SCK
           qcs:
             pinId: RB10
-            function: QSPI_CS (out)
+            function: QSPI_CS
           sio0:
             pinId: RB12
-            function: QSPI_DATA0 (in/out)
+            function: QSPI_DATA0
           sio1:
             pinId: RB13
-            function: QSPI_DATA1 (in/out)
+            function: QSPI_DATA1
           sio2:
             pinId: RA0
-            function: QSPI_DATA2 (in/out)
+            function: QSPI_DATA2
           sio3:
             pinId: RA1
-            function: QSPI_DATA3 (in/out)
+            function: QSPI_DATA3
 
   - name: Temp sensor interface
     description: On-board temp sensor configurations
@@ -126,30 +126,30 @@ interfaces:
           tx:
             pinId: RA5
             name: CONSOLE_TX
-            function: SERCOM0_PAD0 (out)
+            function: SERCOM0_PAD0
           rx:
             pinId: RA6
             name: CONSOLE_RX
-            function: SERCOM0_PAD1 (in)
+            function: SERCOM0_PAD1
       - name: USART HW flow control
         description: USART HW flow control
         pinctrl:
           tx:
             pinId: RA5
             name: USB_USART_TX
-            function: SERCOM0_PAD0 (out)
+            function: SERCOM0_PAD0
           rx:
             pinId: RA6
             name: USB_USART_RX
-            function: SERCOM0_PAD1 (in)
+            function: SERCOM0_PAD1
           rts:
             pinId: RA3
             name: USB_USART_RTS
-            function: SERCOM0_PAD2 (out)
+            function: SERCOM0_PAD2
           cts:
             pinId: RA4
             name: USB_USART_CTS
-            function: SERCOM0_PAD3 (in)
+            function: SERCOM0_PAD3
 
 connectors:
   - compatible: mikrobus
@@ -188,7 +188,7 @@ connectors:
       int:
         pinId: RA2
         name: mikroBUS_INT
-        function: EIC_EXTINT0 (in)
+        function: EIC_EXTINT0
       pwm:
         pinId: RB7
         name: mikroBUS_PWM
@@ -197,17 +197,17 @@ connectors:
         tx:
           pinId: RA14
           name: mikroBUS_UART_TX
-          function: SERCOM2_PAD1 (out)
+          function: SERCOM2_PAD1
         rx:
           pinId: RA13
           name: mikroBUS_UART_RX
-          function: SERCOM2_PAD0 (in)
+          function: SERCOM2_PAD0
       i2c:
         sda:
           pinId: RA7
           name: mikroBUS_I2C_SDA
-          function: SERCOM1_PAD0 (in)
+          function: SERCOM1_PAD0
         scl:
           pinId: RA8
           name: mikroBUS_I2C_SCL
-          function: SERCOM1_PAD1 (out)
+          function: SERCOM1_PAD1
