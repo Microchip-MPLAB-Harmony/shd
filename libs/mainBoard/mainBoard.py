@@ -318,10 +318,11 @@ class MainBoard:
                         spiCSPinFunction = pinControl['function']
                         enabledSymbolList = self.__enabledSymbolsByFunction.get(spiCSPinFunction)
                         # self.__log.writeInfoMessage("SHD >> __showCSASGPIOSymbol spiCSPinId: {} spiCSPinFunction: {} eventSymbolParentID: {} enabledSymbolList: {}".format(spiCSPinId, spiCSPinFunction, eventSymbolParentID, enabledSymbolList))
-                        if eventSymbolParentID in enabledSymbolList:
-                            enabledSymbolList.remove(eventSymbolParentID)
-                            updEnabledSymbols = True
-                            # self.__log.writeInfoMessage("SHD >> __showCSASGPIOSymbol upd- self.__enabledSymbolsByFunction: {}".format(self.__enabledSymbolsByFunction))
+                        if enabledSymbolList != None:
+                            if eventSymbolParentID in enabledSymbolList:
+                                enabledSymbolList.remove(eventSymbolParentID)
+                                updEnabledSymbols = True
+                                # self.__log.writeInfoMessage("SHD >> __showCSASGPIOSymbol upd- self.__enabledSymbolsByFunction: {}".format(self.__enabledSymbolsByFunction))
 
 
                 newPinControl = {"spi":{"cs":{"function": "GPIO","direction": "out","latch": "high"}}}
@@ -941,7 +942,8 @@ class MainBoard:
                         if fnSymList == None:
                             self.__enabledSymbolsByFunction.setdefault(pinFunction, [event["id"]])
                         else:
-                            fnSymList.append(event["id"])
+                            if event["id"] not in fnSymList:
+                                fnSymList.append(event["id"])
                         # self.__log.writeInfoMessage("SHD >> __signalEnableCallback upd+ self.__enabledSymbolsByFunction: {}".format(self.__enabledSymbolsByFunction))
                     else:
                         # Update Enabled Symbols List
@@ -1044,9 +1046,9 @@ class MainBoard:
         if (previousConnectedBoard is not None) and (clickBoardSelection != "Select extension board"):
             self.__log.writeInfoMessage("SHD >> WARNING: {} is already connected. Please disconnect and select again.".format(previousConnectedBoard.getName()))
         else:
-            self.resetConnectorConfig(connectorName)
-
             if clickBoardSelection == "Select extension board":
+                self.resetConnectorConfig(connectorName)
+
                 if self.__depBindings.get(connectorName) != None:
                     del self.__depBindings[connectorName]
                     del self.__connectedClickBoards[connectorName]
