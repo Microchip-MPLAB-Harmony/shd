@@ -864,7 +864,7 @@ def __getConfigDatabaseDrvSST26(settings):
             cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
     elif ('SS' in fn) or ('CS' in fn) or (nameValue is not None and '_CS' in nameValue.upper()):
         protocol = 'SPI'
-        cs = "".join(filter(lambda x: x.isdigit(), functionValue.split("_")[-1]))
+        cs = 0
     
     if cs != "":
         configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')

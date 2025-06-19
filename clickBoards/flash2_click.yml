@@ -4,7 +4,7 @@ description: >
   manufactured by using the proprietary high-performance CMOS Super-Flash® technology
 documentation: https://www.mikroe.com/flash-2-click
 compatible: mikrobus
-dependencies: [["NC", spi]]
+dependencies: [[drv_sst26, spi]]
 multiconnection: False
 supported:
   rst:
