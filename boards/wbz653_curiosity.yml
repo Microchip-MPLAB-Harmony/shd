@@ -223,7 +223,7 @@ interfaces:
     options:
       - name: USART console interface
         description: USART console interface
-        dependencies: [[stdio, sercom0]]
+        dependencies: [[sys_console, sercom0]]
         pinctrl:
           tx:
             pinId: RA5
