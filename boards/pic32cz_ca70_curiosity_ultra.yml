@@ -33,7 +33,7 @@ interfaces:
         description: User Switch 0
         pinctrl:
           gpio:
-            pinId: PA1
+            pinId: PA01
             name: USER_SWTICH0
             function: GPIO
             direction: in
@@ -42,7 +42,7 @@ interfaces:
         description: User Switch 1
         pinctrl:
           gpio:
-            pinId: PA9
+            pinId: PA09
             name: USER_SWITCH1
             function: GPIO
             direction: in
@@ -79,11 +79,11 @@ interfaces:
         dependencies: [[drv_at24, twihs0]]
         pinctrl:
           sda:
-            pinId: PA3
+            pinId: PA03
             name: AT24MAC402_I2C_TWD
             function: TWIHS0_TWD0
           scl:
-            pinId: PA4
+            pinId: PA04
             name: AT24MAC402_I2C_TWCK
             function: TWIHS0_TWCK0
       - name: SDCARD interface
@@ -128,11 +128,11 @@ interfaces:
         description: CAN0 Interface - Connector J704
         pinctrl:
           tx:
-            pinId: PB2
+            pinId: PB02
             name: CAN0_TX
             function: MCAN0_CANTX0
           rx:
-            pinId: PB3
+            pinId: PB03
             name: CAN0_RX
             function: MCAN0_CANRX0
       - name: CAN1 Interface
@@ -173,11 +173,11 @@ interfaces:
         description: Audio I2C interface
         pinctrl:
           sda:
-            pinId: PA3
+            pinId: PA03
             name: X32_I2C_TWD
             function: TWIHS0_TWD0
           scl:
-            pinId: PA4
+            pinId: PA04
             name: X32_I2C_TWCK
             function: TWIHS0_TWCK0
       - name: I2S interface
@@ -185,15 +185,15 @@ interfaces:
         dependencies: [[a_drv_i2s, a_i2sc1]]
         pinctrl:
           sdi:
-            pinId: PE2
+            pinId: PE02
             name: X32_I2SC_DI
             function: I2SC1_DI0
           sdo:
-            pinId: PE1
+            pinId: PE01
             name: X32_I2SC_DO
             function: I2SC1_DO0
           ws:
-            pinId: PE0
+            pinId: PE00
             name: X32_I2SC_WS
             function: I2SC1_WS
           sck:
@@ -246,63 +246,63 @@ interfaces:
             direction: out
             latch: low
           lcdpclk:
-            pinId: PC8
+            pinId: PC08
             name: GFX_DISP_INTF_PIN_PCLK
             function: EBI_NWR0/NWE
           lcdd0:
-            pinId: PC0
+            pinId: PC00
             name: GFX_DISP_INTF_PIN_D0
             function: EBI_D0
           lcdd1:
-            pinId: PC1
+            pinId: PC01
             name: GFX_DISP_INTF_PIN_D1
             function: EBI_D1
           lcdd2:
-            pinId: PC2
+            pinId: PC02
             name: GFX_DISP_INTF_PIN_D2
             function: EBI_D2
           lcdd3:
-            pinId: PC3
+            pinId: PC03
             name: GFX_DISP_INTF_PIN_D3
             function: EBI_D3
           lcdd4:
-            pinId: PC4
+            pinId: PC04
             name: GFX_DISP_INTF_PIN_D4
             function: EBI_D4
           lcdd5:
-            pinId: PC5
+            pinId: PC05
             name: GFX_DISP_INTF_PIN_D5
             function: EBI_D5
           lcdd6:
-            pinId: PC6
+            pinId: PC06
             name: GFX_DISP_INTF_PIN_D6
             function: EBI_D6
           lcdd7:
-            pinId: PC7
+            pinId: PC07
             name: GFX_DISP_INTF_PIN_D7
             function: EBI_D7
           lcdd8:
-            pinId: PE0
+            pinId: PE00
             name: GFX_DISP_INTF_PIN_D8
             function: EBI_D8
           lcdd9:
-            pinId: PE1
+            pinId: PE01
             name: GFX_DISP_INTF_PIN_D9
             function: EBI_D9
           lcdd10:
-            pinId: PE2
+            pinId: PE02
             name: GFX_DISP_INTF_PIN_D10
             function: EBI_D10
           lcdd11:
-            pinId: PE3
+            pinId: PE03
             name: GFX_DISP_INTF_PIN_D11
             function: EBI_D11
           lcdd12:
-            pinId: PE4
+            pinId: PE04
             name: GFX_DISP_INTF_PIN_D12
             function: EBI_D12
           lcdd13:
-            pinId: PE5
+            pinId: PE05
             name: GFX_DISP_INTF_PIN_D13
             function: EBI_D13
           lcdd14:
@@ -317,11 +317,11 @@ interfaces:
         description: GFX Touch I2C interface
         pinctrl:
           sda:
-            pinId: PA3
+            pinId: PA03
             name: GFX_TOUCH_I2C_TWD
             function: TWIHS0_TWD0
           scl:
-            pinId: PA4
+            pinId: PA04
             name: GFX_TOUCH_I2C_TWCK
             function: TWIHS0_TWCK0
       - name: SPI interface
@@ -408,11 +408,11 @@ interfaces:
         dependencies: [[sys_console, uart1]]
         pinctrl:
           tx:
-            pinId: PA6
+            pinId: PA06
             name: VIRTUAL_COM_TX
             function: UART1_UTXD1
           rx:
-            pinId: PA5
+            pinId: PA05
             name: VIRTUAL_COM_RX
             function: UART1_URXD1
 
@@ -451,7 +451,7 @@ connectors:
           name: mikroBUS_SPI_MOSI
           function: SPI0_MOSI
       pwm:
-        pinId: PA0
+        pinId: PA00
         name: mikroBUS_PWM
         function: PWM0_PWMH0
       int:
@@ -463,20 +463,20 @@ connectors:
         pull up: True
       uart:
         tx:
-          pinId: PB1
+          pinId: PB01
           name: mikroBUS_UART_TX
           function: USART0_TXD0
         rx:
-          pinId: PB0
+          pinId: PB00
           name: mikroBUS_UART_RX
           function: USART0_RXD0
       i2c:
         sda:
-          pinId: PA3
+          pinId: PA03
           name: mikroBUS_I2C_TWD
           function: TWIHS0_TWD0
         scl:
-          pinId: PA4
+          pinId: PA04
           name: mikroBUS_I2C_TWCK
           function: TWIHS0_TWCK0
 
@@ -503,7 +503,7 @@ connectors:
         function: GPIO
         direction: in
       pwm plus:
-        pinId: PA0
+        pinId: PA00
         name: EXT1_PWM_PLUS
         function: PWM0_PWMH0
       pwm minus:
@@ -525,20 +525,20 @@ connectors:
         direction: in
       i2c:
         sda:
-          pinId: PA3
+          pinId: PA03
           name: EXT1_I2C_TWD
           function: TWIHS0_TWD0
         scl:
-          pinId: PA4
+          pinId: PA04
           name: EXT1_I2C_TWCK
           function: TWIHS0_TWCK0
       uart:
         tx:
-          pinId: PB1
+          pinId: PB01
           name: EXT1_USART_TX
           function: USART0_TXD0
         rx:
-          pinId: PB0
+          pinId: PB00
           name: EXT1_USART_RX
           function: USART0_RXD0
       spi:
@@ -590,7 +590,7 @@ connectors:
         name: EXT2_PWM_MINUS
         function: PWM0_PWML2
       irq:
-        pinId: PA2
+        pinId: PA02
         name: EXT2_IRQ
         function: GPIO
         direction: in
@@ -603,16 +603,16 @@ connectors:
         direction: in
       i2c:
         sda:
-          pinId: PA3
+          pinId: PA03
           name: EXT2_I2C_TWD
           function: TWIHS0_TWD0
         scl:
-          pinId: PA4
+          pinId: PA04
           name: EXT2_I2C_TWCK
           function: TWIHS0_TWCK0
       uart:
         tx:
-          pinId: PB4
+          pinId: PB04
           name: EXT2_USART_TX
           function: USART1_TXD1
         rx:
@@ -643,43 +643,43 @@ connectors:
     pinctrl:
       ethphy:
         txen:
-          pinId: PD1
+          pinId: PD01
           name: RMII_TX_EN
           function: GMAC_GTXEN
         txd0:
-          pinId: PD2
+          pinId: PD02
           name: RMII_TXD0
           function: GMAC_GTX0
         txd1:
-          pinId: PD3
+          pinId: PD03
           name: RMII_TXD1
           function: GMAC_GTX1
         refck:
-          pinId: PD0
+          pinId: PD00
           name: RMII_CLK_OUT
           function: GMAC_GTXCK
         rxd1:
-          pinId: PD6
+          pinId: PD06
           name: RMII_RXD1
           function: GMAC_GRX1
         rxd0:
-          pinId: PD5
+          pinId: PD05
           name: RMII_RXDO
           function: GMAC_GRX0
         rxer:
-          pinId: PD7
+          pinId: PD07
           name: RMII_RX_ER
           function: GMAC_GRXER
         rxdv:
-          pinId: PD4
+          pinId: PD04
           name: RMII_CRS_DV
           function: GMAC_GRXDV
         mdc:
-          pinId: PD8
+          pinId: PD08
           name: RMII_MDC
           function: GMAC_GMDC
         mdio:
-          pinId: PD9
+          pinId: PD09
           name: RMII_MDIO
           function: GMAC_GMDIO
       nint:
@@ -745,11 +745,11 @@ connectors:
         function: AFEC1_AD5
       i2c:
         sda:
-          pinId: PA3
+          pinId: PA03
           name: Arduino_D14_I2C_SDA
           function: TWIHS0_TWD0
         scl:
-          pinId: PA4
+          pinId: PA04
           name: Arduino_D15_I2C_SCL
           function: TWIHS0_TWCK0
       uart:
@@ -798,7 +798,7 @@ connectors:
         direction: out
         latch: low
       d8:
-        pinId: PC9
+        pinId: PC09
         name: Arduino_D8
         function: GPIO
         direction: out

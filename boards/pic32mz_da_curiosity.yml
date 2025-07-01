@@ -250,7 +250,7 @@ interfaces:
           mck:
             pinId: RB3
             name: X32-1_I2S1_MCK
-            function: REFCLKO1
+            function: I2S1_REFCLKO1
       - name: I2S interface
         description: Audio I2S interface 2
         dependencies: [[a_drv_i2s, a_i2s3]]
@@ -339,7 +339,7 @@ interfaces:
           mck:
             pinId: RB3
             name: X32-2_I2S1_MCK
-            function: REFCLKO1
+            function: I2S1_REFCLKO1
       - name: I2S interface
         description: Audio I2S interface 2
         dependencies: [[a_drv_i2s, a_i2s3]]
@@ -563,7 +563,7 @@ interfaces:
           pwm:
             pinId: RD0
             name: GFX_DISP_BACKLIGHT
-            function: OC1
+            function: OCMP1_OC1
       - name: LCD PWM Control
         description: GFX LCD PWM control
         pinctrl:
@@ -787,12 +787,12 @@ connectors:
         pinId: RJ15
         name: EXT1_GPIO1
         function: GPIO
-        direction: in/out
+        direction: out
       gpio2:
         pinId: RC15
         name: EXT1_GPIO2
         function: GPIO
-        direction: in/out
+        direction: out
       pwm plus:
         pinId: RA1
         name: EXT1_PWM_PLUS
@@ -916,42 +916,42 @@ connectors:
         pinId: RH10
         name: Arduino_D2
         function: GPIO
-        direction: in/out
+        direction: out
       d3:
         pinId: RH0
         name: Arduino_D3
         function: GPIO
-        direction: in/out
+        direction: out
       d4:
         pinId: RJ0
         name: Arduino_D4
         function: GPIO
-        direction: in/out
+        direction: out
       d5:
         pinId: RK1
         name: Arduino_D5
         function: GPIO
-        direction: in/out
+        direction: out
       d6:
         pinId: RH11
         name: Arduino_D6
         function: GPIO
-        direction: in/out
+        direction: out
       d7:
         pinId: RH7
         name: Arduino_D7
         function: GPIO
-        direction: in/out
+        direction: out
       d8:
         pinId: RH3
         name: Arduino_D8
         function: GPIO
-        direction: in/out
+        direction: out
       d9:
         pinId: RJ15
         name: Arduino_D9
         function: GPIO
-        direction: in/out
+        direction: out
 
   - compatible: rmii
     name: Ethernet PHY Header (J702 & J703)

@@ -213,8 +213,12 @@ class MainBoard:
         if self.__architecture == "MIPS" or self.__architecture == "33Axxx":
             if pinCtrlFunction != 'GPIO':
               pinCtrlFunctionSplited = pinCtrlFunction.split("_")
-              pinCtrlFunction = "_".join(pinCtrlFunctionSplited[1:])
-              self.__log.writeInfoMessage("SHD >> __handleFunctionPioManager MIPS: {}".format(pinCtrlFunction))
+              if len(pinCtrlFunctionSplited) == 1:
+                pinCtrlFunction = pinCtrlFunctionSplited[0]
+              else:
+                pinCtrlFunction = "_".join(pinCtrlFunctionSplited[1:])
+                
+              # self.__log.writeInfoMessage("SHD >> __handleFunctionPioManager MIPS: {}".format(pinCtrlFunction))
 
         if functionByPinId.startswith(pinCtrlFunction):
             return functionByPinId

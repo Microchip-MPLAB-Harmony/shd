@@ -862,11 +862,11 @@ connectors:
           function: SERCOM6_PAD1
       uart:
         tx:
-          pinId: PB30
+          pinId: PB31
           name: Arduino_D1_UART_TX
           function: SERCOM5_PAD0
         rx:
-          pinId: PB31
+          pinId: PB30
           name: Arduino_D0_UART_RX
           function: SERCOM5_PAD1
       spi:

@@ -453,11 +453,11 @@ connectors:
         function: ADC1_AIN8
       uart:
         tx:
-          pinId: PA23
+          pinId: PA22
           name: Arduino_D1_UART_TX
           function: SERCOM3_PAD0
         rx:
-          pinId: PA22
+          pinId: PA23
           name: Arduino_D0_UART_RX
           function: SERCOM3_PAD1
       d2:

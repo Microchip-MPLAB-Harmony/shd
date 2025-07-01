@@ -395,7 +395,7 @@ interfaces:
             name: VBUS_DETECT
             function: GPIO
             direction: in
-            pulld down: True
+            pull down: True
 
   - name: USB-B Port
     description: USB-B configuration

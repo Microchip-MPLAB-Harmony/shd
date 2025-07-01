@@ -252,11 +252,11 @@ connectors:
       pwm plus:
         pinId: PB12
         name: EXT2_PWM_PLUS
-        function: TC4/WO0
+        function: TCC0_WO6
       pwm minus:
         pinId: PB13
         name: EXT2_PWM_MINUS
-        function: TC4/WO1
+        function: TCC0_WO7
       irq:
         pinId: PB14
         name: EXT2_IRQ

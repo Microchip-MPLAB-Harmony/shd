@@ -174,31 +174,31 @@ interfaces:
         function: SLCD_LP39
       SEG20:
         pinId: PC20
-        name: LCD_SEG19
+        name: LCD_SEG20
         function: SLCD_LP40
       SEG21:
         pinId: PC21
-        name: LCD_SEG19
+        name: LCD_SEG21
         function: SLCD_LP41
       SEG22:
         pinId: PB16
-        name: LCD_SEG19
+        name: LCD_SEG22
         function: SLCD_LP42
       SEG23:
         pinId: PB17
-        name: LCD_SEG19
+        name: LCD_SEG23
         function: SLCD_LP43
       SEG24:
         pinId: PB18
-        name: LCD_SEG19
+        name: LCD_SEG24
         function: SLCD_LP44
       SEG25:
         pinId: PB19
-        name: LCD_SEG19
+        name: LCD_SEG25
         function: SLCD_LP45
       SEG26:
         pinId: PB20
-        name: LCD_SEG19
+        name: LCD_SEG26
         function: SLCD_LP46
       QTX2:
         pinId: PB07
@@ -440,7 +440,7 @@ connectors:
       pwm plus:
         pinId: PC28
         name: EXT2_PWM_PLUS
-        function: TCC0_WO0
+        function: TCC0_WO4
       pwm minus:
         pinId: PA27
         name: EXT2_PWM_MINUS

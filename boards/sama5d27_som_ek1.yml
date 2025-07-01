@@ -168,7 +168,7 @@ interfaces:
             name: USBA_VBUS_DET
             function: GPIO
             direction: in
-            pulld down: True
+            pull down: True
       - name: USB-B Port
         description: USB-B Port configuration
         pinctrl:
@@ -265,7 +265,7 @@ interfaces:
         pinctrl:
           lcdd0:
             pinId: PB11
-            name: LCD_PIN_D0
+            name: LCD_DATA0
             function: LCDC_LCDDAT0
           lcdd1:
             pinId: PB12
@@ -436,7 +436,7 @@ interfaces:
           pwm:
             pinId: PC3
             name: LCD_BACKLIGHT
-            function: LCLDC_LCDPWM
+            function: LCDC_LCDPWM
 
   - name: ISC connector interface
     description: Image Sensor Controller (ISC) configuration

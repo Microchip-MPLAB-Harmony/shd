@@ -947,7 +947,7 @@ connectors:
         sda:
           pinId: PA3
           name: mikroBUS_I2C_SDA
-          function: TWIHS0_TWCK0
+          function: TWIHS0_TWD0
         scl:
           pinId: PA4
           name: mikroBUS_I2C_SCL

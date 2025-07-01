@@ -259,37 +259,37 @@ connectors:
       spi:
         cs:
           pinId: PA5
-          name: EXT1_SPI_CS
+          name: EXT3_SPI_CS
           function: SPI5_NPCS1
         sck:
           pinId: PA14
-          name: EXT1_SPI_SCK
+          name: EXT3_SPI_SCK
           function: SPI5_SPCK
         miso:
           pinId: PA12
-          name: EXT1_SPI_MISO
+          name: EXT3_SPI_MISO
           function: SPI5_MISO
         mosi:
           pinId: PA13
-          name: EXT1_SPI_MOSI
+          name: EXT3_SPI_MOSI
           function: SPI5_MOSI
       uart:
         tx:
           pinId: PB0
-          name: EXT1_UART_TX
+          name: EXT3_UART_TX
           function: USART6_TXD
         rx:
           pinId: PB1
-          name: EXT1_UART_RX
+          name: EXT3_UART_RX
           function: USART6_RXD
       i2c:
         sda:
           pinId: PB8
-          name: EXT1_I2C_SDA
+          name: EXT3_I2C_SDA
           function: TWI4_TWD
         scl:
           pinId: PB9
-          name: EXT1_I2C_SCL
+          name: EXT3_I2C_SCL
           function: TWI4_TWCK
 
   - compatible: xplainpro
@@ -333,8 +333,8 @@ connectors:
         sda:
           pinId: PB10
           name: I2C_HOST_SDA
-          function: TWI3_TWD
+          function: TWI4_TWD
         scl:
           pinId: PB11
           name: I2C_HOST_SCL
-          function: TWI3_TWCK
+          function: TWI4_TWCK

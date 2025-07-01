@@ -436,9 +436,9 @@ connectors:
     description: mikroBUS Standard Extension Header 2
     pinctrl:
       an:
-        pinId: PDC13
+        pinId: PC13
         name: mikroBUS2_AN
-        function: ADC_AD7
+        function: ADC_AD8
       rst:
         pinId: PC9
         name: mikroBUS2_RST

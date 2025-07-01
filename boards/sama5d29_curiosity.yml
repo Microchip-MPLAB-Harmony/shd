@@ -125,7 +125,7 @@ interfaces:
             name: USBA_VBUS_DET
             function: GPIO
             direction: in
-            pulld down: True
+            pull down: True
       - name: USB-B Port
         description: USB-B Port configuration
         pinctrl:
@@ -173,12 +173,12 @@ interfaces:
             pinId: PA27
             name: ETH_GPIO1
             function: GPIO
-            direction: in/out
+            direction: out
           gpio2:
             pinId: PC8
             name: ETH_GPIO2
             function: GPIO
-            direction: in/out
+            direction: out
 
   - name: Radio interface
     description: Radio PHY system (ATWILC3000)

@@ -194,7 +194,7 @@ connectors:
       int:
         pinId: PA04
         name: mikroBUS1_INT
-        function: EIC_EXTINT14
+        function: EIC_EXTINT4
       uart:
         tx:
           pinId: PB12

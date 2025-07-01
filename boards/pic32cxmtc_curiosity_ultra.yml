@@ -284,7 +284,7 @@ connectors:
         latch: low
       spi:
         cs:
-          pinId: PAB15
+          pinId: PB15
           name: mikroBUS_1_SPI_CS
           function: FLEXCOM5_IO4
         sck:
@@ -555,8 +555,8 @@ connectors:
         function: ADC_AD1
       adc1:
         pinId: PA31
-        name: Arduino_ADC2
-        function: ADC_AD1
+        name: Arduino_ADC1
+        function: ADC_AD2
       adc2:
         pinId: PB0
         name: Arduino_ADC2
@@ -608,39 +608,39 @@ connectors:
         pinId: PD4
         name: Arduino_D2
         function: GPIO
-        direction: in/out
+        direction: out
       d3:
         pinId: PD3
         name: Arduino_D3
         function: GPIO
-        direction: in/out
+        direction: out
       d4:
         pinId: PD9
         name: Arduino_D4
         function: GPIO
-        direction: in/out
+        direction: out
       d5:
         pinId: PD17
         name: Arduino_D5
         function: GPIO
-        direction: in/out
+        direction: out
       d6:
         pinId: PD16
         name: Arduino_D6
         function: GPIO
-        direction: in/out
+        direction: out
       d7:
         pinId: PD10
         name: Arduino_D7
         function: GPIO
-        direction: in/out
+        direction: out
       d8:
         pinId: PD11
         name: Arduino_D8
         function: GPIO
-        direction: in/out
+        direction: out
       d9:
         pinId: PD19
         name: Arduino_D9
         function: GPIO
-        direction: in/out
+        direction: out

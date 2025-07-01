@@ -633,11 +633,11 @@ connectors:
           function: SERCOM7_PAD0
       uart:
         tx:
-          pinId: PC23
+          pinId: PC22
           name: EXT3_USART_TX
           function: SERCOM3_PAD1
         rx:
-          pinId: PC22
+          pinId: PC23
           name: EXT3_USART_RX
           function: SERCOM3_PAD0
       spi:

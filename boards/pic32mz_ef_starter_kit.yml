@@ -100,7 +100,7 @@ interfaces:
           gpio0:
             pinId: RF3
             name: USBID
-            function: USBID
+            function: USB_USBID
           gpio1:
             pinId: RB5
             name: USB_VBUSON
@@ -161,7 +161,7 @@ connectors:
         refck:
           pinId: RJ11
           name: RMII_CLK_OUT
-          function: ETHMAC_EREF_CLK
+          function: ETHMAC_EREFCLK
         rxd1:
           pinId: RH5
           name: RMII_RXD1

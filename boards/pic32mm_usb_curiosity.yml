@@ -172,7 +172,7 @@ interfaces:
           mck:
             pinId: RB15
             name: X32-A_I2S-1_MCK
-            function: REFCLKO
+            function: I2S2_REFCLKO
       - name: X32 StandBy / Reset
         description: StandBy / Reset control signal
         pinctrl:
@@ -293,7 +293,7 @@ interfaces:
           mck:
             pinId: RB15
             name: X32-A_I2S-1_MCK
-            function: REFCLKO
+            function: I2S3_REFCLKO
       - name: X32 StandBy / Reset
         description: StandBy / Reset control signal
         pinctrl:
@@ -360,8 +360,8 @@ interfaces:
       gpio:
         pinId: RB6
         name: USB_VBUS_DET
-        function: VBUS
-        pulld down: True
+        function: USB_VBUS
+        pull down: True
 
 connectors:
   - compatible: mikrobus

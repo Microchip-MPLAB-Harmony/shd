@@ -119,7 +119,7 @@ interfaces:
             name: USBA_VBUS_DET
             function: GPIO
             direction: in
-            pulld down: True
+            pull down: True
       - name: USB-B Port
         description: USB-B Port configuration
         pinctrl:
@@ -437,7 +437,6 @@ interfaces:
             pull up: True
       - name: Backlight control
         description: LCD backlight control
-
         pinctrl:
           pwm:
             pinId: PC28

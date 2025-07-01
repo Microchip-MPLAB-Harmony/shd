@@ -305,12 +305,12 @@ connectors:
         pinId: PA18
         name: EXT_GPIO1
         function: GPIO
-        direction: in/out
+        direction: out
       gpio2:
         pinId: PA20
         name: EXT_GPIO2
         function: GPIO
-        direction: in/out
+        direction: out
       pwm plus:
         pinId: PD3
         name: EXT_PWM_PLUS

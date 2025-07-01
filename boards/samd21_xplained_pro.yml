@@ -192,11 +192,11 @@ connectors:
       pwm plus:
         pinId: PB02
         name: EXT1_PWM_PLUS
-        function: TC6/WO0
+        function: TC6_WO0
       pwm minus:
         pinId: PB03
         name: EXT1_PWM_MINUS
-        function: TC6/WO1
+        function: TC6_WO1
       irq:
         pinId: PB04
         name: EXT1_IRQ
@@ -267,11 +267,11 @@ connectors:
       pwm plus:
         pinId: PB12
         name: EXT2_PWM_PLUS
-        function: TC4/WO0
+        function: TC4_WO0
       pwm minus:
         pinId: PB13
         name: EXT2_PWM_MINUS
-        function: TC4/WO1
+        function: TC4_WO1
       irq:
         pinId: PB14
         name: EXT2_IRQ
@@ -294,11 +294,11 @@ connectors:
         tx:
           pinId: PB10
           name: EXT2_USART_TX
-          function: SERCOM4_PAD0
+          function: SERCOM4_PAD2
         rx:
           pinId: PB11
           name: EXT2_USART_RX
-          function: SERCOM4_PAD1
+          function: SERCOM4_PAD3
       spi:
         cs:
           pinId: PA17
@@ -342,11 +342,11 @@ connectors:
       pwm plus:
         pinId: PA12
         name: EXT3_PWM_PLUS
-        function: TCC2/WO0
+        function: TCC2_WO0
       pwm minus:
         pinId: PA13
         name: EXT3_PWM_MINUS
-        function: TCC2/WO1
+        function: TCC2_WO1
       irq:
         pinId: PA28
         name: EXT3_IRQ
@@ -369,11 +369,11 @@ connectors:
         tx:
           pinId: PB10
           name: EXT3_USART_TX
-          function: SERCOM4_PAD0
+          function: SERCOM4_PAD2
         rx:
           pinId: PB11
           name: EXT3_USART_RX
-          function: SERCOM4_PAD1
+          function: SERCOM4_PAD3
       spi:
         cs:
           pinId: PB17

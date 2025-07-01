@@ -109,8 +109,6 @@ connectors:
           pinId: PA23
           name: Arduino_D10_SPI_CS
           function: SERCOM1_PAD1
-          direction: out
-          latch: high
         sck:
           pinId: PA09
           name: Arduino_D13_SPI_SCK

@@ -103,11 +103,16 @@ def getDeviceFunctionListByPinId(Database, ATDF, pinId):
     return sorted(functionList)
 
 def getDevicePinMap(Database, ATDF):
+    series = ATDF.getNode("/avr-tools-device-file/devices/device").getAttribute("series")
     pinMap = dict()
     # Send message to core to get available pins
     availablePinDictionary = {}
     availablePinDictionary = Database.sendMessage("core", "PIN_LIST", availablePinDictionary)
     for pinNumber, pinId in availablePinDictionary.items():
+        # Handle exception for PIC32CZCA70 series (ATDF and pin Dictionary are different)
+        if series == "PIC32CZCA70":
+            pinId = str(pinId[:2]) + "{}".format(pinId[2:]).zfill(2)
+
         pinMap[str(pinId)] = int(pinNumber)
 
     return pinMap

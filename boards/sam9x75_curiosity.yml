@@ -80,34 +80,43 @@ interfaces:
         pinctrl:
           ck:
             pinId: PA2
+            name: SDMMC0_CK
             function: SDMMC0_CK
             slewrate: True
             drv: high
           cd:
             pinId: PA23
-            function: SDMMC0_CD
+            name: SDMMC0_CD
+            function: GPIO
+            direction: in
+            pull up: True
           cmd:
             pinId: PA1
+            name: SDMMC0_CMD
             function: SDMMC0_CMD
             slewrate: True
             drv: high
           dat0:
             pinId: PA0
+            name: SDMMC0_DAT0
             function: SDMMC0_DAT0
             slewrate: True
             drv: high
           dat1:
             pinId: PA3
+            name: SDMMC0_DAT1
             function: SDMMC0_DAT1
             slewrate: True
             drv: high
           dat2:
             pinId: PA4
+            name: SDMMC0_DAT2
             function: SDMMC0_DAT2
             slewrate: True
             drv: high
           dat3:
             pinId: PA5
+            name: SDMMC0_DAT3
             function: SDMMC0_DAT3
             slewrate: True
             drv: high
@@ -129,7 +138,7 @@ interfaces:
             name: VBUSA_DETECT
             function: GPIO
             direction: in
-            pulld down: True
+            pull down: True
       - name: USB-B Port
         description: USB-B Port configuration
         pinctrl:
