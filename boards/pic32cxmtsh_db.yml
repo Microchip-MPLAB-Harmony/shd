@@ -288,6 +288,57 @@ interfaces:
         name: LCD_SEG19
         function: SLCDC_SEG25
 
+  - name: Energy Metering Analog Front End
+    description: EMAFE interface
+    dependencies: [["emafe"]]
+    pinctrl:
+      sck:
+        pinId: PD20
+        name: EMAFE_MCSPI_SCK
+        function: MCSPI_SPCK
+      mosi:
+        pinId: PD21
+        name: EMAFE_MCSPI_MOSI
+        function: MCSPI_MOSI0
+      miso:
+        pinId: PD22
+        name: EMAFE_MCSPI_MISO
+        function: MCSPI_MISO
+      cs0:
+        pinId: PD23
+        name: EMAFE_MCSPI_CS0
+        function: MCSPI_NPCS0
+      fsync:
+        pinId: PD24
+        name: EMAFE_FSYNC
+        function: EMAFE_FSYNC
+      din0:
+        pinId: PD25
+        name: EMAFE_DIN0
+        function: EMAFE_DIN0
+      din1:
+        pinId: PD26
+        name: EMAFE_DIN1
+        function: EMAFE_DIN1
+      din2:
+        pinId: PD27
+        name: EMAFE_DIN2
+        function: EMAFE_DIN2
+      din3:
+        pinId: PD28
+        name: EMAFE_DIN3
+        function: EMAFE_DIN3
+      mclk:
+        pinId: PD29
+        name: EMAFE_MCLK
+        function: PMC_PCK2
+      nrst:
+        pinId: PD30
+        name: EMAFE_NRESET
+        function: GPIO
+        direction: out
+        latch: low
+
 connectors:
   - compatible: xplainpro
     name: Xplained Pro
