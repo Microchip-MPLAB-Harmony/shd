@@ -3,6 +3,81 @@
 
 # Microchip MPLAB® Harmony 3 Release Notes
 
+## SHD Release v1.2.0
+
+This release adds support for the following development kits and extension boards:
+
+- **Host boards support**
+  - **PIC32CM JH/JH01**
+    - PIC32CM JH-Value Line Curiosity Nano + Touch - Nano Base
+    - PIC32CM JH-Value Line Curiosity Nano + Touch - Nano Explorer
+    - PIC32CM JH01 Curiosity Nano+ Touch - Nano Base
+    - PIC32CM JH01 Curiosity Nano+ Touch - Nano Explorer
+  - **PIC32CM GV**
+    - PIC32CM GV Curiosity Nano + Touch - Nano Base
+    - PIC32CM GV Curiosity Nano + Touch - Nano Explorer
+  - **PIC32CM LS00**
+    - PIC32CM LS00 Curiosity Nano + Touch - Nano Base
+    - PIC32CM LS00 Curiosity Nano + Touch - Nano Explorer
+  - **PIC32CM MC00**
+    - PIC32CM MC00 Curiosity Nano + Touch - Nano Base
+    - PIC32CM MC00 Curiosity Nano + Touch - Nano Explorer
+  - **WBZ451H**
+    - WBZ451HPE EVB Board
+  - **PIC32WM_BZ6204**
+    - WBZ653 Curiosity Board
+- **Click/Add-on boards support**
+  - **Click boards**
+    - Weather click
+    - Heart Rate 9 click
+    - USB I2C click
+    - USB SPI click
+    - USB UART click
+    - GSM GPS click
+    - IR Thermo 2 click
+    - LED Driver 3 click
+    - Thumbstick click
+    - Fan click
+    - PIR click
+    - OLED C Click
+    - WIFI 7 click
+    - RFID click
+    - BLE 2 click
+    - GRID EYE click
+    - LR click
+    - Elink E-Paper display click
+    - 13DOF click
+    - microSD click
+    - DRAM click
+    - Flash 2 click
+ 
+- **New Features and Enhancements**
+  - Added multi-processor capability in board configuration files:
+    - pic32-wfi32-20-curiosity: WFI32E03, PIC32MZ2051W104132
+    - pic32-wfi32e-curiosity: WFI32E01, PIC32MZ1025W104132
+    - wfi32e02-hpc-curiosity: WFI32E02, PIC32MZ1025W104132
+    - wfi32e04-hpc-20-curiosity: WFI32E04, PIC32MZ2051W104132
+    - wfi32e-iot-20-db: WFI32E03, PIC32MZ2051W104132
+    - wfi32e-iot-db: WFI32E01, PIC32MZ1025W104132
+
+  - Enhanced analysis of configured I2C/SPI signals to allow communication buses.
+  
+- **Bug Fixes**
+  - Replaced Ethernet interface by Ethernet External conntector in the following boards:
+    - pic32ck-gc01-curiosity-ultra
+    - pic32ck-sg01-curiosity-ultra
+    - pic32mz-ef-curiosity
+
+**Known issues**
+  - None.
+
+**Development Tools**
+
+- [MPLAB® X IDE v6.25](https://www.microchip.com/mplab/mplab-x-ide)
+- MPLAB® X IDE plug-ins:
+  - MPLAB® Code Configurator 5.5.1 or higher
+- MPLAB® Harmony3 Library 1.5.5-b or higher
+
 ## SHD Release v1.1.0
 
 This release adds support for the following development kits and extension boards:
