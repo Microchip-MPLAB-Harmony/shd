@@ -35,11 +35,22 @@ supported:
     name: MCP25625_CLICK_INT
   uart:
     tx:
-      name: MCP25625_CLICK_TX
+      name: MCP25625_CLICK_TX0RTS
+      function: GPIO
+      direction: in
     rx:
-      name: MCP25625_CLICK_RX
+      name: MCP25625_CLICK_RX0BF
+      function: GPIO
+      direction: out
+      latch: high
   i2c:
     sda:
-      name: MCP25625_CLICK_SDA
+      name: MCP25625_CLICK_RX1BF
+      function: GPIO
+      direction: out
+      latch: high
     scl:
-      name: MCP25625_CLICK_SCL
+      name: MCP25625_CLICK_TX1RTS
+      function: GPIO
+      direction: out
+      latch: high
