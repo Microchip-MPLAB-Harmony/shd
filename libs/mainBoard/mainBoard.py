@@ -817,6 +817,11 @@ class MainBoard:
       # self.__log.writeInfoMessage("SHD >> __updateDriverConnections self.__drvUnconnected: {}".format(self.__drvUnconnected))
         
     def __signalEnableCallback(self, symbol, event):
+        eventID = event["id"]
+        if event['value'] == False and eventID not in str(self.__enabledSymbolsByFunction):
+            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback (False) SKIP -> eventID: {} str(self.__enabledSymbolsByFunction): {}".format(eventID, str(self.__enabledSymbolsByFunction)))
+            return 
+        
         dependencies = {}
         enabledPinIdList = {}
         disabledPinIdList = {}
@@ -825,11 +830,11 @@ class MainBoard:
             self.__signalCallbackBusy = True
 
             # Get Pin Control List
-            srcSymbolSplit = event["id"].split('_')
+            srcSymbolSplit = eventID.split('_')
             # self.__log.writeInfoMessage("SHD >> __signalEnableCallback srcSymbolSplit: {}".format(srcSymbolSplit))
-            if "INTERFACE" in event["id"]:
+            if "INTERFACE" in eventID:
                 connectorName = None
-                if "_OPT_" in event["id"]:
+                if "_OPT_" in eventID:
                     interfaceIndex = int(srcSymbolSplit[-3])
                     optionIndex = int(srcSymbolSplit[-1])
                     pinControlList = self.getPinControlListByInterface(interfaceIndex, optionIndex)
@@ -933,12 +938,12 @@ class MainBoard:
                 if pinId.upper() is not "NC" and pinFunction != None:           
                     if event["value"] is True:
                         # Check if that pin is already added                    
-                        if not pinId in self.__configuredPins:
-                            # self.__log.writeInfoMessage("SHD >> __signalEnableCallback set Pin {} fn:{}".format(pinId, pinFunction))
-                            self.__configuredPins.append(pinId)
-                            self.__pinControlByPinId.setdefault(pinId, pinCtrl)
-                            self.__setPinConfig(pinCtrl)
-                            enabledPinIdList.setdefault(pinId, pinDescr)
+                        # if not pinId in self.__configuredPins:
+                        # self.__log.writeInfoMessage("SHD >> __signalEnableCallback set Pin {} fn:{}".format(pinId, pinFunction))
+                        self.__configuredPins.append(pinId)
+                        self.__pinControlByPinId.setdefault(pinId, pinCtrl)
+                        self.__setPinConfig(pinCtrl)
+                        enabledPinIdList.setdefault(pinId, pinDescr)
 
                         # Adapt pinFunction in case of GPIO
                         if pinFunction == "GPIO":
@@ -946,10 +951,10 @@ class MainBoard:
 
                         fnSymList = self.__enabledSymbolsByFunction.get(pinFunction)
                         if fnSymList == None:
-                            self.__enabledSymbolsByFunction.setdefault(pinFunction, [event["id"]])
+                            self.__enabledSymbolsByFunction.setdefault(pinFunction, [eventID])
                         else:
-                            if event["id"] not in fnSymList:
-                                fnSymList.append(event["id"])
+                            if eventID not in fnSymList:
+                                fnSymList.append(eventID)
                         # self.__log.writeInfoMessage("SHD >> __signalEnableCallback upd+ self.__enabledSymbolsByFunction: {}".format(self.__enabledSymbolsByFunction))
                     else:
                         # Update Enabled Symbols List
@@ -960,8 +965,8 @@ class MainBoard:
                             pinFunction = "{}_{}".format(pinFunction, pinId)
 
                         fnSymList = self.__enabledSymbolsByFunction.get(pinFunction)
-                        if fnSymList != None and event["id"] in fnSymList:
-                            fnSymList.remove(event["id"])
+                        if fnSymList != None and eventID in fnSymList:
+                            fnSymList.remove(eventID)
                             # self.__log.writeInfoMessage("SHD >> __signalEnableCallback remove: {}".format(event["id"]))
 
                         # Check if that pin has to be removed
@@ -993,7 +998,7 @@ class MainBoard:
                 # Configure settings of the drivers of each updated PinId if needed
                 self.__configureDriverSettings(enabledPinIdList, disabledPinIdList)
                 # Check PIN Collisions
-                self.__shdCheckCollisionSymbol.setLabel(event["id"])
+                self.__shdCheckCollisionSymbol.setLabel(eventID)
                 self.__shdCheckCollisionSymbol.setValue(event["value"])
 
             self.__signalCallbackBusy = False
