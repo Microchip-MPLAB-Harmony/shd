@@ -3,6 +3,21 @@
 
 # Microchip MPLAB® Harmony 3 Release Notes
 
+## SHD Release v1.2.1
+
+- **Bug Fixes**
+  - Fixed configuration issues in GPIO settings when reopening MCC.
+
+**Known issues**
+  - None.
+
+**Development Tools**
+
+- [MPLAB® X IDE v6.25](https://www.microchip.com/mplab/mplab-x-ide)
+- MPLAB® X IDE plug-ins:
+  - MPLAB® Code Configurator 5.5.1 or higher
+- MPLAB® Harmony3 Library 1.5.5-b or higher
+
 ## SHD Release v1.2.0
 
 This release adds support for the following development kits and extension boards:
