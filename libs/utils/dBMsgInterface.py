@@ -83,10 +83,10 @@ def __getDevicePeripheralList(ATDF):
             periph = '{}_{}'.format(pName, pId)
         else:
             periph = pName
-            
+
         peripheralList.append(periph)
 
-    return peripheralList    
+    return peripheralList
 
 def __getConfigDatabaseADC(periphID, settings):
     # fnValue format -> '{}_{}'.format(componentID, setting)
@@ -103,7 +103,7 @@ def __getConfigDatabaseADC(periphID, settings):
             muxInput = 'MUXNEG'
         else:
             muxInput = 'MUXPOS'
-            
+
         # get ADC channel from setting
         if setting[0] == "x":
             # PTC connection
@@ -112,18 +112,18 @@ def __getConfigDatabaseADC(periphID, settings):
             channel = int("".join(filter(lambda x: x.isdigit(), setting)))
 
         configDB.setdefault('config', (channel, muxInput, enable))
-        
+
     elif periphID == 'ADC_U2204' or periphID == 'ADC_U2247':
         if "VREF" in pinNameValue:
             setting = fnValue.split('_')[-1]
         else:
             setting = fnValue.split('_')[-1].split('/')[0]
-            
+
         if pinNameValue.split('_')[-1] == 'MINUS':
             muxInput = 'MUXNEG'
         else:
             muxInput = 'MUXPOS'
-            
+
         configDB.setdefault('config', (setting, muxInput, enable))
 
     elif periphID == 'ADC_44134':
@@ -137,7 +137,7 @@ def __getConfigDatabaseADC(periphID, settings):
             if channel != 1 and channel != 3:
                 print("ERROR in SHD Main Board configuration: Negative input is not permitted.[{}]".format(fnValue))
                 return configDB
-            
+
         configDB.setdefault('config', (channel, isNegInput, enable))
 
     elif periphID == 'AFEC_11147':
@@ -151,9 +151,9 @@ def __getConfigDatabaseADC(periphID, settings):
             if channel % 2 == 0:
                 print("ERROR in SHD Main Board configuration: Negative input is not permitted.[{}]".format(fnValue))
                 return configDB
-            
+
         configDB.setdefault('config', (channel, isNegInput, enable))
-    
+
     elif periphID == 'ADC_6489':
         # get ADC channel from setting
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
@@ -165,7 +165,7 @@ def __getConfigDatabaseADC(periphID, settings):
             if channel != 1 and channel != 3 and channel != 5 and channel != 7:
                 print("ERROR in SHD Main Board configuration: Negative input is not permitted.[{}]".format(fnValue))
                 return configDB
-            
+
         configDB.setdefault('config', (channel, isNegInput, enable))
 
     elif periphID == 'ADCHS_02508':
@@ -177,9 +177,9 @@ def __getConfigDatabaseADC(periphID, settings):
     elif periphID == 'ADC_03620':
         # get ADC channel from setting
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
-            
+
         configDB.setdefault('config', (channel, enable))
-    
+
     elif periphID == 'ADC_44073':
         # get ADC channel from setting
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
@@ -191,9 +191,9 @@ def __getConfigDatabaseADC(periphID, settings):
             if (channel % 2) == 1:
                 print("ERROR in SHD Main Board configuration: Negative input is not permitted.[{}]".format(fnValue))
                 return configDB
-            
+
         configDB.setdefault('config', (channel, isNegInput, enable))
-        
+
     elif periphID == 'ADC_00755':
         # get ADC channel from setting
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
@@ -204,7 +204,7 @@ def __getConfigDatabaseADC(periphID, settings):
         if isNegInput == True and channel != 1:
             print("ERROR in SHD Main Board configuration: Negative input is not permitted.[{}]".format(fnValue))
             return configDB
-            
+
         configDB.setdefault('config', (channel, isNegInput, enable))
 
     elif periphID == 'ADC_02805':
@@ -252,7 +252,7 @@ def __getConfigDatabaseAC(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'AC_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'AC_U2501' or periphID == 'AC_U2245':
         # get AC comparator ID from pinNameValue
@@ -269,7 +269,7 @@ def __getConfigDatabaseAC(periphID, settings):
             ioPin = int("".join(filter(lambda x: x.isdigit(), setting)))
         else:
             ioPin = -1
-        
+
         configDB.setdefault('config', (comparatorID, muxInput, ioPin))
 
     # elif periphID == 'AC_U225':
@@ -286,13 +286,13 @@ def __getConfigDatabaseACC(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'ACC_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'ACC_04597':
         # get data configuration from setting in{n/p}{chn}
         accIndex = int("".join(filter(lambda x: x.isdigit(), setting)))
         accPin = setting[-2] #'n' or 'p'
-            
+
         configDB.setdefault('config', (accIndex, accPin, enable))
 
     # elif periphID == 'ACC_6490':
@@ -309,35 +309,35 @@ def __getConfigDatabasePWM(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'PWM_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'PWM_6343':
         # get data configuration from setting in{n/p}{chn}
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
         polarity = setting[-2] #'l' or 'h'
-            
+
         configDB.setdefault('config', (channel, polarity, enable))
 
     elif periphID == 'MCPWM_01477':
         # get data configuration from setting
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
         polarity = setting[-1] #'l' or 'h'
-            
+
         configDB.setdefault('config', (channel, polarity, enable))
 
     elif periphID == 'PWM_6044':
         # get pwm channel
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
-            
+
         configDB.setdefault('config', (channel, enable))
 
     elif periphID == 'PWM_04302':
         # get data configuration from setting
         channel = int("".join(filter(lambda x: x.isdigit(), setting)))
         polarity = setting[-1] #'l' or 'h'
-            
+
         configDB.setdefault('config', (channel, polarity, enable))
-        
+
     # elif periphID == 'PWM_54':
 
     # else:
@@ -361,7 +361,7 @@ def __getConfigDatabaseFLEXCOM(periphID, settings):
         mode = "SPI"
     elif signalId in ['sda', 'scl']:
         mode = "I2C"
-    
+
     periphID = periphID.upper()
     if periphID == 'FLEXCOM_11268':
         if setting == 'io3':
@@ -387,7 +387,7 @@ def __getConfigDatabaseSERCOM(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'SERCOM_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     mode = ""
     pinCtrl = dict()
@@ -395,10 +395,10 @@ def __getConfigDatabaseSERCOM(periphID, settings):
         # Add exceptions for SERCOM_SDL/SDA in WBZ family
         # if setting == 'sda' or setting == 'scl':
         #     return configDB
-        
+
         pinCtrl.setdefault('signalId', signalId)
         pinCtrl.setdefault('padId', int(fnValue[-1]))
-        
+
         if signalId in ['rx', 'tx', 'rts', 'cts', 'xck']:
             mode = "USART"
         elif signalId in ['cs', 'sck', 'miso', 'mosi']:
@@ -410,7 +410,7 @@ def __getConfigDatabaseSERCOM(periphID, settings):
             configDB.setdefault('config', (mode, pinCtrl, enable))
     # else:
     #     print("SHD >> getConfigDatabaseSERCOM {} NOT FOUND!!!".format(periphID))
-    
+
     return configDB
 
 def __getConfigDatabaseMCSPI(periphID, settings):
@@ -421,7 +421,7 @@ def __getConfigDatabaseMCSPI(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'MCSPI_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'MCSPI_04462':
         if 'npcs' in setting:
@@ -439,7 +439,7 @@ def __getConfigDatabaseEIC(periphID, settings, intMode):
     setting = fnValue.split('_')[-1].split('/')[0].lower()
 
     configDB = dict()
-    
+
     periphID = periphID.upper()
     channel = ""
     if periphID == 'EIC_U2254' or periphID == 'EIC_04714':
@@ -447,13 +447,13 @@ def __getConfigDatabaseEIC(periphID, settings, intMode):
             channel = "NMI"
         else:
             channel = "".join(filter(lambda x: x.isdigit(), setting))
-        
+
     elif periphID == 'EIC_U2217' or periphID == 'EIC_U2804' or periphID == 'EIC_03706':
         if "NMI" in setting.upper():
             channel = "NMI"
         else:
             channel = "".join(filter(lambda x: x.isdigit(), setting))
-        
+
     elif periphID == 'EIC_44139':
         channel = "".join(filter(lambda x: x.isdigit(), setting))
 
@@ -474,12 +474,12 @@ def __getConfigDatabaseAIC(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'AIC_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'AIC_11051':
         configDB.setdefault('config', (pinId, enable))
         componentID = "core"
-        
+
     # else:
     #     print("SHD >> getConfigDatabaseAIC {} NOT FOUND!!!".format(periphID))
 
@@ -493,7 +493,7 @@ def __getConfigDatabaseSUPC(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'SUPC_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'SUPC_U2407' or periphID == 'SUPC_U2117':
         output = "".join(filter(lambda x: x.isdigit(), setting))
@@ -504,12 +504,12 @@ def __getConfigDatabaseSUPC(periphID, settings):
         input = "".join(filter(lambda x: x.isdigit(), setting))
         configDB.setdefault('config', (input, enable))
         componentID = "core"
-        
+
     elif periphID == 'SUPC_11228' or periphID == 'SUPC_6452':
         # Enable WKUP pins
         input = "".join(filter(lambda x: x.isdigit(), setting))
         configDB.setdefault('config', (input, enable))
-        
+
     # elif periphID == 'SUPC_03926': # Not needed
     # elif periphID == 'SUPC_44082':
 
@@ -526,7 +526,7 @@ def __getConfigDatabaseOCMP(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'OCMP_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'OCMP_00749':
         output = "pwm"
@@ -559,14 +559,14 @@ def __getConfigDatabaseCCP(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'CCP_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'CCP_01512':
         opMode = "Compare"
         outputPin = setting[-1].upper()
         if outputPin.isalpha() == False:
             outputPin = "A"
-            
+
         configDB.setdefault('config', (opMode, outputPin, enable))
         configDB.setdefault('compID', componentID)
 
@@ -583,14 +583,14 @@ def __getConfigDatabaseINT(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'INT_CONFIG_HW_IO')
-    
-    # 'INT_02610', 'INT_01166', 'INT_02907', 'INT_02481', 'INT_01423', 
+
+    # 'INT_02610', 'INT_01166', 'INT_02907', 'INT_02481', 'INT_01423',
     # 'INT_02495', 'INT_00868', 'INT_01618', 'INT_02922'
     periphID = periphID.upper()
     componentID = "core"
     extIntId = "".join(filter(lambda x: x.isdigit(), setting))
     configDB.setdefault('config', (extIntId, enable))
-    
+
     return componentID, configDB
 
 def __getConfigDatabaseSPI(periphID, settings):
@@ -601,7 +601,7 @@ def __getConfigDatabaseSPI(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'SPI_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
     if periphID == 'SPI_6088':
         if 'npcs' in setting:
@@ -622,9 +622,9 @@ def __getConfigDatabaseI2S(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'I2S_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
-    
+
     if periphID == 'I2S_U2224':
         if 'fs' in setting:
             configDB.setdefault('config', (setting.upper(), pinId, enable))
@@ -643,9 +643,9 @@ def __getConfigDatabaseSDADC(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'SDADC_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
-    
+
     if periphID == 'SDADC_U2260':
         configDB.setdefault('config', (setting.upper(), pinId, enable))
     # else:
@@ -661,9 +661,9 @@ def __getConfigDatabaseCBG(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'CBG_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
-    
+
     if periphID == 'CBG_03516':
         configDB.setdefault('config', (setting, enable))
     # else:
@@ -679,9 +679,9 @@ def __getConfigDatabaseCMPDAC(periphID, settings):
 
     configDB = dict()
     configDB.setdefault('msgID', 'CMPDAC_CONFIG_HW_IO')
-    
+
     periphID = periphID.upper()
-    
+
     if periphID == 'CMP_DAC_03496':
         configDB.setdefault('config', (setting, enable))
     # else:
@@ -692,7 +692,7 @@ def __getConfigDatabaseCMPDAC(periphID, settings):
 def getDBMsgPLIBConfiguration(ATDF, settings, intMode):
     periphList = __getDevicePeripheralList(ATDF)
     msgID = None
-    
+
     signalId, pinId, fnValue, pinNameValue, enable = settings
 
     if "/" in fnValue:
@@ -722,14 +722,14 @@ def getDBMsgPLIBConfiguration(ATDF, settings, intMode):
         periphID = ""
         configDB = dict()
         params = dict()
-        
+
         for peripheral in periphList:
             splitedPeriph = peripheral.split('_')
             if len(splitedPeriph) > 2:
                 pName = "_".join(splitedPeriph[:2]).lower()
             else:
                 pName = splitedPeriph[0].lower()
-            
+
             # print("SHD >> checking periph {}: {} = {}".format(peripheral, plib, pName))
             if plib == pName:
                 periphID = peripheral
@@ -744,16 +744,16 @@ def getDBMsgPLIBConfiguration(ATDF, settings, intMode):
 
         elif plib == 'adc' or plib == 'afec' or plib == 'adchs':
             configDB = __getConfigDatabaseADC(periphID, settings)
-            
+
         elif plib == 'dac' or plib == 'dacc':
             configDB = __getConfigDatabaseDAC(periphID, settings)
-            
+
         elif plib == 'ac':
             configDB = __getConfigDatabaseAC(periphID, settings)
-            
+
         elif plib == 'acc':
-            configDB = __getConfigDatabaseACC(periphID, settings) 
-                
+            configDB = __getConfigDatabaseACC(periphID, settings)
+
         elif plib == 'pwm' or plib == 'mcpwm':
             configDB = __getConfigDatabasePWM(periphID, settings)
 
@@ -765,16 +765,16 @@ def getDBMsgPLIBConfiguration(ATDF, settings, intMode):
 
         elif plib == 'mcspi':
             configDB = __getConfigDatabaseMCSPI(periphID, settings)
-            
+
         elif plib == 'eic':
             configDB = __getConfigDatabaseEIC(periphID, settings, intMode)
 
         elif plib == 'aic':
             componentID, configDB = __getConfigDatabaseAIC(periphID, settings)
-            
+
         elif plib == 'supc':
             componentID, configDB = __getConfigDatabaseSUPC(periphID, settings)
-            
+
         elif plib == 'ocmp':
             configDB = __getConfigDatabaseOCMP(periphID, settings)
 
@@ -792,16 +792,16 @@ def getDBMsgPLIBConfiguration(ATDF, settings, intMode):
 
         elif plib == 'sdadc':
             configDB = __getConfigDatabaseSDADC(periphID, settings)
-        
+
         elif plib == 'cbg':
             configDB = __getConfigDatabaseCBG(periphID, settings)
-        
+
         elif plib == 'cmp_dac':
             configDB = __getConfigDatabaseCMPDAC(periphID, settings)
 
         # else:
         #     print("SHD >> getDevicePLIBConfigurationDBMessage {} NOT FOUND!!! - {}".format(plib, periphID))
-            
+
         config = configDB.get('config')
         if config != None:
             msgID = configDB.get('msgID')
@@ -819,7 +819,7 @@ def __getConfigDatabaseDrvPlc(settings):
         if "PL360" in nameValue.upper() or "PL460" in nameValue.upper():
             configDB.setdefault('msgID', 'DRVPLC_CONFIG_HW_IO')
             configDB.setdefault('config', (signalId, pinId, functionValue, nameValue, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseDrvX2CScope(settings):
@@ -833,7 +833,7 @@ def __getConfigDatabaseDrvX2CScope(settings):
     elif "rx" in nameValue.lower():
         configDB.setdefault('msgID', 'X2CSCOPE_CONFIG_HW_IO')
         configDB.setdefault('config', ("RX", pinId, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseDrvPMSMFOC(settings):
@@ -847,7 +847,7 @@ def __getConfigDatabaseDrvPMSMFOC(settings):
     # elif "rx" in nameValue.lower():
     #     configDB.setdefault('msgID', 'X2CSCOPE_CONFIG_HW_IO')
     #     configDB.setdefault('config', ("RX", pinId, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseDrvSST26(settings):
@@ -865,7 +865,7 @@ def __getConfigDatabaseDrvSST26(settings):
     elif ('SS' in fn) or ('CS' in fn) or (nameValue is not None and '_CS' in nameValue.upper()):
         protocol = 'SPI'
         cs = 0
-    
+
     if cs != "":
         configDB.setdefault('msgID', 'SST26_CONFIG_HW_IO')
         configDB.setdefault('config', (pinId, protocol, int(cs), enable))
@@ -882,7 +882,7 @@ def __getConfigDatabaseDrvAT25(settings):
     if pinFn in ["WP", "CS", "HOLD"]:
         configDB.setdefault('msgID', 'AT25_CONFIG_HW_IO')
         configDB.setdefault('config', (pinFn, pinId, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseDrvSDSPI(settings):
@@ -898,7 +898,7 @@ def __getConfigDatabaseDrvSDSPI(settings):
         plib = functionValue.split("_")[0]
         configDB.setdefault('msgID', 'DRV_SDSPI_CONFIG_INSTANCE_HW_IO')
         configDB.setdefault('config', (plib, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseDrvAT25DF(settings):
@@ -911,7 +911,7 @@ def __getConfigDatabaseDrvAT25DF(settings):
     if pinFn in ["CS"]:
         configDB.setdefault('msgID', 'AT25DF_CONFIG_HW_IO')
         configDB.setdefault('config', (pinFn, pinId, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseDrvWINCS02(settings):
@@ -923,7 +923,7 @@ def __getConfigDatabaseDrvWINCS02(settings):
         setting = functionValue.split('_')[-1]
         configDB.setdefault('msgID', 'WINCS02_CONFIG_HW_IO')
         configDB.setdefault('config', (signalId, pinId, plib, setting, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseDrvWINC(settings):
@@ -935,7 +935,7 @@ def __getConfigDatabaseDrvWINC(settings):
         setting = functionValue.split('_')[-1]
         configDB.setdefault('msgID', 'WINC_CONFIG_HW_IO')
         configDB.setdefault('config', (signalId, pinId, plib, setting, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseWirelessRNWF(settings):
@@ -946,7 +946,7 @@ def __getConfigDatabaseWirelessRNWF(settings):
     addon = nameValue.split("_")[0]
     configDB.setdefault('msgID', 'WIRELESS_RNWF_CONFIG_HW_IO')
     configDB.setdefault('config', (addon, plib, enable))
-    
+
     return configDB
 
 def __getConfigDatabaseWirelessRNBD(settings):
@@ -956,24 +956,26 @@ def __getConfigDatabaseWirelessRNBD(settings):
     plib = functionValue.split("_")[0]
     configDB.setdefault('msgID', 'WIRELESS_RNBD_CONFIG_HW_IO')
     configDB.setdefault('config', (pinId, nameValue, plib, enable))
-    
+
     return configDB
 
 def __getConfigDatabasePlcSrvPvddMon(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
 
     configDB = dict()
-    plib = functionValue.split("_")[0]
-    setting = functionValue.split('_')[-1]
-    channel = "".join(filter(lambda x: x.isdigit(), setting))
-    configDB.setdefault('msgID', 'PLV_SRV_PVDDMON_CONFIG_HW_IO')
-    configDB.setdefault('config', (plib, channel, enable))
+    if functionValue != "GPIO":
+        plib = functionValue.split("_")[0]
+        setting = functionValue.split('_')[-1]
+        channel = "".join(filter(lambda x: x.isdigit(), setting))
+        if channel != "":
+            configDB.setdefault('msgID', 'PLV_SRV_PVDDMON_CONFIG_HW_IO')
+            configDB.setdefault('config', (plib, channel, enable))
 
     return configDB
 
 def getDBMsgDriverConfiguration(settings):
     driver, signalId, pinId, functionValue, nameValue, enable = settings
-    
+
     componentID = driver
     configDB = dict()
     params = dict()
@@ -1004,7 +1006,7 @@ def getDBMsgDriverConfiguration(settings):
         configDB = __getConfigDatabasePlcSrvPvddMon(settings)
     # else:
     #     print("SHD >> getDeviceDriverConfigurationDBMessage {} NOT FOUND!!!".format(driver))
-        
+
     config = configDB.get('config')
     if config != None:
         msgID = configDB.get('msgID')
@@ -1046,7 +1048,7 @@ def getAutoconnectTable(atdf, idDependency, idCapability):
                 if idDepSplit[-1].isdigit():
                     depToCheck = "_".join(idDepSplit[:-1])
 
-            # print("SHD >> getAutoconnectTable depId:{} depToCheck:{}".format(depId, depToCheck)) 
+            # print("SHD >> getAutoconnectTable depId:{} depToCheck:{}".format(depId, depToCheck))
             if depId == depToCheck:
                 connection = []
                 # Add dependency
@@ -1074,9 +1076,9 @@ def getAutoconnectTable(atdf, idDependency, idCapability):
                     elif plib == 'dsci':
                         depType = "pmsmfoc_X2CSCOPE"
                     else:
-                        # print("SHD >> getAutoconnectTable skip pmsm_foc: plib:{}".format(plib)) 
+                        # print("SHD >> getAutoconnectTable skip pmsm_foc: plib:{}".format(plib))
                         continue
-                    # print("SHD >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType)) 
+                    # print("SHD >> getAutoconnectTable check pmsm_foc: plib:{}, depType{}".format(plib, depType))
                 elif 'drvGmac' == depId:
                     exception = True
                     if periphGmac is not None:
@@ -1085,7 +1087,7 @@ def getAutoconnectTable(atdf, idDependency, idCapability):
                     elif periphEth is not None:
                         depType = "ETH_PHY_Dependency"
                     else:
-                        # print("SHD >> getAutoconnectTable drvGmac peripheral not found") 
+                        # print("SHD >> getAutoconnectTable drvGmac peripheral not found")
                         continue
                 elif 'drvEmac' == depId:
                     exception = True
@@ -1128,7 +1130,7 @@ def getAutoconnectTable(atdf, idDependency, idCapability):
                     connection.append("{}".format(depType))
                 else:
                     connection.append("{}_{}_dependency".format(depType, capId))
-                
+
                 # Add capability
                 # handle name exceptions
                 exception = False
@@ -1171,7 +1173,7 @@ def getAutoconnectTable(atdf, idDependency, idCapability):
                     connection.append("{}".format(idCapability))
                 else:
                     connection.append("{}_{}".format(idCapability.upper(), capId))
-                
+
                 connectionTable.append(connection)
 
     # print("SHD >> getAutoconnectTable connectionTable:{}".format(connectionTable)) 
