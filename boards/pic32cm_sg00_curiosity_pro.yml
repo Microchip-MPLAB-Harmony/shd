@@ -1,6 +1,6 @@
 name: pic32cm-sg00-curiosity-pro
 config: pic32cm_sg00_curiosity_pro.py
-documentation: https://www.microchip.com/en-us/development-tool/EA36K74A
+documentation: https://www.microchip.com/en-us/development-tool/EA51N28A
 processor:
   name: PIC32CM5112SG00100
   architecture: CORTEX-M23
@@ -36,7 +36,7 @@ interfaces:
         pinctrl:
           gpio:
             pinId: PB07
-            name: USER_SWTICH0
+            name: USER_SWITCH0
             function: GPIO
             direction: in
             pull up: True

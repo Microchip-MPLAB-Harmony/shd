@@ -34,7 +34,7 @@ interfaces:
         pinctrl:
           gpio:
             pinId: PB26
-            name: USER_SWTICH0
+            name: USER_SWITCH0
             function: GPIO
             direction: in
             pull up: True
