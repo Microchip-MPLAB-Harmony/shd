@@ -1,6 +1,6 @@
 name: sam9x75-curiosity_pro
 config: sam9x75_curiosity_pro.py
-documentation: https://www.microchip.com/en-us/development-tool/?????
+documentation: https://www.microchip.com/en-us/development-tool/EV29J11A
 processor:
   name: SAM9X75D2G
   architecture: ARM926EJ-S
