@@ -770,7 +770,7 @@ connectors:
         function: GPIO
         direction: in
         latch: low
-        interrupt: falling edge
+        interrupt: Low level
       gpio ss:
         pinId: PC17
         name: EXT1_GPIO_SS
