@@ -3,6 +3,36 @@
 
 # Microchip MPLAB® Harmony 3 Release Notes
 
+## SHD Release v1.3.0
+
+This release adds support for the following development kits and extension boards:
+
+- **Host boards support**
+  - **MPU**
+    - SAMA7D65 Curiosity Pro
+    - SAM9X75 Curiosity Pro
+  - **PIC32CZ CA**
+    - PIC32CZ CA91 Curiosity Ultra
+
+- **Click/Add-on boards support**
+  - **Click boards**
+    - PL460 Evaluation Kit v5 (G3 MAC RT)
+    - PL460 Evaluation Kit v5 (PLC PHY)
+ 
+- **Bug Fixes**
+  - Fixed configuration issues in template files for switch press/release definitions.
+
+**Known issues**
+  - None.
+
+**Development Tools**
+
+- [MPLAB® X IDE v6.30](https://www.microchip.com/mplab/mplab-x-ide)
+- [MPLAB® XC32 C/C++ Compiler v5.00](https://www.microchip.com/en-us/tools-resources/develop/mplab-xc-compilers) or higher
+- MPLAB® X IDE plug-ins:
+  - MPLAB® Code Configurator 5.8.4 or higher
+
+
 ## SHD Release v1.2.1
 
 - **Bug Fixes**
