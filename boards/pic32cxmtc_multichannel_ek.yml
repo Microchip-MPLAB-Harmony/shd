@@ -1,0 +1,418 @@
+name: pic32cxmtc-multichannel-ek
+config: pic32cxmtc_multichannel_ek.py
+documentation: https://www.microchip.com/en-us/development-tool/????
+processor:
+  name: PIC32CX2051MTC128
+  architecture: CORTEX-M4
+  family: PIC32CXMT
+  series: PIC32CXMTC
+
+interfaces:
+  - name: Digital interface
+    description: Button and LED configurations
+    options:
+      - name: Switch 1
+        description: Switch 1 - active low
+        pinctrl:
+          gpio:
+            pinId: PA3
+            name: SW1
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: Switch 2
+        description: Switch 2 - active low
+        pinctrl:
+          gpio:
+            pinId: PC4
+            name: SW2
+            function: GPIO
+            direction: in
+            pull up: True
+      - name: Switch 1 - Interrupt
+        description: Switch 1 - falling edge
+        pinctrl:
+          gpio:
+            pinId: PA3
+            name: SW1_INT
+            function: GPIO
+            direction: in
+            interrupt: falling edge
+            pull up: True
+      - name: Switch 2 - Interrupt
+        description: Switch 2 - falling edge
+        pinctrl:
+          gpio:
+            pinId: PC4
+            name: SW2_INT
+            function: GPIO
+            direction: in
+            interrupt: falling edge
+            pull up: True
+      - name: User LED0 Red
+        description: User LED0 Red
+        pinctrl:
+          gpio:
+            pinId: PB1
+            name: LED0_RED
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User LED0 Green
+        description: User LED0 Green
+        pinctrl:
+          gpio:
+            pinId: PB3
+            name: LED0_GREEN
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User LED0 Blue
+        description: User LED0 Blue
+        pinctrl:
+          gpio:
+            pinId: PB4
+            name: LED0_BLUE
+            function: GPIO
+            direction: out
+            latch: low
+      - name: User LED1
+        description: User LED1
+        pinctrl:
+          gpio:
+            pinId: PB15
+            name: LED1
+            function: GPIO
+            direction: out
+            latch: low
+
+  - name: Storage interface
+    description: Storage on-board components configurations
+    options:
+      - name: SST26VF064B interface
+        description: SST26VF064B QSPI flash memory (16Mbit)
+        dependencies: [[drv_sst26, qspi]]
+        pinctrl:
+          qsck:
+            pinId: PC15
+            function: QSPI_QSCK
+          qcs:
+            pinId: PC14
+            function: QSPI_QCS
+          quio0:
+            pinId: PC13
+            function: QSPI_QIO0
+          quio1:
+            pinId: PC12
+            function: QSPI_QIO1
+          quio2:
+            pinId: PC11
+            function: QSPI_QIO2
+          quio3:
+            pinId: PC10
+            function: QSPI_QIO3
+
+  - name: Debug UART interface
+    description: Debugging Isolated UART interface
+    dependencies: [[sys_console, flexcom0]]
+    pinctrl:
+      tx:
+        pinId: PA4
+        name: DBG_UART_TX
+        function: FLEXCOM0_IO0
+      rx:
+        pinId: PA5
+        name: DBG_UART_RX
+        function: FLEXCOM0_IO1
+
+  - name: Metrology Pulses interface (PWM)
+    description: Optical & Isolated Port interface for Pulses Outputs
+    options:
+      - name: Metrology LED 1
+        description: Metrology LED 1
+        pinctrl:
+          gpio:
+            pinId: PD17
+            name: METROLOGY_LED1
+            function: PWM_PWML0
+      - name: Metrology LED 2
+        description: Metrology LED 2
+        pinctrl:
+          gpio:
+            pinId: PD18
+            name: METROLOGY_LED2
+            function: PWM_PWML1
+      - name: Metrology LED 3
+        description: Metrology LED 3
+        pinctrl:
+          gpio:
+            pinId: PD19
+            name: METROLOGY_LED3
+            function: PWM_PWML2
+
+  - name: MCP Multichannel interface
+    description: Simultaneous Sample ADC
+    options:
+      - name: AFE 0
+        description: AFE Device 0
+        pinctrl:
+          cs:
+            pinId: PD8
+            name: AFE0_MCSPI_CS0
+            function: MCSPI_NPCS0
+          sck:
+            pinId: PD5
+            name: AFE_MCSPI_SCK
+            function: MCSPI_SPCK
+          miso:
+            pinId: PD6
+            name: AFE_MCSPI_MISO
+            function: MCSPI_MISO
+          mosi:
+            pinId: PD7
+            name: AFE_MCSPI_MOSI
+            function: MCSPI_MOSI0
+          rst:
+            pinId: PD12
+            name: AFE_RESET
+            function: GPIO
+            direction: out
+            latch: low
+          clk:
+            pinId: PD4
+            name: AFE_CLKOUT
+            function: PMC_PCK2
+          dr:
+            pinId: PD0
+            name: AFE0_DR0
+            function: GPIO
+            direction: in
+      - name: AFE 1
+        description: AFE Device 1
+        pinctrl:
+          cs:
+            pinId: PD9
+            name: AFE1_MCSPI_CS1
+            function: MCSPI_NPCS1
+          dr:
+            pinId: PD13
+            name: AFE1_DR1
+            function: GPIO
+            direction: in
+      - name: AFE 2
+        description: AFE Device 2
+        pinctrl:
+          cs:
+            pinId: PD10
+            name: AFE2_MCSPI_CS2
+            function: MCSPI_NPCS2
+          dr:
+            pinId: PD14
+            name: AFE2_DR2
+            function: GPIO
+            direction: in
+      - name: AFE 3
+        description: AFE Device 3
+        pinctrl:
+          cs:
+            pinId: PD11
+            name: AFE3_MCSPI_CS3
+            function: MCSPI_NPCS3
+          dr:
+            pinId: PD15
+            name: AFE3_DR3
+            function: GPIO
+            direction: in
+
+connectors:
+  - compatible: mikroBUS
+    name: mikroBUS 1
+    description: mikroBUS socket 1
+    pinctrl:
+      an:
+        pinId: PA30
+        name: mikroBUS1_AN
+        function: ADC_AD1/ACC_INP1
+      rst:
+        pinId: PA20
+        name: mikroBUS1_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PC6
+          name: mikroBUS1_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PC7
+          name: mikroBUS1_SPI_SCK
+          function: FLEXCOM5_IO2
+        miso:
+          pinId: PC8
+          name: mikroBUS1_SPI_MISO
+          function: FLEXCOM5_IO1
+        mosi:
+          pinId: PC9
+          name: mikroBUS1_SPI_MOSI
+          function: FLEXCOM5_IO0
+      pwm:
+        pinId: PB24
+        name: mikroBUS1_PWM
+        function: GPIO
+        direction: out
+        latch: low
+      int:
+        pinId: PB25
+        name: mikroBUS1_INT
+        function: GPIO
+        direction: in
+        interrupt: falling edge
+      uart:
+        tx:
+          pinId: PA16
+          name: mikroBUS1_UART_TX
+          function: FLEXCOM3_IO0
+        rx:
+          pinId: PA17
+          name: mikroBUS1_UART_RX
+          function: FLEXCOM3_IO1
+      i2c:
+        sda:
+          pinId: PC21
+          name: mikroBUS1_I2C_SDA
+          function: FLEXCOM7_IO0
+        scl:
+          pinId: PC20
+          name: mikroBUS1_I2C_SCL
+          function: FLEXCOM7_IO1
+
+  - compatible: mikroBUS
+    name: mikroBUS 2
+    description: mikroBUS socket 2
+    pinctrl:
+      an:
+        pinId: PA29
+        name: mikroBUS2_AN
+        function: ADC_AD0/ACC_INP0
+      rst:
+        pinId: PC5
+        name: mikroBUS2_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PB8
+          name: mikroBUS2_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PB7
+          name: mikroBUS2_SPI_SCK
+          function: FLEXCOM4_IO2
+        miso:
+          pinId: PB6
+          name: mikroBUS2_SPI_MISO
+          function: FLEXCOM4_IO1
+        mosi:
+          pinId: PB5
+          name: mikroBUS2_SPI_MOSI
+          function: FLEXCOM4_IO0
+      pwm:
+        pinId: PB26
+        name: mikroBUS2_PWM
+        function: GPIO
+        direction: out
+        latch: low
+      int:
+        pinId: PB9
+        name: mikroBUS2_INT
+        function: GPIO
+        direction: in
+        interrupt: falling edge
+      uart:
+        tx:
+          pinId: PA16
+          name: mikroBUS2_UART_TX
+          function: FLEXCOM3_IO0
+        rx:
+          pinId: PA17
+          name: mikroBUS2_UART_RX
+          function: FLEXCOM3_IO1
+      i2c:
+        sda:
+          pinId: PC21
+          name: mikroBUS2_I2C_SDA
+          function: FLEXCOM7_IO0
+        scl:
+          pinId: PC20
+          name: mikroBUS2_I2C_SCL
+          function: FLEXCOM7_IO1
+
+  - compatible: mikroBUS
+    name: mikroBUS 3
+    description: mikroBUS socket 3
+    pinctrl:
+      an:
+        pinId: PA31
+        name: mikroBUS3_AN
+        function: ADC_AD2/ACC_INP2
+      rst:
+        pinId: PC1
+        name: mikroBUS3_RST
+        function: GPIO
+        direction: out
+        latch: low
+      spi:
+        cs:
+          pinId: PA15
+          name: mikroBUS3_SPI_CS
+          function: GPIO
+          direction: out
+          latch: high
+        sck:
+          pinId: PA14
+          name: mikroBUS3_SPI_SCK
+          function: FLEXCOM2_IO2
+        miso:
+          pinId: PA13
+          name: mikroBUS3_SPI_MISO
+          function: FLEXCOM2_IO1
+        mosi:
+          pinId: PA12
+          name: mikroBUS3_SPI_MOSI
+          function: FLEXCOM2_IO0
+      pwm:
+        pinId: PC22
+        name: mikroBUS3_PWM
+        function: GPIO
+        direction: out
+        latch: low
+      int:
+        pinId: PA2
+        name: mikroBUS3_INT
+        function: GPIO
+        direction: in
+        interrupt: falling edge
+      uart:
+        tx:
+          pinId: PA8
+          name: mikroBUS3_UART_TX
+          function: FLEXCOM1_IO0
+        rx:
+          pinId: PA9
+          name: mikroBUS3_UART_RX
+          function: FLEXCOM1_IO1
+      i2c:
+        sda:
+          pinId: PC21
+          name: mikroBUS3_I2C_SDA
+          function: FLEXCOM7_IO0
+        scl:
+          pinId: PC20
+          name: mikroBUS3_I2C_SCL
+          function: FLEXCOM7_IO1
