@@ -11,7 +11,7 @@ supported:
     name: FLASH2_CLICK_HOLD
     function: GPIO
     direction: out
-    latch: low
+    latch: high
   spi:
     cs:
       name: FLASH2_CLICK_CS
@@ -28,4 +28,4 @@ supported:
     name: FLASH2_CLICK_WP
     function: GPIO
     direction: out
-    latch: low
+    latch: high
