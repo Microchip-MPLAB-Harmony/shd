@@ -4,9 +4,9 @@ package:
   type: "api"
   status: "production"
   required: false
-  version: "v1.3.0"
+  version: "v1.4.0"
 
   dependencies:
     - name: "csp"
       type: "package"
-      version: "v3.25.1"
+      version: "v3.25.2"

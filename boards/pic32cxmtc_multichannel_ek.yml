@@ -1,6 +1,6 @@
 name: pic32cxmtc-multichannel-ek
 config: pic32cxmtc_multichannel_ek.py
-documentation: https://www.microchip.com/en-us/development-tool/????
+documentation: https://www.microchip.com/en-us/development-tool/EV35M12A
 processor:
   name: PIC32CX2051MTC128
   architecture: CORTEX-M4

@@ -3,6 +3,30 @@
 
 # Microchip MPLAB® Harmony 3 Release Notes
 
+## SHD Release v1.4.0
+
+This release adds support for the following development kits:
+
+- **Host boards support**
+  - **MPU**
+    - SAMA7G54 Curiosity Pro
+  - **PIC32CX MT**
+    - PIC32CX MTC Multichannel EK
+
+- **Bug Fixes**
+  - Updated Part Number of PIC32CM SG Curiosity Pro Development Kit.
+  - Fixed default values for RST and PWM signals in the Flash2 Click board
+
+**Known issues**
+  - None.
+
+**Development Tools**
+
+- [MPLAB® X IDE v6.30](https://www.microchip.com/mplab/mplab-x-ide)
+- [MPLAB® XC32 C/C++ Compiler v5.10](https://www.microchip.com/en-us/tools-resources/develop/mplab-xc-compilers) or higher
+- MPLAB® X IDE plug-ins:
+  - MPLAB® Code Configurator 5.8.4 or higher
+
 ## SHD Release v1.3.0
 
 This release adds support for the following development kits and extension boards:
