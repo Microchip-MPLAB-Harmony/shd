@@ -1,6 +1,6 @@
 name: pic32cm-sg00-curiosity-pro
 config: pic32cm_sg00_curiosity_pro.py
-documentation: https://www.microchip.com/en-us/development-tool/EA51N28A
+documentation: https://www.microchip.com/en-us/development-tool/ev53v42a
 processor:
   name: PIC32CM5112SG00100
   architecture: CORTEX-M23
